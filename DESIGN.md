@@ -1,58 +1,74 @@
-# DESIGN.md — Mệnh Quán: Huyền Vũ Chu Sa (Eastern Occult & Classical Bazi Divination System)
+# DESIGN.md — Mệnh Quán (Huyền Vũ Chu Sa & Cổ Pháp Bát Tự)
 
-## 1. Brand Archetype & Aesthetic Philosophy
-- **Archetype**: *Huyền Vũ Chu Sa (Dark Occult Eastern Divination & Classical Astrological Atlas)*.
-- **Atmosphere**: Cổ tịch huyền học Á Đông, trang nghiêm, ma mị, sâu lắng như bước vào một mật thất chiêm tinh cổ đại dưới ánh đèn dầu Chu Sa và chữ Vàng Kim khắc trên thẻ tre đen.
-- **Core Principle**: **Map-First Visual Divination** — Ngay sau khi khởi lập lá số, toàn bộ **5 Đại Bản Đồ Bát Tự (5-Map Atlas)** xuất hiện trực quan trước mắt người xem, kết hợp tương tác từ trường sống động và lời phán cổ thư.
-
----
-
-## 2. Color Tokens (Bảng Màu Huyền Học Cổ Phong)
-| Token | Giá trị | Ý nghĩa Huyền Học |
-| :--- | :--- | :--- |
-| `--ritual-bg-abyss` | `#0b0708` | Đêm Huyền Vũ sâu thẳm (Nền chính) |
-| `--ritual-bg-altar` | `rgba(22, 11, 13, 0.86)` | Mặt bàn thờ Tứ Trụ (Nền thẻ bản đồ) |
-| `--ritual-bg-elevated` | `rgba(36, 15, 18, 0.92)` | Tầng khí nổi bật / Hover state |
-| `--ritual-cinnabar` | `#b91c1c` | Chu Sa Ấn Triện (Đỏ thần bí chủ đạo) |
-| `--ritual-cinnabar-glow` | `rgba(220, 38, 38, 0.42)` | Hào quang Chu Sa |
-| `--ritual-gold` | `#d4af37` | Hoàng Kim Cổ Tự (Điểm nhấn Nhật Chủ & Tinh tú) |
-| `--ritual-gold-soft` | `rgba(212, 175, 55, 0.24)` | Viền tơ vàng mảnh |
-| `--ritual-jade` | `#10b981` | Thanh Mộc Sinh Khí (Tương sinh / Cát thần) |
-| `--ritual-parchment` | `#f5ebe6` | Giấy tuyên cổ ngả kem (Chữ chính độ tương phản > 12:1) |
-| `--ritual-muted` | `#b89f97` | Chữ chú giải cổ tịch (WCAG AA compliant >= 4.8:1) |
-
-### Ngũ Hành Linh Sắc (Five Elements Palette)
-- **Mộc (木 - Thanh Long)**: `#34d399` (Ngọc Lục Bảo)
-- **Hỏa (火 - Chu Tước)**: `#f87171` (Chu Sa Xích Hỏa)
-- **Thổ (土 - Câu Trần)**: `#fbbf24` (Hoàng Thổ Kim Sa)
-- **Kim (金 - Bạch Hổ)**: `#e2e8f0` (Bạch Ngân Tinh Kim)
-- **Thủy (水 - Huyền Vũ)**: `#60a5fa` (Huyền Thủy Minh Châu)
+## 1. Triết Lý & Không Khí (Visual Atmosphere)
+- **Phong cách:** Đông Phương Huyền Học Cổ Điển — Trầm Mặc, Ma Mị, Thư Pháp Bút Lông & La Kinh Cổ Điển.
+- **Nguyên tắc cốt lõi:**
+  - Giữ trọn vẹn nền đen rêu huyền bí (`#0b100e`) cùng vòng Bát Quái đỏ xoay ngầm (`.reading-sigil`) và những dòng cổ thi trôi lơ lửng (`.reading-verse`).
+  - Toàn bộ khung thẻ đồ bản sử dụng nền kính mờ huyền ảo (`rgba(21, 26, 24, 0.72)` + `backdrop-filter: blur(8px)`), viền chỉ tơ cổ phong (`rgba(214, 154, 136, 0.25)`).
+  - Tuyệt đối không dùng icon mặc định hay emoji thô (như ☯, ⛩, 🌊, ✦). Toàn bộ biểu tượng dùng **Lucide SVG nét mảnh (stroke-width: 1.5)** hoặc đồ họa vector khắc chỉ tơ cổ học.
 
 ---
 
-## 3. Typography & Hierarchy
-- **Display / Tiêu đề Quẻ & Chữ Hán**: `'Noto Serif', 'Playfair Display', Georgia, serif` — Trọng lượng 600–700, giãn chữ nhẹ, tạo cảm giác khắc bia đá cổ.
-- **Body / Lời Luận Giải**: `'Noto Sans', system-ui, sans-serif` — Dễ đọc, dòng thoáng (`line-height: 1.65`).
-- **Hán Tự Linh Phù**: Hiển thị song ngữ Hán - Việt (`甲子 · Giáp Tý`) giúp giữ trọn thần thái huyền học vừa dễ hiểu cho người Việt.
+## 2. Hệ Thống Màu Chuẩn (Color Palette Tokens)
+
+### Màu Nền & Mực Viết (Base & Ink)
+- **Nền Hư Không (Void Base):** `#0b100e` (Đen rêu sâu thẳm nguyên bản của Mệnh Quán)
+- **Thẻ Huyền Trúc (Card Surface):** `rgba(21, 26, 24, 0.72)`
+- **Thẻ Chu Sa Tối (Deep Accent Surface):** `rgba(33, 27, 27, 0.78)`
+- **Chỉ Kẻ Cổ Mặc (Border Line):** `#493532` & `#352422`
+- **Mực Trắng Ngà (Primary Text):** `#eee3d8`
+- **Mực Mờ Sương Khói (Muted Text):** `#beb0a7`
+- **Chỉ Dẫn Mềm (Soft Text):** `#8c7d74`
+
+### Điểm Nhấn Huyền Vũ & Chu Sa (Ritual Accents)
+- **Vàng Đồng Hồng (Copper Gold):** `#d69a88`
+- **Đỏ Chu Sa Trầm (Deep Cinnabar):** `#772b32`
+- **Đỏ Chu Sa Phát Sáng (Glowing Cinnabar):** `#bf4b45`
+- **Hồng Ngọc Chu Sa (Soft Cinnabar):** `#edaaa1`
+
+### 5 Sắc Độ Ngũ Hành Trầm Cổ (Antique Muted Five Elements)
+*Tuyệt đối không dùng màu xanh đỏ tím vàng sặc sỡ làm vỡ không khí ma mị của web:*
+- **Mộc (Thanh Ngọc Tối):**
+  - Màu chính: `#789e82`
+  - Nền mờ: `rgba(120, 158, 130, 0.12)`
+  - Viền: `rgba(120, 158, 130, 0.35)`
+- **Hỏa (Chu Sa Trầm):**
+  - Màu chính: `#c9655b`
+  - Nền mờ: `rgba(201, 101, 91, 0.12)`
+  - Viền: `rgba(201, 101, 91, 0.35)`
+- **Thổ (Hoàng Thổ Đồng Cổ):**
+  - Màu chính: `#c2966d`
+  - Nền mờ: `rgba(194, 150, 109, 0.12)`
+  - Viền: `rgba(194, 150, 109, 0.35)`
+- **Kim (Bạch Kim Mờ):**
+  - Màu chính: `#c7bfb8`
+  - Nền mờ: `rgba(199, 191, 184, 0.12)`
+  - Viền: `rgba(199, 191, 184, 0.35)`
+- **Thủy (Huyền Thủy Tối):**
+  - Màu chính: `#6d88a3`
+  - Nền mờ: `rgba(109, 136, 163, 0.12)`
+  - Viền: `rgba(109, 136, 163, 0.35)`
 
 ---
 
-## 4. 6 Hiệu Ứng Huyền Vi Chủ Đạo (60fps Physics & SVG Craft)
-1. **Hào Quang Bản Mệnh Nhật Chủ (`day-master-aura`)**: Vầng sáng Hoàng Kim - Chu Sa thở nhịp nhàng tại cột Trụ Ngày.
-2. **Mạng Lưới Từ Trường Tương Tác (`Interactive Branch Beam Focus`)**: Rê chuột hoặc chọn thẻ *Lục Hợp, Tam Hợp, Lục Xung, Tương Hình, Tương Hại*, các cột trụ liên quan lập tức phát sáng đồng bộ.
-3. **La Kinh Tinh Tú Thiên Bàn (`Celestial Constellation Beam`)**: Chùm tia sao từ tâm Thái Cực phóng thẳng tới cung Địa Chi / Thần Sát đang chọn.
-4. **Dòng Khí Tuần Hoàn Ngũ Hành (`Dynamic Qi Generation Stream`)**: Luồng hạt năng lượng chạy dọc vòng tròn tương sinh ngoài và mạng ngôi sao tương khắc bên trong.
-5. **Sóng Sinh Khí Tự Vẽ (`Living Life-Wave SVG`)**: Đường cong Trường Sinh & Đại Vận chuyển động mềm mại kèm bong bóng giải nghĩa.
-6. **Ấn Triện Chu Sa Năm Hiện Tại (`Stamp Pulse`)**: Dấu ấn Chu Sa khắc chữ Hán đóng tại năm hiện tại (2026 Bính Ngọ) trên bảng Lưu Niên.
+## 3. Hệ Thống Kiểu Chữ (Typography Hierarchy)
+- **Đại Tự & Ấn Chương Thư Pháp:**
+  - Font: `"Ma Shan Zheng", "Zhi Mang Xing", "STKaiti", "KaiTi", serif`
+  - Dùng cho: Chữ Hán đại tự Thiên Can, Địa Chi, Quẻ Dịch, Ấn Chu Sa Mệnh Chủ.
+- **Chữ Hán La Kinh & Số Liệu Cổ Pháp:**
+  - Font: `"Noto Serif TC", "Noto Serif SC", "Songti SC", "SimSun", serif`
+  - Dùng cho: 24 Sơn Hướng, 28 Tinh Tú, Tàng Can, Thần Sát.
+- **Tiếng Việt & Nội dung Diễn Giải:**
+  - Tiêu đề: `"Noto Serif", Georgia, serif`
+  - Văn bản đọc: `"Noto Sans", system-ui, sans-serif`
 
 ---
 
-## 5. Layout Safety & Anti-Slop Rules
-- **Thứ tự bắt buộc trong `ChartResult`**:
-  1. Thanh điều hướng nhanh 5 Đại Bản Đồ (Sticky Jump Bar)
-  2. **Bản đồ 1**: Ma Trận Bát Tự 7 Tầng & Từ Trường Hình Xung Hội Hợp (`BaziMatrixMap`)
-  3. **Bản đồ 2 & 3**: La Kinh Bát Tự 24 Sơn Hướng (`CelestialWheel`) & Trận Đồ Radar Ngũ Hành (`FiveElementsRadar`) (Xếp song song 2 cột ở màn hình `>=1100px`, xếp chồng ở mobile)
-  4. **Bản đồ 4**: Tinh Đồ Thập Thần & Pháp Quyết Dụng Thần (`TenGodsProfileMap`)
-  5. **Bản đồ 5**: Sóng Vận Trình Đại Vận & Bảng Lưu Niên 10 Năm (`LuckTimeline`)
-  6. **Lời Phán Tổng Kết Mệnh Cục & Sổ Tay Chiêm Nghiệm**
-- **Anti-Overflow**: Bảng ma trận có `overflow-x: auto` và ghim cột nhãn trên màn hình nhỏ (`<=650px`), đảm bảo 0px tràn ngang tài liệu.
+## 4. Quy Chuẩn Bố Cục (Layout Architecture)
+- **Khung Tổng Thể (Master Frame):**
+  - Rộng tối đa 1200px, căn giữa, cách lề linh hoạt (`px-4 sm:px-8`).
+  - Chống tràn (`min-w-0`, `min-h-0`, `overflow-hidden` ở các thẻ con).
+- **Mô hình Song Hành (Dual-Column Split-View):**
+  - Cột Trái (45-50%): Đồ bản chuyên sâu kỹ thuật số liệu (Tứ Trụ, La Kinh, Ngũ Hành, Thập Thần, Đại Vận).
+  - Cột Phải (50-55%): Lời giải đời thường, ấm áp, thực tế cho người mới.
+  - Tương tác đồng bộ: Bấm vào đâu bên trái, giải nghĩa lập tức đổi bên phải.
