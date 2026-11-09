@@ -56,3 +56,20 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
   - Next.js build hoàn thành 100% thành công.
   - Dev server phục vụ tại `http://127.0.0.1:5173/`.
   - Đồng bộ 100% giữa `menh-quan-font-ring` và `menh-quan`.
+
+
+## 2026-11-09 — Standalone Node Server & Direct Local Launch
+- Cấu hình server chạy độc lập server.mjs kết hợp register.mjs/loader.mjs với Node.js v24.22.1 (C:\AI Engineering\runtime\node.exe).
+- Đã giải nén bản phát hành ritual-release.tar.gz, phục vụ toàn bộ SSR Next.js/Vinext và static assets (CSS, JS Chunks, Fonts Noto Serif/Sans, SVG).
+- Kiểm tra kết nối HTTP 200, kích thước trang ~29KB, CSS 148KB, JS 255KB hoạt động mượt mà tại http://127.0.0.1:5173/.
+- Đã tự động kích hoạt trình duyệt và tạo file khởi động nhanh một chạm chay-du-an.bat.
+
+## 2026-11-09 — Git pull commit 0c5ac53
+- Pulled latest commit 0c5ac53 ('update') from origin/main.
+- Identified Gitlink issue: commit 0c5ac53 only updated subproject commit hash for menh-quan-font-ring (69d54f2) due to nested .git folder, no actual files were included.
+- Guided user on removing nested .git and re-adding menh-quan-font-ring to push full source files.
+
+## 2026-11-09 — Fixed 'Tam nghi de hoan thien / Tam dong' issue
+- Root cause: page-LMxhegNg.js imports { env as r } from 'cloudflare:workers' and computes acceptNewReadings: (r.ACCEPT_NEW_READINGS === 'true'). The previous loader mock returned empty env {}, making it false.
+- Fix: Updated loader.mjs to export env with ACCEPT_NEW_READINGS = 'true'.
+- Verified: Rendered SSR payload now passes acceptNewReadings: true, allowing users to enter birth info and view Bazi matrix.
