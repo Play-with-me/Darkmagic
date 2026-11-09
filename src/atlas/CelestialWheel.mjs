@@ -287,8 +287,26 @@ export function CelestialWheel({ React, chart }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · GIẢI MÃ SAO CHIẾU MỆNH'),
-          h('span', { className: 'col-hint' }, `Đang soi: ${curStar.name}`)
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · GIẢI MÃ SAO CHIẾU MỆNH'),
+          h('span', { className: 'col-hint' }, `Đang soi: ${curStar.name} (${curStar.branch})`)
+        ),
+
+        // Hàng nút chọn nhanh Thần Sát cho người đọc
+        h(
+          'div',
+          { className: 'quick-switch-tabs' },
+          shenShaList.map((star, sIdx) =>
+            h(
+              'button',
+              {
+                key: sIdx,
+                type: 'button',
+                className: `switch-tab-btn ${curStar.name === star.name ? 'is-active' : ''}`,
+                onClick: () => setSelectedStar(star),
+              },
+              `${star.name} (${star.branch})`
+            )
+          )
         ),
 
         // Thẻ Giải Nghĩa Sao Đang Chọn
@@ -302,29 +320,60 @@ export function CelestialWheel({ React, chart }) {
               'div',
               { className: 'guide-card-badge' },
               h(SparklesIcon, { React, size: 14, color: 'var(--gold)' }),
-              h('span', null, starGuide.title)
+              h('span', null, starGuide.title || curStar.name)
             ),
-            h('span', { className: 'guide-period-pill' }, starGuide.nature)
+            h('span', { className: 'guide-period-pill' }, starGuide.nature || 'Chiếu Cung Chi')
           ),
           h('h3', { className: 'guide-headline' }, `Khí Chất Của ${curStar.name} Trong Đời Sống Thực Tế`),
-          h('p', { className: 'guide-meaning-body' }, starGuide.simpleDesc),
+          h('p', { className: 'guide-meaning-body' }, starGuide.simpleDesc || curStar.desc),
           h(
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Đóng tại cung ${curStar.branch}: ${starGuide.advice}`)
-          )
+            h('span', null, `Tọa độ cung ${curStar.branch} (${curStar.palace}): ${starGuide.advice || 'Vận dụng thế mạnh này vào các quyết định lớn.'}`)
+          ),
+
+          // Lưới 4 Chiều Ứng Dụng Sao (Sự nghiệp, Tình cảm, Việc nên làm, Việc nên tránh)
+          starGuide.careerPower &&
+            h(
+              'div',
+              { className: 'guide-domains-grid' },
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '💼 Năng Lực Sự Nghiệp'),
+                h('p', { className: 'domain-card-desc' }, starGuide.careerPower)
+              ),
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '❤️ Duyên Vận & Xã Giao'),
+                h('p', { className: 'domain-card-desc' }, starGuide.relationshipEffect)
+              ),
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '✅ Việc Nên Làm'),
+                h('p', { className: 'domain-card-desc' }, starGuide.dos)
+              ),
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '⛔ Điều Nên Tránh'),
+                h('p', { className: 'domain-card-desc' }, starGuide.donts)
+              )
+            )
         ),
 
         // Cẩm nang người mới: Hiểu đúng về Thần Sát
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, 'Góc Nhìn Khách Quan Về "Thần Sát"'),
+          h('h4', { className: 'card-sec-title' }, 'Góc Nhìn Khoa Học & Khách Quan Về "Thần Sát"'),
           h(
             'p',
             { className: 'card-sec-desc' },
-            'Trong cổ học Đông Phương, "Thần Sát" không phải là thần thánh hay ma quỷ ban phước giáng họa, mà là những mô thức tâm lý và cơ hội tương tác xã hội lặp đi lặp lại.'
+            'Trong cổ học Đông Phương, "Thần Sát" không phải là thần thánh hay ma quỷ ban phước giáng họa, mà là những mô thức tâm lý bẩm sinh và cơ hội tương tác xã hội lặp đi lặp lại.'
           ),
           h(
             'div',
@@ -333,29 +382,29 @@ export function CelestialWheel({ React, chart }) {
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Quý Nhân'),
-              h('strong', null, 'Quan hệ tương trợ'),
-              h('p', null, 'Khả năng kết nối và được người có uy tín giúp đỡ đúng thời điểm.')
+              h('strong', null, 'Mạng lưới tương trợ'),
+              h('p', null, 'Khả năng kết nối và được người có tầm ảnh hưởng giúp đỡ đúng thời điểm then chốt.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Đào Hoa'),
-              h('strong', null, 'Duyên vận & Cảm xúc'),
-              h('p', null, 'Sức hút giao tiếp, năng khiếu thẩm mỹ và độ nhạy cảm với người khác.')
+              h('strong', null, 'Sức hút giao tiếp'),
+              h('p', null, 'Duyên ăn nói, năng khiếu thẩm mỹ và độ nhạy cảm tinh tế với cảm xúc người khác.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Dịch Mã'),
-              h('strong', null, 'Vận động & Xa xứ'),
-              h('p', null, 'Sự linh hoạt đổi mới, cơ duyên đi xa để mở rộng tầm nhìn.')
+              h('strong', null, 'Vận động & Đổi mới'),
+              h('p', null, 'Sự linh hoạt đổi mới, cơ duyên đi xa, thay đổi chỗ ở hay mở rộng tầm nhìn toàn cầu.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Văn Xương'),
-              h('strong', null, 'Trí tuệ & Học vấn'),
-              h('p', null, 'Khả năng tự học, sáng tạo nội dung và diễn đạt bằng văn từ.')
+              h('strong', null, 'Trí tuệ & Học thức'),
+              h('p', null, 'Khả năng tự học xuất sắc, nghiên cứu và diễn đạt thuyết phục bằng văn tự.')
             )
           )
         ),
@@ -368,8 +417,8 @@ export function CelestialWheel({ React, chart }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, 'Cách vận dụng tốt nhất:'),
-            h('p', null, 'Đừng lo lắng khi thấy các tên gọi có vẻ nghiêm trọng. Nắm rõ ưu thế của từng sao giúp bạn chủ động phát huy điểm mạnh và cẩn trọng trước những điểm mù.')
+            h('strong', null, 'Bí quyết kích hoạt vận hội:'),
+            h('p', null, 'Không cần hoang mang trước những tên gọi hung tinh hay thần sát. Mọi vì sao đều là hai mặt của một đồng xu; hiểu rõ bản chất giúp bạn chủ động phát huy điểm mạnh và thiết lập rào chắn an toàn cho điểm yếu.')
           )
         )
       )

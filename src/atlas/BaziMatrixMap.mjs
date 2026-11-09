@@ -306,8 +306,26 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · LỜI GIẢI ĐỜI THƯỜNG'),
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · LỜI GIẢI ĐỜI THƯỜNG 4 CHIỀU'),
           h('span', { className: 'col-hint' }, `Đang soi: Trụ ${curPillar.label}`)
+        ),
+
+        // Hàng nút chọn nhanh Trụ cho người đọc
+        h(
+          'div',
+          { className: 'quick-switch-tabs' },
+          pillars.map((p, idx) =>
+            h(
+              'button',
+              {
+                key: idx,
+                type: 'button',
+                className: `switch-tab-btn ${selectedPillarIdx === idx ? 'is-active' : ''}`,
+                onClick: () => handleSelect(idx),
+              },
+              `Trụ ${p.label}: ${p.name || ''}${p.isDayMaster ? ' ★' : ''}`
+            )
+          )
         ),
 
         // Thẻ Giải Thích Trụ Đang Chọn
@@ -332,14 +350,45 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
             h('span', null, beginnerPillarInfo.question)
-          )
+          ),
+
+          // Lưới 4 Chiều Đời Thường (Sự nghiệp, Tình cảm, Thế mạnh, Điểm mù)
+          beginnerPillarInfo.domains &&
+            h(
+              'div',
+              { className: 'guide-domains-grid' },
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '💼 Sự Nghiệp & Tiền Tài'),
+                h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.career)
+              ),
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '❤️ Tình Cảm & Gia Đạo'),
+                h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.relationships)
+              ),
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '⚡ Thế Mạnh Tự Nhiên'),
+                h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.strength)
+              ),
+              h(
+                'div',
+                { className: 'domain-card' },
+                h('div', { className: 'domain-card-head' }, '⚠️ Điểm Mù Cần Thận Trọng'),
+                h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.blindspot)
+              )
+            )
         ),
 
         // Giải mã Can Chi & Nạp Âm của Trụ đang chọn
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, `Chất Liệu Năng Lượng Trụ ${curPillar.label}`),
+          h('h4', { className: 'card-sec-title' }, `Chất Liệu Năng Lượng Cụ Thể (Trụ ${curPillar.label} · ${curPillar.name})`),
           h(
             'div',
             { className: 'guide-traits-grid' },
@@ -348,28 +397,28 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Thiên Can'),
               h('strong', { style: { color: stemTheme.color } }, `${curPillar.stem} (${stemTheme.han})`),
-              h('p', null, curPillar.isDayMaster ? 'Chính là bạn: trung tâm của toàn bộ lá số.' : `Thể hiện quan hệ ${curPillar.stemRelation || 'ngoại cảnh'} đối với bạn.`)
+              h('p', null, curPillar.isDayMaster ? 'Chính là bạn: trung tâm của toàn bộ sinh mệnh.' : `Định hình cách bạn tương tác với thế giới qua góc nhìn ${curPillar.stemRelation || 'ngoại cảnh'}.`)
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Địa Chi'),
               h('strong', { style: { color: branchTheme.color } }, `${curPillar.branch} (${curPillar.animal})`),
-              h('p', null, `Nền tảng thực tế, môi trường sống và sức bật ngầm.`)
+              h('p', null, `Nền tảng thực tế, nguồn năng lượng nội tại và sức chịu đựng.`)
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Nạp Âm Bản Mệnh'),
               h('strong', null, curPillar.naYin),
-              h('p', null, 'Hình tượng khí chất ẩn tàng của cả can chi hợp lại.')
+              h('p', null, 'Hình tượng khí chất tự nhiên toát ra bên ngoài.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Vòng Sinh Khí (Trường Sinh)'),
               h('strong', null, curPillar.lifeStage?.name || '—'),
-              h('p', null, curPillar.lifeStage?.omen || 'Khí thế bình hòa.')
+              h('p', null, curPillar.lifeStage?.omen || 'Khí thế phát triển bình hòa, ổn định.')
             )
           )
         ),
@@ -382,10 +431,10 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, 'Lời khuyên chiêm nghiệm:'),
-            h('p', null, curPillar.isDayMaster
+            h('strong', null, 'Kim chỉ nam chiêm nghiệm hôm nay:'),
+            h('p', null, beginnerPillarInfo.domains?.dailyTip || (curPillar.isDayMaster
               ? 'Trụ Ngày là chính bản thân bạn. Hãy sống đúng với tính cách nguyên bản, đừng cố gắng trở thành một ai khác.'
-              : `Quan sát xem những sự kiện trong giai đoạn ${beginnerPillarInfo.period} có phản ánh đúng khí thế của ${curPillar.name} hay không.`)
+              : `Quan sát xem những sự kiện trong giai đoạn ${beginnerPillarInfo.period} có phản ánh đúng khí thế của ${curPillar.name} hay không.`))
           )
         )
       )
