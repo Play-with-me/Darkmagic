@@ -180,52 +180,67 @@ body:has(.atlas-chart-result-container) .workspace,
 /* Các nét vẽ trên La Kinh Tổng Hợp */
 .compass-ring-outer {
   fill: none;
-  stroke: var(--mist-border);
+  stroke: var(--copper-gold);
   stroke-width: 1.5;
+  stroke-opacity: 0.65;
 }
 
 .compass-ring-middle {
   fill: none;
   stroke: var(--copper-gold);
-  stroke-width: 1;
-  opacity: 0.6;
+  stroke-width: 1.2;
+  stroke-opacity: 0.75;
 }
 
 .compass-ring-inner {
   fill: none;
-  stroke: var(--mist-border);
+  stroke: var(--gold, #c4a365);
   stroke-width: 1;
+  stroke-opacity: 0.7;
 }
 
 .compass-ring-thin {
   fill: none;
-  stroke: var(--mist-border-subtle);
+  stroke: var(--copper-gold);
   stroke-width: 0.8;
+  stroke-opacity: 0.6;
 }
 
 .compass-han-text {
   font-family: var(--font-han-serif);
   letter-spacing: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
 .compass-viet-text {
   font-family: var(--sans);
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
 .master-pillar-han {
   font-family: var(--font-han-brush);
   letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
 }
 
 .master-pillar-name {
   font-family: var(--serif);
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
+}
+
+.master-pillar-role-badge {
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
 .master-core-brush-han {
   font-family: var(--font-han-brush);
   font-size: 46px;
+  text-shadow: 0 0 16px rgba(0, 0, 0, 0.95);
 }
 
 /* Đại Mệnh Bàn Split View (Trái: La Kinh 24 Sơn / Phải: 3 Đúc Kết 30 Giây Kinh Thư) */

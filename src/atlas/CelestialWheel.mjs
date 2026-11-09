@@ -139,22 +139,41 @@ export function CelestialWheel({ React, chart }) {
             h(
               'defs',
               null,
+              // Đĩa nền Thiên Bàn ngọc đen huyền bí tách lớp khỏi nền trang web
+              h(
+                'radialGradient',
+                { id: 'compassPlateGrad', cx: '50%', cy: '50%', r: '50%' },
+                h('stop', { offset: '0%', stopColor: '#1d2722', stopOpacity: '0.98' }),
+                h('stop', { offset: '60%', stopColor: '#141d18', stopOpacity: '0.98' }),
+                h('stop', { offset: '90%', stopColor: '#0e1512', stopOpacity: '0.98' }),
+                h('stop', { offset: '100%', stopColor: '#0a0f0d', stopOpacity: '0.99' })
+              ),
               h(
                 'radialGradient',
                 { id: 'compassCoreGlow', cx: '50%', cy: '50%', r: '50%' },
-                h('stop', { offset: '0%', stopColor: 'var(--gold)', stopOpacity: '0.15' }),
-                h('stop', { offset: '70%', stopColor: 'var(--cinnabar)', stopOpacity: '0.04' }),
+                h('stop', { offset: '75%', stopColor: 'transparent', stopOpacity: '0' }),
+                h('stop', { offset: '95%', stopColor: 'var(--copper-gold)', stopOpacity: '0.3' }),
                 h('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
               )
             ),
 
-            // Nền La Kinh
-            h('circle', { cx: 300, cy: 300, r: 285, fill: 'url(#compassCoreGlow)' }),
-            h('circle', { cx: 300, cy: 300, r: 280, className: 'compass-ring-outer' }),
-            h('circle', { cx: 300, cy: 300, r: 260, className: 'compass-ring-middle' }),
-            h('circle', { cx: 300, cy: 300, r: 215, className: 'compass-ring-inner', strokeDasharray: '2 6' }),
-            h('circle', { cx: 300, cy: 300, r: 155, className: 'compass-ring-inner' }),
-            h('circle', { cx: 300, cy: 300, r: 85, className: 'compass-ring-core' }),
+            // Đĩa Thiên Bàn Ngọc Đen (Tách lớp hoàn toàn khỏi nền web)
+            h('circle', {
+              cx: 300,
+              cy: 300,
+              r: 288,
+              fill: 'url(#compassPlateGrad)',
+              stroke: 'var(--copper-gold)',
+              strokeWidth: 1.5,
+              strokeOpacity: 0.55,
+              filter: 'drop-shadow(0 0 22px rgba(191, 75, 69, 0.28))',
+            }),
+            h('circle', { cx: 300, cy: 300, r: 295, fill: 'url(#compassCoreGlow)' }),
+            h('circle', { cx: 300, cy: 300, r: 280, className: 'compass-ring-outer', stroke: 'var(--copper-gold)', strokeWidth: 1.2, strokeOpacity: 0.65 }),
+            h('circle', { cx: 300, cy: 300, r: 260, className: 'compass-ring-middle', stroke: 'var(--copper-gold)', strokeWidth: 1.2, strokeOpacity: 0.7 }),
+            h('circle', { cx: 300, cy: 300, r: 215, className: 'compass-ring-inner', stroke: 'var(--gold)', strokeDasharray: '2 6', strokeOpacity: 0.8 }),
+            h('circle', { cx: 300, cy: 300, r: 155, className: 'compass-ring-inner', stroke: 'var(--copper-gold)', strokeOpacity: 0.6 }),
+            h('circle', { cx: 300, cy: 300, r: 85, className: 'compass-ring-core', stroke: 'var(--cinnabar-bright)', strokeWidth: 1.5 }),
 
             // 24 Vạch Sơn Hướng
             Array.from({ length: 24 }).map((_, idx) => {
@@ -166,8 +185,8 @@ export function CelestialWheel({ React, chart }) {
                 y1: 300 + 260 * Math.sin(rad),
                 x2: 300 + 280 * Math.cos(rad),
                 y2: 300 + 280 * Math.sin(rad),
-                stroke: idx % 2 === 0 ? 'var(--gold)' : 'var(--line)',
-                strokeWidth: idx % 2 === 0 ? 1.5 : 0.8,
+                stroke: idx % 2 === 0 ? '#f5d59f' : 'rgba(214, 154, 136, 0.6)',
+                strokeWidth: idx % 2 === 0 ? 1.6 : 1,
               });
             }),
 
@@ -226,9 +245,9 @@ export function CelestialWheel({ React, chart }) {
                       y: y + 4,
                       textAnchor: 'middle',
                       className: 'compass-han-char',
-                      fill: isStarPos ? 'var(--gold)' : isPillar ? 'var(--ink)' : 'var(--muted)',
-                      fontSize: isStarPos ? 16 : isPillar ? 14 : 12,
-                      fontWeight: isStarPos || isPillar ? '600' : '400',
+                      fill: isStarPos ? '#f7dfb9' : isPillar ? '#f5d59f' : '#eddcd0',
+                      fontSize: isStarPos ? 17 : isPillar ? 15 : 13,
+                      fontWeight: isStarPos || isPillar ? '700' : '600',
                     },
                     b.han
                   )
@@ -261,9 +280,10 @@ export function CelestialWheel({ React, chart }) {
                     y: y + 5,
                     textAnchor: 'middle',
                     className: 'compass-trigram',
-                    fill: 'var(--gold)',
-                    fontSize: 16,
-                    opacity: 0.75,
+                    fill: '#f7dfb9',
+                    fontSize: 18,
+                    fontWeight: '700',
+                    opacity: 0.9,
                   },
                   g.han
                 );

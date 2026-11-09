@@ -157,17 +157,36 @@ export function FiveElementsRadar({ React, chart }) {
             h(
               'defs',
               null,
+              // Đĩa nền Ngũ Hành Trận Đồ ngọc đen tách lớp khỏi nền web
+              h(
+                'radialGradient',
+                { id: 'pentaPlateGrad', cx: '50%', cy: '50%', r: '50%' },
+                h('stop', { offset: '0%', stopColor: '#1d2722', stopOpacity: '0.98' }),
+                h('stop', { offset: '65%', stopColor: '#141d18', stopOpacity: '0.98' }),
+                h('stop', { offset: '90%', stopColor: '#0e1512', stopOpacity: '0.98' }),
+                h('stop', { offset: '100%', stopColor: '#0a0f0d', stopOpacity: '0.99' })
+              ),
               h(
                 'radialGradient',
                 { id: 'pentagramGlow', cx: '50%', cy: '50%', r: '50%' },
-                h('stop', { offset: '0%', stopColor: curTheme.color, stopOpacity: '0.16' }),
-                h('stop', { offset: '70%', stopColor: 'var(--cinnabar)', stopOpacity: '0.04' }),
+                h('stop', { offset: '75%', stopColor: 'transparent', stopOpacity: '0' }),
+                h('stop', { offset: '95%', stopColor: 'var(--copper-gold)', stopOpacity: '0.3' }),
                 h('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
               )
             ),
 
-            // Nền hào quang mờ
-            h('circle', { cx: 250, cy: 240, r: 210, fill: 'url(#pentagramGlow)' }),
+            // Đĩa Ngũ Giác Tinh Ngọc Đen (Tách lớp hoàn toàn khỏi nền web)
+            h('circle', {
+              cx: 250,
+              cy: 240,
+              r: 218,
+              fill: 'url(#pentaPlateGrad)',
+              stroke: 'var(--copper-gold)',
+              strokeWidth: 1.5,
+              strokeOpacity: 0.55,
+              filter: 'drop-shadow(0 0 22px rgba(191, 75, 69, 0.28))',
+            }),
+            h('circle', { cx: 250, cy: 240, r: 226, fill: 'url(#pentagramGlow)' }),
 
             // Vòng ngoài Tương Sinh (Mộc -> Hỏa -> Thổ -> Kim -> Thủy -> Mộc)
             h('circle', {
@@ -176,18 +195,19 @@ export function FiveElementsRadar({ React, chart }) {
               r: 185,
               fill: 'none',
               stroke: 'var(--gold)',
-              strokeWidth: 1.2,
+              strokeWidth: 1.5,
               strokeDasharray: '4 4',
-              opacity: 0.6,
+              strokeOpacity: 0.85,
             }),
 
             // Đường Tương Khắc hình ngôi sao 5 cánh (Mộc khắc Thổ, Thổ khắc Thủy, Thủy khắc Hỏa, Hỏa khắc Kim, Kim khắc Mộc)
             h('path', {
               d: 'M250 70 L350 380 L90 190 L410 190 L150 380 Z',
               className: 'qi-stream-line',
-              fill: 'rgba(21, 26, 24, 0.45)',
-              stroke: 'var(--line)',
-              strokeWidth: 1.2,
+              fill: 'rgba(28, 38, 34, 0.75)',
+              stroke: 'var(--copper-gold)',
+              strokeWidth: 1.6,
+              strokeOpacity: 0.85,
             }),
 
             // 5 Đỉnh Ngũ Hành
@@ -219,9 +239,9 @@ export function FiveElementsRadar({ React, chart }) {
                   cx: node.x,
                   cy: node.y,
                   r: 28,
-                  fill: 'var(--paper-card)',
-                  stroke: theme.border,
-                  strokeWidth: 1.2,
+                  fill: 'rgba(28, 38, 34, 0.96)',
+                  stroke: theme.color,
+                  strokeWidth: 1.5,
                 }),
                 // Chữ Hán đại tự
                 h(
@@ -233,7 +253,7 @@ export function FiveElementsRadar({ React, chart }) {
                     className: 'penta-han-char',
                     fill: theme.color,
                     fontSize: 18,
-                    fontWeight: '600',
+                    fontWeight: '700',
                   },
                   node.han
                 ),
@@ -245,8 +265,9 @@ export function FiveElementsRadar({ React, chart }) {
                     y: node.y + 16,
                     textAnchor: 'middle',
                     className: 'penta-viet-name',
-                    fill: isSelected ? 'var(--gold)' : 'var(--ink)',
-                    fontSize: 9,
+                    fill: isSelected ? '#f7dfb9' : '#f3ebe4',
+                    fontSize: 9.5,
+                    fontWeight: '600',
                   },
                   `${el} (${score.toFixed(1)})`
                 )
@@ -257,16 +278,16 @@ export function FiveElementsRadar({ React, chart }) {
             h(
               'g',
               { className: 'penta-center-seal aura-breathe' },
-              h('circle', { cx: 250, cy: 240, r: 42, fill: 'var(--void)', stroke: 'var(--cinnabar)', strokeWidth: 1.2 }),
+              h('circle', { cx: 250, cy: 240, r: 42, fill: 'rgba(26, 36, 31, 0.98)', stroke: 'var(--cinnabar-bright)', strokeWidth: 1.8 }),
               h(
                 'text',
                 {
                   x: 250,
                   y: 236,
                   textAnchor: 'middle',
-                  fill: 'var(--gold)',
-                  fontSize: 13,
-                  fontWeight: '600',
+                  fill: '#f7dfb9',
+                  fontSize: 13.5,
+                  fontWeight: '700',
                 },
                 yongShen.isStrong ? 'THÂN VƯỢNG' : 'THÂN NHƯỢC'
               ),
@@ -276,8 +297,9 @@ export function FiveElementsRadar({ React, chart }) {
                   x: 250,
                   y: 253,
                   textAnchor: 'middle',
-                  fill: 'var(--muted)',
-                  fontSize: 9,
+                  fill: '#eddcd0',
+                  fontSize: 10,
+                  fontWeight: '600',
                   letterSpacing: 1,
                 },
                 `DỤNG ${yongShen.yongShen.element?.toUpperCase()}`

@@ -100,24 +100,63 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
           React.createElement(
             'defs',
             null,
+            // 1. Đĩa nền Thiên Bàn ngọc đen huyền bí (Obsidian Plate) tách lớp khỏi nền trang web
+            React.createElement(
+              'radialGradient',
+              { id: 'celestialPlateGrad', cx: '50%', cy: '50%', r: '50%' },
+              React.createElement('stop', { offset: '0%', stopColor: '#1d2722', stopOpacity: '0.98' }),
+              React.createElement('stop', { offset: '60%', stopColor: '#141d18', stopOpacity: '0.98' }),
+              React.createElement('stop', { offset: '90%', stopColor: '#0e1512', stopOpacity: '0.98' }),
+              React.createElement('stop', { offset: '100%', stopColor: '#0a0f0d', stopOpacity: '0.99' })
+            ),
+            // 2. Vầng hào quang đồng hồng quanh mép đĩa
             React.createElement(
               'radialGradient',
               { id: 'masterGlow', cx: '50%', cy: '50%', r: '50%' },
-              React.createElement('stop', { offset: '0%', stopColor: elTheme.color, stopOpacity: '0.18' }),
-              React.createElement('stop', { offset: '60%', stopColor: 'var(--cinnabar)', stopOpacity: '0.06' }),
+              React.createElement('stop', { offset: '75%', stopColor: 'transparent', stopOpacity: '0' }),
+              React.createElement('stop', { offset: '95%', stopColor: 'var(--copper-gold)', stopOpacity: '0.3' }),
               React.createElement('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
             )
           ),
 
-          // Nền hào quang mờ
-          React.createElement('circle', { cx: 350, cy: 350, r: 335, fill: 'url(#masterGlow)' }),
+          // Đĩa Thiên Bàn Ngọc Đen (Tách lớp hoàn toàn khỏi nền web)
+          React.createElement('circle', {
+            cx: 350,
+            cy: 350,
+            r: 338,
+            fill: 'url(#celestialPlateGrad)',
+            stroke: 'var(--copper-gold)',
+            strokeWidth: 1.5,
+            strokeOpacity: 0.55,
+            filter: 'drop-shadow(0 0 22px rgba(191, 75, 69, 0.28))',
+          }),
+          // Hào quang viền mờ
+          React.createElement('circle', { cx: 350, cy: 350, r: 348, fill: 'url(#masterGlow)' }),
 
           // Vòng ngoài cùng: Vòng hào quang nét chỉ tơ tự xoay chậm theo chiều kim đồng hồ
           React.createElement(
             'g',
             { className: 'celestial-orbit-cw' },
-            React.createElement('circle', { cx: 350, cy: 350, r: 330, className: 'compass-ring-outer', stroke: 'var(--line)', fill: 'none', strokeWidth: 1.2 }),
-            React.createElement('circle', { cx: 350, cy: 350, r: 322, className: 'compass-ring-thin', stroke: 'var(--gold)', fill: 'none', strokeDasharray: '3 6', opacity: 0.7 })
+            React.createElement('circle', {
+              cx: 350,
+              cy: 350,
+              r: 330,
+              className: 'compass-ring-outer',
+              stroke: 'var(--copper-gold)',
+              fill: 'none',
+              strokeWidth: 1.2,
+              strokeOpacity: 0.65,
+            }),
+            React.createElement('circle', {
+              cx: 350,
+              cy: 350,
+              r: 322,
+              className: 'compass-ring-thin',
+              stroke: 'var(--gold)',
+              fill: 'none',
+              strokeDasharray: '3 6',
+              strokeOpacity: 0.85,
+            })
           ),
 
           // Vòng 12 Địa Chi & 24 Sơn (Tự xoay chậm như thiên thể vũ trụ)
@@ -142,8 +181,8 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   y1: 350 + 280 * Math.sin(rad),
                   x2: 350 + 310 * Math.cos(rad),
                   y2: 350 + 310 * Math.sin(rad),
-                  stroke: isPillarBranch ? 'var(--gold)' : 'var(--line)',
-                  strokeWidth: isPillarBranch ? 2 : 1,
+                  stroke: isPillarBranch ? '#f5d59f' : 'rgba(214, 154, 136, 0.6)',
+                  strokeWidth: isPillarBranch ? 2.2 : 1.2,
                 }),
                 React.createElement(
                   'text',
@@ -152,9 +191,9 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                     y: y + 5,
                     textAnchor: 'middle',
                     className: 'compass-han-text',
-                    fill: isPillarBranch ? 'var(--gold)' : 'var(--muted)',
-                    fontSize: isPillarBranch ? 16 : 13,
-                    fontWeight: isPillarBranch ? '600' : '400',
+                    fill: isPillarBranch ? '#f7dfb9' : '#e6caa5',
+                    fontSize: isPillarBranch ? 17 : 14,
+                    fontWeight: isPillarBranch ? '700' : '600',
                   },
                   br.han
                 ),
@@ -165,8 +204,9 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                     y: 350 + 265 * Math.sin(rad) + 4,
                     textAnchor: 'middle',
                     className: 'compass-viet-text',
-                    fill: isPillarBranch ? brElTheme.color : 'var(--soft)',
+                    fill: isPillarBranch ? brElTheme.color : '#f3ebe4',
                     fontSize: 10,
+                    fontWeight: isPillarBranch ? '600' : '500',
                   },
                   br.name
                 )
@@ -178,8 +218,26 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
           React.createElement(
             'g',
             { className: 'celestial-orbit-ccw' },
-            React.createElement('circle', { cx: 350, cy: 350, r: 235, className: 'compass-ring-middle', stroke: 'var(--line)', fill: 'none', strokeWidth: 1 }),
-            React.createElement('circle', { cx: 350, cy: 350, r: 215, className: 'compass-ring-thin', stroke: 'var(--cinnabar)', fill: 'none', strokeDasharray: '4 8', opacity: 0.6 })
+            React.createElement('circle', {
+              cx: 350,
+              cy: 350,
+              r: 235,
+              className: 'compass-ring-middle',
+              stroke: 'var(--copper-gold)',
+              fill: 'none',
+              strokeWidth: 1.2,
+              strokeOpacity: 0.7,
+            }),
+            React.createElement('circle', {
+              cx: 350,
+              cy: 350,
+              r: 215,
+              className: 'compass-ring-thin',
+              stroke: 'var(--cinnabar-bright)',
+              fill: 'none',
+              strokeDasharray: '4 8',
+              strokeOpacity: 0.85,
+            })
           ),
 
           // Các tia mạch khí chảy liên tục từ tâm đến 4 Trụ Can Chi
@@ -208,16 +266,16 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                 y2: y,
                 className: 'qi-stream-line',
                 stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)',
-                strokeWidth: p.isDayMaster ? 2.5 : 1.4,
-                opacity: isHovered || p.isDayMaster ? 1 : 0.7,
+                strokeWidth: p.isDayMaster ? 2.5 : 1.6,
+                opacity: isHovered || p.isDayMaster ? 1 : 0.75,
               }),
               React.createElement('circle', {
                 cx: x,
                 cy: y,
                 r: p.isDayMaster ? 32 : 26,
-                fill: 'rgba(11, 16, 14, 0.4)',
-                stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--line)',
-                strokeWidth: p.isDayMaster ? 2 : 1,
+                fill: 'rgba(28, 38, 34, 0.96)',
+                stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)',
+                strokeWidth: p.isDayMaster ? 2.4 : 1.4,
               }),
               // Chữ Hán Can Chi Trụ (Thư pháp bút lông)
               React.createElement(
@@ -228,7 +286,8 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   textAnchor: 'middle',
                   className: 'master-pillar-han',
                   fill: pStemTheme.color,
-                  fontSize: p.isDayMaster ? 20 : 16,
+                  fontSize: p.isDayMaster ? 21 : 17,
+                  fontWeight: '700',
                 },
                 `${p.stemHan}${p.branchHan}`
               ),
@@ -239,8 +298,9 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   y: y + 15,
                   textAnchor: 'middle',
                   className: 'master-pillar-name',
-                  fill: 'var(--ink)',
-                  fontSize: 10,
+                  fill: '#ffffff',
+                  fontSize: 10.5,
+                  fontWeight: '600',
                 },
                 p.name
               ),
@@ -251,9 +311,10 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   y: y + 42,
                   textAnchor: 'middle',
                   className: 'master-pillar-role-badge',
-                  fill: p.isDayMaster ? 'var(--cinnabar-soft)' : 'var(--muted)',
-                  fontSize: 9,
-                  letterSpacing: 1,
+                  fill: p.isDayMaster ? '#f2a79b' : '#e5b098',
+                  fontSize: 10,
+                  fontWeight: '600',
+                  letterSpacing: 1.5,
                 },
                 idx === 2 ? 'NHẬT CHỦ' : `TRỤ ${p.label.toUpperCase()}`
               )
@@ -268,9 +329,9 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
               cx: 350,
               cy: 350,
               r: 72,
-              fill: 'rgba(11, 16, 14, 0.5)',
-              stroke: 'var(--cinnabar)',
-              strokeWidth: 2,
+              fill: 'rgba(26, 36, 31, 0.98)',
+              stroke: 'var(--cinnabar-bright)',
+              strokeWidth: 2.2,
             }),
             React.createElement('circle', {
               cx: 350,
@@ -278,8 +339,9 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
               r: 64,
               fill: 'none',
               stroke: 'var(--gold)',
-              strokeWidth: 0.8,
-              strokeDasharray: '2 4',
+              strokeWidth: 1.2,
+              strokeDasharray: '3 5',
+              strokeOpacity: 0.9,
             }),
             // Chữ Hán Thư Pháp lớn của Nhật Can
             React.createElement(
@@ -290,7 +352,8 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                 textAnchor: 'middle',
                 className: 'master-core-brush-han',
                 fill: elTheme.color,
-                fontSize: 44,
+                fontSize: 48,
+                fontWeight: '700',
               },
               dayStemHan
             ),
@@ -301,8 +364,9 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                 y: 382,
                 textAnchor: 'middle',
                 className: 'master-core-sub',
-                fill: 'var(--gold)',
-                fontSize: 10,
+                fill: '#ffffff',
+                fontSize: 11,
+                fontWeight: '600',
                 letterSpacing: 2,
               },
               `${dayStem} ${dayElement.toUpperCase()}`
