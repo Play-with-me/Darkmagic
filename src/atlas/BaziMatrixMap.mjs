@@ -1,18 +1,39 @@
-// src/atlas/BaziMatrixMap.mjs
-// Bản Đồ 1: Đại Bàn Ma Trận Tứ Trụ Bát Tự 7 Tầng & Mạng Lưới Từ Trường Tương Tác
+/**
+ * src/atlas/BaziMatrixMap.mjs
+ * ĐỒ BẢN I: TỨ TRỤ HUYỀN BÀN 7 TẦNG & MẠCH KHÍ ĐỊA CHI
+ * Bố cục Split-View:
+ * - Cột Trái: Đồ bản chuyên sâu 7 tầng + Cầu Mạch Khí Hình-Xung-Hợp-Hại
+ * - Cột Phải: Lời giải đời thường dễ hiểu cho người mới (Tương ứng với trụ đang chọn)
+ */
 
-import { ELEMENT_THEME } from './bazi-engine-ext.mjs';
+import {
+  LayersIcon,
+  SparklesIcon,
+  BookOpenIcon,
+  InfoIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
+} from './icons.mjs';
+import { ELEMENT_THEME, PILLAR_ROLES_BEGINNER } from './bazi-engine-ext.mjs';
 
 export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
   const h = React.createElement;
+  const [selectedPillarIdx, setSelectedPillarIdx] = React.useState(activePillar ?? 2);
   const [hoveredInteraction, setHoveredInteraction] = React.useState(null);
-  const [PinnedInteraction, setPinnedInteraction] = React.useState(null);
-
-  const activeInteraction = hoveredInteraction || PinnedInteraction || chart.interactions?.[0] || null;
-  const highlightedCols = activeInteraction ? activeInteraction.pillars : [];
 
   const pillars = chart.pillars || [];
-  const selectedPillarObj = pillars[activePillar ?? 2] || pillars[2] || pillars[0];
+  const curPillar = pillars[selectedPillarIdx] || pillars[2] || pillars[0];
+  const activeInteraction = hoveredInteraction || chart.interactions?.[0] || null;
+  const highlightedCols = activeInteraction ? activeInteraction.pillars : [];
+
+  const beginnerPillarInfo = PILLAR_ROLES_BEGINNER[selectedPillarIdx] || PILLAR_ROLES_BEGINNER[2];
+  const stemTheme = ELEMENT_THEME[curPillar?.stemElement] || ELEMENT_THEME['Thủy'];
+  const branchTheme = ELEMENT_THEME[curPillar?.branchElement] || ELEMENT_THEME['Thủy'];
+
+  function handleSelect(idx) {
+    setSelectedPillarIdx(idx);
+    if (onSelectPillar) onSelectPillar(idx);
+  }
 
   function renderElementBadge(el) {
     const theme = ELEMENT_THEME[el] || ELEMENT_THEME['Thủy'];
@@ -21,8 +42,9 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
       {
         className: 'atlas-el-badge',
         style: {
-          '--el-color': theme.color,
-          '--el-glow': theme.glow,
+          color: theme.color,
+          backgroundColor: theme.bg,
+          borderColor: theme.border,
         },
       },
       `${theme.han} ${el}`
@@ -32,374 +54,325 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
   return h(
     'section',
     {
-      id: 'map-bazi-matrix',
-      className: 'atlas-card atlas-matrix-section',
-      'aria-label': 'Bản đồ 1: Ma trận Bát Tự 7 tầng',
+      id: 'bazi-matrix',
+      className: 'atlas-chapter-section ritual-mist-card',
+      'aria-label': 'Đồ Bản I: Tứ Trụ Huyền Bàn',
     },
-    // Header
+    // Tiêu đề chương
     h(
-      'div',
-      { className: 'atlas-card-header' },
+      'header',
+      { className: 'chapter-header' },
       h(
         'div',
-        { className: 'atlas-card-title-group' },
-        h('span', { className: 'atlas-map-kicker' }, 'ĐẠI BẢN ĐỒ 01 · TỨ TRỤ NGUYÊN CỤC (四柱八字)'),
-        h('h2', { className: 'atlas-card-title' }, 'Bàn Thờ Mệnh Lý & Ma Trận Tứ Trụ 7 Tầng'),
-        h(
-          'p',
-          { className: 'atlas-card-subtitle' },
-          'Bốn trụ Năm · Tháng · Ngày · Giờ khắc họa thiên thời, địa lợi và nguyên thần bản mệnh. Rê chuột vào các quẻ Hình – Xung – Hợp phía dưới để kích hoạt tia từ trường giữa các trụ.'
-        )
+        { className: 'chapter-badge' },
+        h(LayersIcon, { React, size: 14, color: 'var(--gold)' }),
+        h('span', null, 'ĐỒ BẢN I · TỨ TRỤ NGUYÊN CỤC (四柱八字)')
       ),
+      h('h2', { className: 'chapter-title' }, 'Tứ Trụ Huyền Bàn & Mạch Khí Địa Chi'),
       h(
-        'div',
-        { className: 'atlas-daymaster-seal day-master-aura' },
-        h('span', { className: 'seal-han' }, chart.dayMasterMeta?.han || '命'),
-        h(
-          'div',
-          { className: 'seal-meta' },
-          h('small', null, 'BẢN MỆNH NHẬT CHỦ'),
-          h('strong', null, `${chart.dayStem} (${chart.dayElement})`),
-          h('span', null, chart.dayMasterMeta?.title || '')
-        )
+        'p',
+        { className: 'chapter-desc' },
+        'Bốn trụ Năm · Tháng · Ngày · Giờ là 4 cột trụ chống trời của sinh mệnh. Bấm vào từng trụ ở bản đồ bên trái để xem lời giải đời thường chi tiết ở cột bên phải.'
       )
     ),
 
-    // 7-Layer Matrix Table Wrapper (horizontally scrollable on mobile with sticky row header)
+    // Bố cục Chia Đôi (Split View)
     h(
       'div',
-      { className: 'atlas-matrix-scroll-wrap' },
+      { className: 'chapter-split-layout' },
+
+      // ================= CỘT TRÁI: BẢN ĐỒ CHUYÊN SÂU =================
       h(
-        'table',
-        { className: 'atlas-matrix-table' },
+        'div',
+        { className: 'split-column split-column-tech' },
         h(
-          'thead',
-          null,
+          'div',
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag pro-tag' }, 'DÀNH CHO DÂN CHUYÊN · ĐỒ BẢN CỔ PHÁP 7 TẦNG'),
+          h('span', { className: 'col-hint' }, 'Bấm chọn từng cột trụ để soi mạch')
+        ),
+
+        // Ma trận 7 tầng
+        h(
+          'div',
+          { className: 'matrix-table-wrap' },
           h(
-            'tr',
-            null,
-            h('th', { className: 'matrix-row-label-col' }, 'TẦNG KHÍ / CUNG VỊ'),
-            pillars.map((p, idx) => {
-              const isFocus = highlightedCols.includes(idx);
-              const isSelected = (activePillar ?? 2) === idx;
-              return h(
-                'th',
-                {
-                  key: p.label,
-                  onClick: () => onSelectPillar && onSelectPillar(idx),
-                  className: [
-                    'matrix-pillar-head',
-                    p.isDayMaster ? 'is-day-master day-master-aura' : '',
-                    isFocus ? 'is-interacting-focus' : '',
-                    isSelected ? 'is-selected-pillar' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' '),
-                },
-                h(
-                  'div',
-                  { className: 'pillar-head-inner' },
-                  h('span', { className: 'pillar-palace-sub' }, p.palaceTitle),
-                  h('strong', { className: 'pillar-main-label' }, `TRỤ ${p.label.toUpperCase()}`),
-                  p.isDayMaster
-                    ? h('span', { className: 'pillar-dm-pill' }, '★ Nguyên Thần')
-                    : isFocus
-                      ? h('span', { className: 'pillar-beam-pill' }, '⚡ Cảm ứng từ trường')
-                      : null
+            'table',
+            { className: 'bazi-matrix-table' },
+            h(
+              'thead',
+              null,
+              h(
+                'tr',
+                null,
+                h('th', { className: 'col-header-sticky' }, 'TẦNG MA TRẬN'),
+                pillars.map((p, idx) =>
+                  h(
+                    'th',
+                    {
+                      key: p.label,
+                      className: `pillar-col-header ${selectedPillarIdx === idx ? 'is-selected-col' : ''} ${highlightedCols.includes(p.label) ? 'is-beaming-col' : ''}`,
+                      onClick: () => handleSelect(idx),
+                    },
+                    h('div', { className: 'header-label-viet' }, `Trụ ${p.label}`),
+                    h('div', { className: 'header-palace-title' }, p.palaceTitle?.split('&')[0] || ''),
+                    p.isDayMaster && h('span', { className: 'header-daymaster-pill' }, 'NHẬT CHỦ')
+                  )
                 )
-              );
-            })
+              )
+            ),
+            h(
+              'tbody',
+              null,
+              // Tầng 1: Thập Thần Can
+              h(
+                'tr',
+                null,
+                h('td', { className: 'row-title' }, '1. Thập Thần Can'),
+                pillars.map((p, idx) =>
+                  h(
+                    'td',
+                    { key: idx, className: selectedPillarIdx === idx ? 'cell-active' : '' },
+                    p.isDayMaster
+                      ? h('strong', { className: 'daymaster-star' }, 'Bản Thân')
+                      : h('span', { className: 'ten-god-tag' }, p.stemRelation || 'Chưa định')
+                  )
+                )
+              ),
+              // Tầng 2: Thiên Can (Thư pháp bút lông)
+              h(
+                'tr',
+                { className: 'row-highlight-stem' },
+                h('td', { className: 'row-title' }, '2. Thiên Can'),
+                pillars.map((p, idx) => {
+                  const pStemTheme = ELEMENT_THEME[p.stemElement] || stemTheme;
+                  return h(
+                    'td',
+                    {
+                      key: idx,
+                      className: `cell-stem ${selectedPillarIdx === idx ? 'cell-active' : ''}`,
+                      onClick: () => handleSelect(idx),
+                    },
+                    h('div', { className: 'han-brush-char', style: { color: pStemTheme.color } }, p.stemHan),
+                    h('div', { className: 'viet-name-sub' }, p.stem),
+                    renderElementBadge(p.stemElement)
+                  );
+                })
+              ),
+              // Tầng 3: Địa Chi (Thư pháp bút lông)
+              h(
+                'tr',
+                { className: 'row-highlight-branch' },
+                h('td', { className: 'row-title' }, '3. Địa Chi'),
+                pillars.map((p, idx) => {
+                  const pBrTheme = ELEMENT_THEME[p.branchElement] || branchTheme;
+                  return h(
+                    'td',
+                    {
+                      key: idx,
+                      className: `cell-branch ${selectedPillarIdx === idx ? 'cell-active' : ''}`,
+                      onClick: () => handleSelect(idx),
+                    },
+                    h('div', { className: 'han-brush-char', style: { color: pBrTheme.color } }, p.branchHan),
+                    h('div', { className: 'viet-name-sub' }, p.branch),
+                    h('div', { className: 'animal-sub' }, p.animal)
+                  );
+                })
+              ),
+              // Tầng 4: Tàng Can (Minh Thể)
+              h(
+                'tr',
+                null,
+                h('td', { className: 'row-title' }, '4. Tàng Can'),
+                pillars.map((p, idx) =>
+                  h(
+                    'td',
+                    { key: idx, className: selectedPillarIdx === idx ? 'cell-active' : '' },
+                    (p.hiddenStems || []).length > 0
+                      ? h(
+                          'div',
+                          { className: 'hidden-stems-flex' },
+                          p.hiddenStems.map((hs, hIdx) =>
+                            h('span', { key: hIdx, className: 'hidden-stem-pill' }, hs)
+                          )
+                        )
+                      : '—'
+                  )
+                )
+              ),
+              // Tầng 5: Thập Thần Tàng Can
+              h(
+                'tr',
+                null,
+                h('td', { className: 'row-title' }, '5. Thập Thần Tàng'),
+                pillars.map((p, idx) =>
+                  h(
+                    'td',
+                    { key: idx, className: selectedPillarIdx === idx ? 'cell-active' : '' },
+                    (p.hiddenRelations || []).length > 0
+                      ? p.hiddenRelations.map((rel, rIdx) =>
+                          h('div', { key: rIdx, className: 'hidden-relation-line' }, rel)
+                        )
+                      : '—'
+                  )
+                )
+              ),
+              // Tầng 6: Vòng Trường Sinh
+              h(
+                'tr',
+                null,
+                h('td', { className: 'row-title' }, '6. Vòng Trường Sinh'),
+                pillars.map((p, idx) =>
+                  h(
+                    'td',
+                    { key: idx, className: selectedPillarIdx === idx ? 'cell-active' : '' },
+                    p.lifeStage
+                      ? h(
+                          'div',
+                          { className: 'stage-box' },
+                          h('span', { className: 'stage-han' }, p.lifeStage.han),
+                          h('strong', null, p.lifeStage.name)
+                        )
+                      : '—'
+                  )
+                )
+              ),
+              // Tầng 7: Nạp Âm Lục Thập Hoa Giáp
+              h(
+                'tr',
+                null,
+                h('td', { className: 'row-title' }, '7. Nạp Âm 60 Hoa Giáp'),
+                pillars.map((p, idx) =>
+                  h(
+                    'td',
+                    { key: idx, className: selectedPillarIdx === idx ? 'cell-active' : '' },
+                    h('div', { className: 'nayin-badge' }, p.naYin || '—')
+                  )
+                )
+              )
+            )
           )
         ),
-        h(
-          'tbody',
-          null,
-          // Tầng 1: Chủ Tinh (Thập Thần Thiên Can)
-          h(
-            'tr',
-            null,
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '01 · 主星'),
-              h('strong', null, 'Thập Thần Thiên Can')
-            ),
-            pillars.map((p, idx) =>
-              h(
-                'td',
-                {
-                  key: idx,
-                  className: `${p.isDayMaster ? 'is-day-master-cell' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                h(
-                  'span',
-                  { className: `tengod-chip ${p.isDayMaster ? 'tengod-dm' : ''}` },
-                  p.isDayMaster ? 'Nhật Chủ (Ta)' : p.stemRelation || 'Chưa xác định'
-                )
-              )
-            )
-          ),
 
-          // Tầng 2: Thiên Can
-          h(
-            'tr',
-            { className: 'matrix-row-glyph' },
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '02 · 天干'),
-              h('strong', null, 'Thiên Can Hiển Lộ')
-            ),
-            pillars.map((p, idx) => {
-              const theme = ELEMENT_THEME[p.stemElement] || ELEMENT_THEME['Thủy'];
-              return h(
-                'td',
-                {
-                  key: idx,
-                  onClick: () => onSelectPillar && onSelectPillar(idx),
-                  className: `matrix-glyph-cell ${p.isDayMaster ? 'is-day-master-cell day-master-aura' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                h(
-                  'div',
-                  { className: 'glyph-box', style: { '--glyph-color': theme.color, '--glyph-glow': theme.glow } },
-                  h('span', { className: 'glyph-han' }, p.stemHan || '—'),
-                  h('strong', { className: 'glyph-viet' }, p.stem || 'Ẩn'),
-                  renderElementBadge(p.stemElement)
-                )
-              );
-            })
-          ),
-
-          // Tầng 3: Địa Chi
-          h(
-            'tr',
-            { className: 'matrix-row-glyph' },
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '03 · 地支'),
-              h('strong', null, 'Địa Chi Mệnh Cung')
-            ),
-            pillars.map((p, idx) => {
-              const theme = ELEMENT_THEME[p.branchElement] || ELEMENT_THEME['Thổ'];
-              return h(
-                'td',
-                {
-                  key: idx,
-                  onClick: () => onSelectPillar && onSelectPillar(idx),
-                  className: `matrix-glyph-cell ${p.isDayMaster ? 'is-day-master-cell' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                h(
-                  'div',
-                  { className: 'glyph-box branch-glyph-box', style: { '--glyph-color': theme.color, '--glyph-glow': theme.glow } },
-                  h('span', { className: 'glyph-han' }, p.branchHan || '—'),
-                  h('strong', { className: 'glyph-viet' }, p.branch || 'Ẩn'),
-                  renderElementBadge(p.branchElement),
-                  h('small', { className: 'glyph-animal' }, p.animal)
-                )
-              );
-            })
-          ),
-
-          // Tầng 4: Tàng Can & Thập Thần Ẩn
-          h(
-            'tr',
-            null,
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '04 · 藏干'),
-              h('strong', null, 'Tàng Can Ẩn Khí')
-            ),
-            pillars.map((p, idx) =>
-              h(
-                'td',
-                {
-                  key: idx,
-                  className: `${p.isDayMaster ? 'is-day-master-cell' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                p.hiddenStems && p.hiddenStems.length > 0
-                  ? h(
-                      'div',
-                      { className: 'hidden-stems-stack' },
-                      p.hiddenStems.map((hs, hIdx) =>
-                        h(
-                          'div',
-                          { key: hIdx, className: 'hidden-stem-item' },
-                          h('span', { className: 'hs-role' }, hIdx === 0 ? 'Bản khí' : hIdx === 1 ? 'Trung khí' : 'Dư khí'),
-                          h('strong', { className: 'hs-name' }, hs),
-                          h('em', { className: 'hs-rel' }, p.hiddenRelations?.[hIdx] || '')
-                        )
-                      )
-                    )
-                  : h('span', { className: 'muted-cell' }, 'Chưa xác định')
-              )
-            )
-          ),
-
-          // Tầng 5: Nạp Âm Cổ Pháp
-          h(
-            'tr',
-            null,
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '05 · 納音'),
-              h('strong', null, 'Lục Thập Nạp Âm')
-            ),
-            pillars.map((p, idx) =>
-              h(
-                'td',
-                {
-                  key: idx,
-                  className: `${p.isDayMaster ? 'is-day-master-cell' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                h('span', { className: 'nayin-label' }, p.naYin)
-              )
-            )
-          ),
-
-          // Tầng 6: Vòng Trường Sinh
-          h(
-            'tr',
-            null,
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '06 · 長生'),
-              h('strong', null, 'Vòng Trường Sinh')
-            ),
-            pillars.map((p, idx) => {
-              const st = p.lifeStage;
-              return h(
-                'td',
-                {
-                  key: idx,
-                  className: `${p.isDayMaster ? 'is-day-master-cell' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                st
-                  ? h(
-                      'div',
-                      { className: 'lifestage-cell' },
-                      h(
-                        'div',
-                        { className: 'lifestage-top' },
-                        h('strong', null, `${st.name} (${st.han})`),
-                        h('span', { className: 'lifestage-score' }, `${st.score}% Khí lực`)
-                      ),
-                      h(
-                        'div',
-                        { className: 'lifestage-bar' },
-                        h('div', { className: 'lifestage-fill', style: { width: `${st.score}%` } })
-                      )
-                    )
-                  : h('span', { className: 'muted-cell' }, '—')
-              );
-            })
-          ),
-
-          // Tầng 7: Tuần Không & Thần Sát
-          h(
-            'tr',
-            null,
-            h(
-              'th',
-              { scope: 'row', className: 'matrix-row-label-col' },
-              h('span', { className: 'row-han' }, '07 · 神煞'),
-              h('strong', null, 'Tuần Không & Thần Sát')
-            ),
-            pillars.map((p, idx) => {
-              const pillarStars = (chart.shenSha || []).filter(s =>
-                s.matchedPillars.some(mp => mp.index === idx)
-              );
-              return h(
-                'td',
-                {
-                  key: idx,
-                  className: `${p.isDayMaster ? 'is-day-master-cell' : ''} ${highlightedCols.includes(idx) ? 'is-interacting-focus' : ''}`,
-                },
-                h(
-                  'div',
-                  { className: 'shensha-cell-stack' },
-                  p.kongWang?.length > 0 &&
-                    h('span', { className: 'kongwang-tag' }, `Không Vong: ${p.kongWang.join(' · ')}`),
-                  pillarStars.length > 0
-                    ? pillarStars.map(st =>
-                        h(
-                          'span',
-                          { key: st.id, className: `star-mini-pill star-${st.type}` },
-                          `✦ ${st.name}`
-                        )
-                      )
-                    : h('span', { className: 'star-mini-pill star-neutral' }, 'Tinh cung bình hòa')
-                )
-              );
-            })
-          )
-        )
-      )
-    ),
-
-    // Mạng Lưới Từ Trường Tương Tác (Interactive Branch Beam Focus)
-    h(
-      'div',
-      { className: 'atlas-beam-panel' },
-      h(
-        'div',
-        { className: 'beam-panel-head' },
-        h('span', { className: 'beam-title' }, '⚡ MẠNG LƯỚI TỪ TRƯỜNG HÌNH · XUNG · HỘI · HỢP (Rê chuột hoặc chạm để chiếu tia cảm ứng)'),
-        h('span', { className: 'beam-hint' }, 'Cột trụ liên kết sẽ rực sáng đồng bộ trên bàn thờ Tứ Trụ')
-      ),
-      h(
-        'div',
-        { className: 'beam-tags-row' },
-        (chart.interactions || []).map(inter => {
-          const isAct = activeInteraction && activeInteraction.id === inter.id;
-          return h(
-            'button',
-            {
-              key: inter.id,
-              type: 'button',
-              onMouseEnter: () => setHoveredInteraction(inter),
-              onMouseLeave: () => setHoveredInteraction(null),
-              onClick: () => setPinnedInteraction(inter),
-              className: `beam-interaction-btn beam-type-${inter.type} ${isAct ? 'is-active' : ''}`,
-            },
-            h('span', { className: 'beam-badge' }, inter.badge),
-            h('strong', null, inter.pillarNames.join(' ⟷ '))
-          );
-        })
-      ),
-      activeInteraction &&
+        // Cầu Mạch Khí Hình-Xung-Hợp-Hại
         h(
           'div',
-          { className: 'beam-oracle-box' },
-          h('strong', null, `✦ Điềm báo Mạch Khí [${activeInteraction.pillarNames.join(' ⟷ ')}]: `),
-          h('span', null, activeInteraction.description)
+          { className: 'interaction-beam-panel' },
+          h('h4', { className: 'beam-title' }, 'Mạch Khí Tương Tác Địa Chi (Xung · Hợp · Hình · Hại)'),
+          (chart.interactions || []).length > 0
+            ? h(
+                'div',
+                { className: 'interaction-chips-row' },
+                chart.interactions.map((int, iIdx) =>
+                  h(
+                    'button',
+                    {
+                      key: iIdx,
+                      type: 'button',
+                      className: `interaction-chip ${int.nature === 'conflict' ? 'chip-conflict' : 'chip-harmony'} ${hoveredInteraction === int ? 'is-hovered' : ''}`,
+                      onMouseEnter: () => setHoveredInteraction(int),
+                      onMouseLeave: () => setHoveredInteraction(null),
+                    },
+                    h('span', { className: 'chip-type' }, int.type),
+                    h('strong', null, int.name),
+                    h('small', null, `(${int.pillars.join(' – ')})`)
+                  )
+                )
+              )
+            : h('p', { className: 'no-conflict-msg' }, 'Bốn chi thuần hòa, không gặp xung phá trực diện.')
         )
-    ),
+      ),
 
-    // Luận giải chi tiết Trụ đang chọn
-    selectedPillarObj &&
+      // ================= CỘT PHẢI: LỜI GIẢI ĐỜI THƯỜNG =================
       h(
         'div',
-        { className: 'atlas-pillar-oracle' },
+        { className: 'split-column split-column-guide' },
         h(
           'div',
-          { className: 'pillar-oracle-header' },
-          h('span', { className: 'oracle-seal' }, selectedPillarObj.stemHan + selectedPillarObj.branchHan),
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · LỜI GIẢI ĐỜI THƯỜNG'),
+          h('span', { className: 'col-hint' }, `Đang soi: Trụ ${curPillar.label}`)
+        ),
+
+        // Thẻ Giải Thích Trụ Đang Chọn
+        h(
+          'div',
+          { className: 'guide-card-primary' },
           h(
             'div',
-            null,
-            h('h3', null, `Giải Mật Trụ ${selectedPillarObj.label}: ${selectedPillarObj.name} — Cung ${selectedPillarObj.palaceTitle}`),
-            h('p', null, `Nạp âm: ${selectedPillarObj.naYin} · Linh thú: ${selectedPillarObj.animal} · Trường sinh: ${selectedPillarObj.lifeStage?.name || '—'}`)
+            { className: 'guide-card-head' },
+            h(
+              'div',
+              { className: 'guide-card-badge' },
+              h(SparklesIcon, { React, size: 14, color: 'var(--gold)' }),
+              h('span', null, beginnerPillarInfo.theme)
+            ),
+            h('span', { className: 'guide-period-pill' }, beginnerPillarInfo.period)
+          ),
+          h('h3', { className: 'guide-headline' }, `Ý nghĩa của Trụ ${curPillar.label} (${curPillar.name}) trong đời bạn`),
+          h('p', { className: 'guide-meaning-body' }, beginnerPillarInfo.meaning),
+          h(
+            'div',
+            { className: 'guide-prompt-quote' },
+            h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
+            h('span', null, beginnerPillarInfo.question)
           )
         ),
+
+        // Giải mã Can Chi & Nạp Âm của Trụ đang chọn
         h(
-          'p',
-          { className: 'pillar-oracle-body' },
-          selectedPillarObj.lifeStage?.omen || 'Khí mạch lưu chuyển tự nhiên, giữ tâm chính định ắt gặp cát tường.'
+          'div',
+          { className: 'guide-card-secondary' },
+          h('h4', { className: 'card-sec-title' }, `Chất Liệu Năng Lượng Trụ ${curPillar.label}`),
+          h(
+            'div',
+            { className: 'guide-traits-grid' },
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Thiên Can'),
+              h('strong', { style: { color: stemTheme.color } }, `${curPillar.stem} (${stemTheme.han})`),
+              h('p', null, curPillar.isDayMaster ? 'Chính là bạn: trung tâm của toàn bộ lá số.' : `Thể hiện quan hệ ${curPillar.stemRelation || 'ngoại cảnh'} đối với bạn.`)
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Địa Chi'),
+              h('strong', { style: { color: branchTheme.color } }, `${curPillar.branch} (${curPillar.animal})`),
+              h('p', null, `Nền tảng thực tế, môi trường sống và sức bật ngầm.`)
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Nạp Âm Bản Mệnh'),
+              h('strong', null, curPillar.naYin),
+              h('p', null, 'Hình tượng khí chất ẩn tàng của cả can chi hợp lại.')
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Vòng Sinh Khí (Trường Sinh)'),
+              h('strong', null, curPillar.lifeStage?.name || '—'),
+              h('p', null, curPillar.lifeStage?.omen || 'Khí thế bình hòa.')
+            )
+          )
+        ),
+
+        // Lời khuyên ứng xử cho người mới
+        h(
+          'div',
+          { className: 'guide-card-action' },
+          h(CheckCircleIcon, { React, size: 16, color: 'var(--gold)' }),
+          h(
+            'div',
+            { className: 'guide-action-text' },
+            h('strong', null, 'Lời khuyên chiêm nghiệm:'),
+            h('p', null, curPillar.isDayMaster
+              ? 'Trụ Ngày là chính bản thân bạn. Hãy sống đúng với tính cách nguyên bản, đừng cố gắng trở thành một ai khác.'
+              : `Quan sát xem những sự kiện trong giai đoạn ${beginnerPillarInfo.period} có phản ánh đúng khí thế của ${curPillar.name} hay không.`)
+          )
         )
       )
+    )
   );
 }

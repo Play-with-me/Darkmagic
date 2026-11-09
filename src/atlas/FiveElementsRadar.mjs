@@ -1,285 +1,380 @@
-// src/atlas/FiveElementsRadar.mjs
-// Bản Đồ 3: Trận Đồ Radar Ngũ Hành Sinh Khắc & Dòng Khí Tuần Hoàn
+/**
+ * src/atlas/FiveElementsRadar.mjs
+ * ĐỒ BẢN III: NGŨ HÀNH SINH KHẮC TRẬN & ĐIỀU HÒA NGUYÊN KHÍ
+ * Bố cục Split-View:
+ * - Cột Trái: Trận đồ Ngũ Giác Tinh 5 sắc độ trầm cổ + Mạch Tương Sinh / Lưới Tương Khắc
+ * - Cột Phải: Lời giải đời thường giải mã Thân Vượng/Nhược và cách cân bằng lối sống cho người mới
+ */
 
+import {
+  ScaleIcon,
+  SparklesIcon,
+  BookOpenIcon,
+  InfoIcon,
+  CheckCircleIcon,
+  FlameIcon,
+  DropletIcon,
+  TreeIcon,
+  MountainIcon,
+  ShieldIcon,
+} from './icons.mjs';
 import { ELEMENT_THEME } from './bazi-engine-ext.mjs';
-
-const ELEMENTS_ORDER = ['Mộc', 'Hỏa', 'Thổ', 'Kim', 'Thủy'];
-
-const GENERATION_INFO = {
-  'Mộc':  { generates: 'Hỏa', generatedBy: 'Thủy', controls: 'Thổ', controlledBy: 'Kim' },
-  'Hỏa':  { generates: 'Thổ', generatedBy: 'Mộc',  controls: 'Kim', controlledBy: 'Thủy' },
-  'Thổ':  { generates: 'Kim', generatedBy: 'Hỏa',  controls: 'Thủy', controlledBy: 'Mộc' },
-  'Kim':  { generates: 'Thủy', generatedBy: 'Thổ', controls: 'Mộc', controlledBy: 'Hỏa' },
-  'Thủy': { generates: 'Mộc', generatedBy: 'Kim',  controls: 'Hỏa', controlledBy: 'Thổ' },
-};
-
-function radarPoint(cx, cy, r, idx) {
-  const angleDeg = idx * 72 - 90;
-  const rad = (angleDeg * Math.PI) / 180;
-  return {
-    x: cx + r * Math.cos(rad),
-    y: cy + r * Math.sin(rad),
-  };
-}
 
 export function FiveElementsRadar({ React, chart }) {
   const h = React.createElement;
   const [selectedEl, setSelectedEl] = React.useState(chart.dayElement || 'Thủy');
 
-  const weighted = chart.weightedCounts || { Mộc: 1, Hỏa: 1, Thổ: 1, Kim: 1, Thủy: 1 };
-  const rawCounts = chart.counts || { Mộc: 0, Hỏa: 0, Thổ: 0, Kim: 0, Thủy: 0 };
-  const totalWeight = Object.values(weighted).reduce((a, b) => a + b, 0) || 1;
-  const maxVal = Math.max(...Object.values(weighted), 2.5);
+  const weightedCounts = chart.weightedCounts || { Mộc: 1, Hỏa: 1, Thổ: 1, Kim: 1, Thủy: 1 };
+  const yongShen = chart.yongShen || { isStrong: true, yongShen: { element: 'Hỏa' }, xiShen: { element: 'Mộc' }, jiShen: { element: 'Thủy' } };
+  const curTheme = ELEMENT_THEME[selectedEl] || ELEMENT_THEME['Thủy'];
 
-  const cx = 210;
-  const cy = 210;
-  const maxR = 132;
+  const ELEMENTS = ['Mộc', 'Hỏa', 'Thổ', 'Kim', 'Thủy'];
+  const maxScore = Math.max(...Object.values(weightedCounts), 3.5);
 
-  // Polygon points for actual chart energy
-  const polyPoints = ELEMENTS_ORDER.map((el, idx) => {
-    const val = weighted[el] || 0;
-    const ratio = Math.max(0.16, Math.min(1, val / maxVal));
-    const pt = radarPoint(cx, cy, maxR * ratio, idx);
-    return `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
-  }).join(' ');
+  // Tọa độ 5 đỉnh Ngũ Giác (đỉnh Hỏa hướng lên trên: -90 độ)
+  const PENTAGRAM_COORDS = {
+    'Hỏa':  { x: 250, y: 70,  han: '火', icon: FlameIcon },
+    'Thổ':  { x: 410, y: 190, han: '土', icon: MountainIcon },
+    'Kim':  { x: 350, y: 380, han: '金', icon: ShieldIcon },
+    'Thủy': { x: 150, y: 380, han: '水', icon: DropletIcon },
+    'Mộc':  { x: 90,  y: 190, han: '木', icon: TreeIcon },
+  };
 
-  const outerVertices = ELEMENTS_ORDER.map((el, idx) => ({
-    el,
-    idx,
-    ...radarPoint(cx, cy, maxR, idx),
-    labelPos: radarPoint(cx, cy, maxR + 40, idx),
-  }));
+  // Cẩm nang giải nghĩa 5 hành trong đời sống hàng ngày
+  const ELEMENT_DAILY_GUIDE = {
+    'Mộc': {
+      virtue: 'Lòng Nhân Ái & Khát Vọng Sinh Sôi',
+      meaning: 'Đại diện cho sức sống vươn lên, lòng trắc ẩn, tính kiên nhẫn và khả năng học hỏi đổi mới không ngừng.',
+      excess: 'Nếu Mộc quá vượng: dễ bướng bỉnh, thiếu linh hoạt, hay suy nghĩ ôm đồm.',
+      deficient: 'Nếu Mộc khuyết thiếu: dễ chán nản, thiếu định hướng dài hạn, hay do dự trước cơ hội.',
+      lifestyle: 'Thêm cây xanh vào bàn làm việc, tập thói quen dậy sớm đi bộ dưới bóng cây, học thêm kỹ năng mới.',
+    },
+    'Hỏa': {
+      virtue: 'Nhiệt Huyết & Khả Năng Lan Tỏa',
+      meaning: 'Đại diện cho sự ấm áp, danh tiếng, tính bộc trực, khả năng kết nối cộng đồng và truyền cảm hứng.',
+      excess: 'Nếu Hỏa quá vượng: dễ nóng vội, bốc đồng, nói nhanh hơn nghĩ, mau kiệt sức.',
+      deficient: 'Nếu Hỏa khuyết thiếu: thiếu nhiệt tình, ngại xuất hiện trước đám đông, tay chân dễ lạnh.',
+      lifestyle: 'Tắm nắng sớm 15 phút mỗi ngày, dùng ánh đèn vàng ấm, giữ nụ cười và sự chủ động khi chào hỏi.',
+    },
+    'Thổ': {
+      virtue: 'Chữ Tín & Sự Ổn Định Vững Chắc',
+      meaning: 'Đại diện cho lòng trung thành, khả năng bao dung, sự thực tế, đáng tin cậy và giỏi giữ gìn thành quả.',
+      excess: 'Nếu Thổ quá vượng: chậm thích nghi, bảo thủ, hay lo xa cho chuyện gia đình.',
+      deficient: 'Nếu Thổ khuyết thiếu: thiếu kiên nhẫn tích lũy, dễ thay đổi mục tiêu giữa chừng.',
+      lifestyle: 'Giữ môi trường sống ngăn nắp, tôn trọng lời hứa, tập thiền tĩnh tâm hoặc làm vườn nhẹ nhàng.',
+    },
+    'Kim': {
+      virtue: 'Kỷ Luật & Trực Giác Quyết Đoán',
+      meaning: 'Đại diện cho chuẩn mực đạo đức, tính công bằng, sự sắc bén trong tư duy và kỷ luật tự giác cao độ.',
+      excess: 'Nếu Kim quá vượng: quá khắt khe với bản thân và người khác, lời nói dễ làm tổn thương.',
+      deficient: 'Nếu Kim khuyết thiếu: thiếu nguyên tắc, dễ thỏa hiệp với sự cẩu thả, khó dứt khoát buông bỏ.',
+      lifestyle: 'Lập thời gian biểu rõ ràng, giữ đồ dùng kim loại/đồng hồ sạch bóng, tập hít thở sâu nuôi dưỡng phổi.',
+    },
+    'Thủy': {
+      virtue: 'Trí Tuệ & Khả Năng Thích Nghi',
+      meaning: 'Đại diện cho sự thông minh, trực giác nhạy bén, khả năng nhìn xa trông rộng và xoay chuyển khéo léo.',
+      excess: 'Nếu Thủy quá vượng: cảm xúc thất thường như sóng biển, hay suy diễn phức tạp hóa vấn đề.',
+      deficient: 'Nếu Thủy khuyết thiếu: tư duy cứng nhắc, ngại thay đổi phương pháp, uống ít nước.',
+      lifestyle: 'Uống đủ nước ấm mỗi ngày, nghe tiếng sóng/nhạc êm dịu, rèn luyện sự tĩnh lặng nội tâm trước khi quyết định.',
+    },
+  };
 
-  const selRelation = GENERATION_INFO[selectedEl] || GENERATION_INFO['Thủy'];
-  const selTheme = ELEMENT_THEME[selectedEl] || ELEMENT_THEME['Thủy'];
+  const curGuide = ELEMENT_DAILY_GUIDE[selectedEl] || ELEMENT_DAILY_GUIDE['Thủy'];
 
   return h(
     'section',
     {
-      id: 'map-five-elements-radar',
-      className: 'atlas-card atlas-radar-section',
-      'aria-label': 'Bản đồ 3: Trận Đồ Ngũ Hành Sinh Khắc',
+      id: 'five-elements',
+      className: 'atlas-chapter-section ritual-mist-card',
+      'aria-label': 'Đồ Bản III: Ngũ Hành Sinh Khắc Trận',
     },
+    // Tiêu đề chương
     h(
-      'div',
-      { className: 'atlas-card-header' },
+      'header',
+      { className: 'chapter-header' },
       h(
         'div',
-        { className: 'atlas-card-title-group' },
-        h('span', { className: 'atlas-map-kicker' }, 'ĐẠI BẢN ĐỒ 03 · NGŨ HÀNH KHÍ TRẬN (五行生剋圖)'),
-        h('h2', { className: 'atlas-card-title' }, 'Trận Đồ Ngũ Hành & Dòng Khí Tuần Hoàn'),
-        h(
-          'p',
-          { className: 'atlas-card-subtitle' },
-          'Vòng ngoài biểu thị Dòng Khí Tương Sinh tuần hoàn theo chiều kim đồng hồ; ngôi sao 5 cánh bên trong biểu thị mạng lưới Tương Khắc chế hóa.'
-        )
+        { className: 'chapter-badge' },
+        h(ScaleIcon, { React, size: 14, color: 'var(--gold)' }),
+        h('span', null, 'ĐỒ BẢN III · NGŨ KHÍ TRIỀU NGUYÊN (五行生剋)')
+      ),
+      h('h2', { className: 'chapter-title' }, 'Ngũ Hành Sinh Khắc Trận & Cân Bằng Năng Lượng'),
+      h(
+        'p',
+        { className: 'chapter-desc' },
+        'Mộc · Hỏa · Thổ · Kim · Thủy lưu chuyển không ngừng trong cơ thể và vận mệnh. Bấm chọn từng đỉnh hành trên trận đồ bên trái để xem phương pháp bồi dưỡng lối sống ở bên phải.'
       )
     ),
 
+    // Bố cục Chia Đôi (Split View)
     h(
       'div',
-      { className: 'radar-layout' },
-      // SVG Radar + Qi Stream
+      { className: 'chapter-split-layout' },
+
+      // ================= CỘT TRÁI: TRẬN ĐỒ CHUYÊN SÂU =================
       h(
         'div',
-        { className: 'radar-svg-container' },
+        { className: 'split-column split-column-tech' },
         h(
-          'svg',
-          {
-            viewBox: '0 0 420 420',
-            className: 'five-elements-radar-svg',
-            role: 'img',
-            'aria-label': 'Biểu đồ Radar Ngũ Hành Sinh Khắc',
-          },
-          // Outer Qi Generation Stream Circle (Animated Particles)
-          h('circle', {
-            cx,
-            cy,
-            r: maxR + 12,
-            className: 'qi-generation-ring-track',
-          }),
-          h('circle', {
-            cx,
-            cy,
-            r: maxR + 12,
-            className: 'qi-generation-ring-stream',
-          }),
+          'div',
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag pro-tag' }, 'DÀNH CHO DÂN CHUYÊN · NGŨ GIÁC SINH KHẮC TRẬN'),
+          h('span', { className: 'col-hint' }, 'Vòng ngoài Tương Sinh · Lưới trong Tương Khắc')
+        ),
 
-          // Concentric Pentagon Webs
-          [0.25, 0.5, 0.75, 1.0].map(scale => {
-            const pts = ELEMENTS_ORDER.map((_, idx) => {
-              const p = radarPoint(cx, cy, maxR * scale, idx);
-              return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
-            }).join(' ');
-            return h('polygon', {
-              key: scale,
-              points: pts,
-              className: 'radar-web-polygon',
-            });
-          }),
+        // Khung SVG Trận Đồ Ngũ Giác Tinh
+        h(
+          'div',
+          { className: 'radar-svg-container' },
+          h(
+            'svg',
+            {
+              viewBox: '0 0 500 480',
+              className: 'pentagram-svg',
+              role: 'img',
+              'aria-label': 'Đồ hình Ngũ Giác Tinh Sinh Khắc',
+            },
+            h(
+              'defs',
+              null,
+              h(
+                'radialGradient',
+                { id: 'pentagramGlow', cx: '50%', cy: '50%', r: '50%' },
+                h('stop', { offset: '0%', stopColor: curTheme.color, stopOpacity: '0.16' }),
+                h('stop', { offset: '70%', stopColor: 'var(--cinnabar)', stopOpacity: '0.04' }),
+                h('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
+              )
+            ),
 
-          // Inner Overcoming Star (Ngôi Sao Tương Khắc)
-          ELEMENTS_ORDER.map((el, idx) => {
-            const targetIdx = (idx + 2) % 5;
-            const p1 = outerVertices[idx];
-            const p2 = outerVertices[targetIdx];
-            const isHighlighted = el === selectedEl || ELEMENTS_ORDER[targetIdx] === selectedEl;
-            return h('line', {
-              key: `star-${el}`,
-              x1: p1.x,
-              y1: p1.y,
-              x2: p2.x,
-              y2: p2.y,
-              className: `radar-overcoming-line ${isHighlighted ? 'is-active-overcome' : ''}`,
-            });
-          }),
+            // Nền hào quang mờ
+            h('circle', { cx: 250, cy: 240, r: 210, fill: 'url(#pentagramGlow)' }),
 
-          // Axis Spokes
-          outerVertices.map(v =>
-            h('line', {
-              key: `axis-${v.el}`,
-              x1: cx,
-              y1: cy,
-              x2: v.x,
-              y2: v.y,
-              className: 'radar-axis-line',
-            })
-          ),
+            // Vòng ngoài Tương Sinh (Mộc -> Hỏa -> Thổ -> Kim -> Thủy -> Mộc)
+            h('circle', {
+              cx: 250,
+              cy: 240,
+              r: 185,
+              fill: 'none',
+              stroke: 'var(--gold)',
+              strokeWidth: 1.2,
+              strokeDasharray: '4 4',
+              opacity: 0.6,
+            }),
 
-          // Filled Energy Polygon
-          h('polygon', {
-            points: polyPoints,
-            className: 'radar-energy-polygon',
-          }),
+            // Đường Tương Khắc hình ngôi sao 5 cánh (Mộc khắc Thổ, Thổ khắc Thủy, Thủy khắc Hỏa, Hỏa khắc Kim, Kim khắc Mộc)
+            h('path', {
+              d: 'M250 70 L350 380 L90 190 L410 190 L150 380 Z',
+              fill: 'rgba(21, 26, 24, 0.45)',
+              stroke: 'var(--line)',
+              strokeWidth: 1.2,
+            }),
 
-          // Element Vertex Nodes
-          outerVertices.map(v => {
-            const theme = ELEMENT_THEME[v.el];
-            const isSel = v.el === selectedEl;
-            const pct = Math.round(((weighted[v.el] || 0) / totalWeight) * 100);
-            return h(
+            // 5 Đỉnh Ngũ Hành
+            ELEMENTS.map((el) => {
+              const node = PENTAGRAM_COORDS[el];
+              const theme = ELEMENT_THEME[el];
+              const score = weightedCounts[el] || 0;
+              const isSelected = selectedEl === el;
+
+              return h(
+                'g',
+                {
+                  key: el,
+                  className: `pentagram-node ${isSelected ? 'is-selected' : ''}`,
+                  onClick: () => setSelectedEl(el),
+                  style: { cursor: 'pointer' },
+                },
+                // Vòng sáng nếu được chọn
+                isSelected &&
+                  h('circle', {
+                    cx: node.x,
+                    cy: node.y,
+                    r: 38,
+                    fill: theme.bg,
+                    stroke: theme.color,
+                    strokeWidth: 1.5,
+                  }),
+                h('circle', {
+                  cx: node.x,
+                  cy: node.y,
+                  r: 28,
+                  fill: 'var(--paper-card)',
+                  stroke: theme.border,
+                  strokeWidth: 1.2,
+                }),
+                // Chữ Hán đại tự
+                h(
+                  'text',
+                  {
+                    x: node.x,
+                    y: node.y - 1,
+                    textAnchor: 'middle',
+                    className: 'penta-han-char',
+                    fill: theme.color,
+                    fontSize: 18,
+                    fontWeight: '600',
+                  },
+                  node.han
+                ),
+                // Tên tiếng Việt & Điểm số
+                h(
+                  'text',
+                  {
+                    x: node.x,
+                    y: node.y + 16,
+                    textAnchor: 'middle',
+                    className: 'penta-viet-name',
+                    fill: isSelected ? 'var(--gold)' : 'var(--ink)',
+                    fontSize: 9,
+                  },
+                  `${el} (${score.toFixed(1)})`
+                )
+              );
+            }),
+
+            // Tâm Trận Đồ: Trạng thái Thân Vượng / Thân Nhược
+            h(
               'g',
-              {
-                key: v.el,
-                onClick: () => setSelectedEl(v.el),
-                className: `radar-vertex-group ${isSel ? 'is-selected' : ''}`,
-                style: { cursor: 'pointer' },
-              },
-              h('circle', {
-                cx: v.x,
-                cy: v.y,
-                r: isSel ? 22 : 18,
-                fill: isSel ? 'rgba(185, 28, 28, 0.92)' : 'rgba(16, 9, 11, 0.94)',
-                stroke: theme.color,
-                strokeWidth: isSel ? '2.8' : '1.8',
-              }),
+              { className: 'penta-center-seal' },
+              h('circle', { cx: 250, cy: 240, r: 42, fill: 'var(--void)', stroke: 'var(--cinnabar)', strokeWidth: 1.2 }),
               h(
                 'text',
                 {
-                  x: v.x,
-                  y: v.y + 5,
+                  x: 250,
+                  y: 236,
                   textAnchor: 'middle',
-                  fill: theme.color,
-                  fontSize: '15',
-                  fontWeight: '700',
+                  fill: 'var(--gold)',
+                  fontSize: 13,
+                  fontWeight: '600',
                 },
-                theme.han
+                yongShen.isStrong ? 'THÂN VƯỢNG' : 'THÂN NHƯỢC'
               ),
               h(
                 'text',
                 {
-                  x: v.labelPos.x,
-                  y: v.labelPos.y,
+                  x: 250,
+                  y: 253,
                   textAnchor: 'middle',
-                  fill: '#f5ebe6',
-                  fontSize: '12',
-                  fontWeight: '700',
+                  fill: 'var(--muted)',
+                  fontSize: 9,
+                  letterSpacing: 1,
                 },
-                `${v.el} (${pct}%)`
+                `DỤNG ${yongShen.yongShen.element?.toUpperCase()}`
               )
+            )
+          )
+        ),
+
+        // Thanh đo tỷ trọng 5 Hành
+        h(
+          'div',
+          { className: 'elements-weight-bar-box' },
+          ELEMENTS.map((el) => {
+            const score = weightedCounts[el] || 0;
+            const pct = Math.min(Math.round((score / maxScore) * 100), 100);
+            const theme = ELEMENT_THEME[el];
+            return h(
+              'div',
+              {
+                key: el,
+                className: `el-score-row ${selectedEl === el ? 'is-active-row' : ''}`,
+                onClick: () => setSelectedEl(el),
+                style: { cursor: 'pointer' },
+              },
+              h('span', { className: 'el-score-label', style: { color: theme.color } }, `${theme.han} ${el}`),
+              h(
+                'div',
+                { className: 'el-score-track' },
+                h('div', {
+                  className: 'el-score-fill',
+                  style: { width: `${pct}%`, backgroundColor: theme.color },
+                })
+              ),
+              h('span', { className: 'el-score-num' }, `${score.toFixed(1)} đ`)
             );
           })
         )
       ),
 
-      // Right Column: Five Elements Breakdown & Sinh Khắc Detail
+      // ================= CỘT PHẢI: LỜI GIẢI ĐỜI THƯỜNG =================
       h(
         'div',
-        { className: 'radar-details-column' },
+        { className: 'split-column split-column-guide' },
         h(
           'div',
-          {
-            className: 'radar-selected-banner',
-            style: { '--sel-color': selTheme.color },
-          },
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · CÂN BẰNG NĂNG LƯỢNG'),
+          h('span', { className: 'col-hint' }, `Đang soi: Hành ${selectedEl}`)
+        ),
+
+        // Thẻ Giải Mã Thân Vượng / Thân Nhược
+        h(
+          'div',
+          { className: 'guide-card-primary' },
           h(
             'div',
-            { className: 'radar-banner-head' },
-            h('span', { className: 'radar-han-seal' }, selTheme.han),
+            { className: 'guide-card-head' },
             h(
               'div',
-              null,
-              h('h3', null, `Hành ${selectedEl} — ${selTheme.guardian}`),
-              h('p', null, selTheme.trait)
-            )
+              { className: 'guide-card-badge' },
+              h(ScaleIcon, { React, size: 14, color: 'var(--gold)' }),
+              h('span', null, yongShen.isStrong ? 'Thể Trạng Thân Vượng' : 'Thể Trạng Thân Nhược')
+            ),
+            h('span', { className: 'guide-period-pill' }, 'Nguyên Khí')
+          ),
+          h('h3', { className: 'guide-headline' }, yongShen.isStrong ? 'Thân Vượng: Động cơ mạnh, cần nơi tỏa nhiệt' : 'Thân Nhược: Tinh tế nhạy cảm, cần nạp dưỡng khí'),
+          h(
+            'p',
+            { className: 'guide-meaning-body' },
+            yongShen.isStrong
+              ? 'Thân Vượng không phải là "tốt hơn", mà là bạn có nguồn năng lượng dồi dào, dám nghĩ dám làm nhưng nếu không xả bớt ra bên ngoài qua công việc hoặc thể thao thì dễ bị bức bối, nóng nảy.'
+              : 'Thân Nhược là người có nội tâm nhạy bén, đồng cảm sâu sắc, làm việc cẩn trọng. Bạn cần biết tiết kiệm năng lượng, chọn bạn mà chơi và tránh để người khác hút cạn sinh khí của mình.'
           ),
           h(
             'div',
-            { className: 'sinh-khac-pills' },
-            h('span', { className: 'sk-pill sk-sinh' }, `✦ Sinh xuất: ${selectedEl} sinh ${selRelation.generates}`),
-            h('span', { className: 'sk-pill sk-duocsinh' }, `✦ Nguồn sinh: ${selRelation.generatedBy} sinh ${selectedEl}`),
-            h('span', { className: 'sk-pill sk-khac' }, `⚔ Chế khắc: ${selectedEl} khắc ${selRelation.controls}`),
-            h('span', { className: 'sk-pill sk-bikhac' }, `⚡ Bị khắc bởi: ${selRelation.controlledBy}`)
+            { className: 'guide-prompt-quote' },
+            h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
+            h('span', null, `Dụng Thần cứu cánh: Hành ${yongShen.yongShen.element} — ${yongShen.yongShen.desc || 'Chìa khóa mở khóa vượng vận.'}`)
           )
         ),
 
+        // Thẻ Chi Tiết Hành Đang Chọn
         h(
           'div',
-          { className: 'elements-bars-list' },
-          ELEMENTS_ORDER.map(el => {
-            const theme = ELEMENT_THEME[el];
-            const wVal = weighted[el] || 0;
-            const pct = Math.round((wVal / totalWeight) * 100);
-            const rawCount = rawCounts[el] || 0;
-            const isYong = chart.yongShen?.yongShen?.element === el;
-            const isXi = chart.yongShen?.xiShen?.element === el;
-
-            return h(
+          { className: 'guide-card-secondary' },
+          h('h4', { className: 'card-sec-title' }, `Hành ${selectedEl} (${curTheme.han}) Trong Tâm Tính & Lối Sống`),
+          h('p', { className: 'card-sec-desc' }, curGuide.meaning),
+          h(
+            'div',
+            { className: 'guide-traits-grid' },
+            h(
               'div',
-              {
-                key: el,
-                onClick: () => setSelectedEl(el),
-                className: `element-bar-row ${selectedEl === el ? 'is-active' : ''}`,
-              },
-              h(
-                'div',
-                { className: 'el-bar-meta' },
-                h(
-                  'strong',
-                  { style: { color: theme.color } },
-                  `${theme.han} ${el}`
-                ),
-                h(
-                  'div',
-                  { className: 'el-bar-tags' },
-                  isYong && h('span', { className: 'yongshen-mini-tag tag-yong' }, '★ Dụng Thần'),
-                  isXi && h('span', { className: 'yongshen-mini-tag tag-xi' }, '✦ Hỷ Thần'),
-                  h('span', { className: 'el-raw-count' }, `${rawCount} chữ hiển lộ · ${pct}% khí lực`)
-                )
-              ),
-              h(
-                'div',
-                { className: 'el-bar-track' },
-                h('div', {
-                  className: 'el-bar-fill',
-                  style: {
-                    width: `${Math.max(6, pct)}%`,
-                    backgroundColor: theme.color,
-                  },
-                })
-              )
-            );
-          })
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Đức Tính'),
+              h('strong', { style: { color: curTheme.color } }, curGuide.virtue),
+              h('p', null, curTheme.trait)
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Biểu Hiện'),
+              h('strong', null, (weightedCounts[selectedEl] || 0) > 2.5 ? 'Đang Vượng' : (weightedCounts[selectedEl] || 0) === 0 ? 'Khuyết Thiếu' : 'Vừa Vặn'),
+              h('p', null, (weightedCounts[selectedEl] || 0) > 2.5 ? curGuide.excess : curGuide.deficient)
+            )
+          )
+        ),
+
+        // Lời khuyên bồi dưỡng lối sống
+        h(
+          'div',
+          { className: 'guide-card-action' },
+          h(CheckCircleIcon, { React, size: 16, color: 'var(--gold)' }),
+          h(
+            'div',
+            { className: 'guide-action-text' },
+            h('strong', null, `Cách bồi đắp hành ${selectedEl} trong đời sống:`),
+            h('p', null, curGuide.lifestyle)
+          )
         )
       )
     )

@@ -1,328 +1,376 @@
-// src/atlas/CelestialWheel.mjs
-// Bản Đồ 2: La Kinh Thiên Bàn 24 Sơn Hướng & Chùm Tia Tinh Tú Thần Sát
+/**
+ * src/atlas/CelestialWheel.mjs
+ * ĐỒ BẢN II: LA KINH TINH BÀN 24 SƠN & THẦN SÁT CHIẾU MỆNH
+ * Bố cục Split-View:
+ * - Cột Trái: La Kinh 5 vòng đồng tâm cổ pháp + Vị trí các Thần Sát
+ * - Cột Phải: Lời giải đời thường giải mã Quý Nhân, Đào Hoa, Dịch Mã... cho người mới
+ */
 
-import { BRANCHES, BRANCH_META, ELEMENT_THEME } from './bazi-engine-ext.mjs';
-
-const BAGUA_RING = [
-  { trigram: '☵', name: 'Khảm Thủy', angle: 0 },
-  { trigram: '☶', name: 'Cấn Sơn',   angle: 45 },
-  { trigram: '☳', name: 'Chấn Lôi',  angle: 90 },
-  { trigram: '☴', name: 'Tốn Phong', angle: 135 },
-  { trigram: '☲', name: 'Ly Hỏa',    angle: 180 },
-  { trigram: '☷', name: 'Khôn Địa',  angle: 225 },
-  { trigram: '☱', name: 'Đoài Trạch', angle: 270 },
-  { trigram: '☰', name: 'Càn Thiên', angle: 315 },
-];
-
-function polarToCartesian(cx, cy, r, angleDeg) {
-  const rad = ((angleDeg - 90) * Math.PI) / 180;
-  return {
-    x: cx + r * Math.cos(rad),
-    y: cy + r * Math.sin(rad),
-  };
-}
+import {
+  CompassIcon,
+  SparklesIcon,
+  BookOpenIcon,
+  InfoIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
+} from './icons.mjs';
+import {
+  ELEMENT_THEME,
+  BRANCH_META,
+  SHENSHA_BEGINNER_MEANINGS,
+} from './bazi-engine-ext.mjs';
 
 export function CelestialWheel({ React, chart }) {
   const h = React.createElement;
-  const shenSha = chart.shenSha || [];
-  const defaultStar = shenSha.find(s => s.present) || shenSha[0];
+  const [selectedStar, setSelectedStar] = React.useState(null);
 
-  const [selectedStarId, setSelectedStarId] = React.useState(defaultStar?.id || 'thien-at');
-  const [selectedBranch, setSelectedBranch] = React.useState(null);
+  const shenShaList = chart.shenSha || [];
+  const curStar = selectedStar || shenShaList[0] || {
+    name: 'Thiên Ất Quý Nhân',
+    pinyin: 'Tiān Yǐ Guì Rén',
+    branch: chart.dayBranch || 'Tý',
+    nature: 'cát',
+    desc: 'Đệ nhất cát thần trong Bát Tự, chuyển nguy thành an.',
+    effect: 'Gặp quý nhân tương trợ khi hoạn nạn.',
+  };
 
-  const activeStar = shenSha.find(s => s.id === selectedStarId) || defaultStar;
-  const targetBranch = selectedBranch || activeStar?.matchedPillars?.[0]?.branch || activeStar?.primaryBranch || chart.dayBranch || 'Tý';
-  const targetBranchIdx = Math.max(0, BRANCHES.indexOf(targetBranch));
-  const targetAngle = targetBranchIdx * 30;
+  const starGuide = SHENSHA_BEGINNER_MEANINGS[curStar.name] || {
+    title: curStar.name,
+    nature: curStar.nature === 'cát' ? 'Cát Tinh' : 'Biến Động Tinh',
+    simpleDesc: curStar.desc || 'Năng lượng đặc biệt chi phối một khía cạnh đời sống.',
+    advice: curStar.effect || 'Thuận theo tự nhiên, bồi dưỡng tâm tính.',
+  };
 
-  const cx = 230;
-  const cy = 230;
-  const beamEnd = polarToCartesian(cx, cy, 152, targetAngle);
-  const bMeta = BRANCH_META[targetBranch] || BRANCH_META['Tý'];
+  // 24 Sơn Hướng La Kinh
+  const MOUNTAINS_24 = [
+    { name: 'Nhâm', han: '壬', deg: 337.5, type: 'stem' },
+    { name: 'Tý',   han: '子', deg: 0,     type: 'branch' },
+    { name: 'Quý',  han: '癸', deg: 22.5,  type: 'stem' },
+    { name: 'Sửu',  han: '丑', deg: 45,    type: 'branch' },
+    { name: 'Cấn',  han: '艮', deg: 67.5,  type: 'gua' },
+    { name: 'Dần',  han: '寅', deg: 90,    type: 'branch' },
+    { name: 'Giáp', han: '甲', deg: 112.5, type: 'stem' },
+    { name: 'Mão',  han: '卯', deg: 135,   type: 'branch' },
+    { name: 'Ất',   han: '乙', deg: 157.5, type: 'stem' },
+    { name: 'Thìn', han: '辰', deg: 180,   type: 'branch' },
+    { name: 'Tốn',  han: '巽', deg: 202.5, type: 'gua' },
+    { name: 'Tỵ',   han: '巳', deg: 225,   type: 'branch' },
+    { name: 'Bính', han: '丙', deg: 247.5, type: 'stem' },
+    { name: 'Ngọ',  han: '午', deg: 270,   type: 'branch' },
+    { name: 'Đinh', han: '丁', deg: 292.5, type: 'stem' },
+    { name: 'Mùi',  han: '未', deg: 315,   type: 'branch' },
+    { name: 'Khôn', han: '坤', deg: 337.5, type: 'gua' },
+    { name: 'Thân', han: '申', deg: 0,     type: 'branch' },
+    { name: 'Canh', han: '庚', deg: 22.5,  type: 'stem' },
+    { name: 'Dậu',  han: '酉', deg: 45,    type: 'branch' },
+    { name: 'Tân',  han: '辛', deg: 67.5,  type: 'stem' },
+    { name: 'Tuất', han: '戌', deg: 90,    type: 'branch' },
+    { name: 'Càn',  han: '乾', deg: 112.5, type: 'gua' },
+    { name: 'Hợi',  han: '亥', deg: 135,   type: 'branch' },
+  ];
 
-  // Map branches to pillars present in the chart
-  const branchPillarsMap = {};
-  (chart.pillars || []).forEach(p => {
-    if (p.branch) {
-      if (!branchPillarsMap[p.branch]) branchPillarsMap[p.branch] = [];
-      branchPillarsMap[p.branch].push(p.label);
-    }
-  });
+  const pillarBranches = (chart.pillars || []).map((p) => p.branch);
 
   return h(
     'section',
     {
-      id: 'map-celestial-wheel',
-      className: 'atlas-card atlas-wheel-section',
-      'aria-label': 'Bản đồ 2: La Kinh Thiên Bàn & Tinh Đồ Thần Sát',
+      id: 'celestial-wheel',
+      className: 'atlas-chapter-section ritual-mist-card',
+      'aria-label': 'Đồ Bản II: La Kinh 24 Sơn',
     },
+    // Tiêu đề chương
     h(
-      'div',
-      { className: 'atlas-card-header' },
+      'header',
+      { className: 'chapter-header' },
       h(
         'div',
-        { className: 'atlas-card-title-group' },
-        h('span', { className: 'atlas-map-kicker' }, 'ĐẠI BẢN ĐỒ 02 · LA KINH THIÊN BÀN (羅經天盤)'),
-        h('h2', { className: 'atlas-card-title' }, 'La Kinh 24 Sơn Hướng & Chùm Tia Tinh Tú'),
-        h(
-          'p',
-          { className: 'atlas-card-subtitle' },
-          'Bấm vào từng Thần Sát hoặc cung Địa Chi trên mặt La Kinh để kích hoạt luồng tia sao từ tâm Thái Cực chiếu thẳng vào phương vị mệnh cung.'
-        )
+        { className: 'chapter-badge' },
+        h(CompassIcon, { React, size: 14, color: 'var(--gold)' }),
+        h('span', null, 'ĐỒ BẢN II · LA KINH THẦN SÁT (二十四山)')
+      ),
+      h('h2', { className: 'chapter-title' }, 'La Kinh Tinh Bàn 24 Sơn & Thần Sát Chiếu Mệnh'),
+      h(
+        'p',
+        { className: 'chapter-desc' },
+        'La Kinh định phương hướng năng lượng không gian, kết hợp cùng các chòm sao Quý Nhân, Đào Hoa, Dịch Mã chiếu rọi cung mệnh. Bấm chọn từng sao để xem lời giải đời thường.'
       )
     ),
 
+    // Bố cục Chia Đôi (Split View)
     h(
       'div',
-      { className: 'celestial-wheel-layout' },
-      // SVG Compass
+      { className: 'chapter-split-layout' },
+
+      // ================= CỘT TRÁI: LA KINH CHUYÊN SÂU =================
       h(
         'div',
-        { className: 'celestial-svg-container' },
+        { className: 'split-column split-column-tech' },
         h(
-          'svg',
-          {
-            viewBox: '0 0 460 460',
-            className: 'celestial-compass-svg',
-            role: 'img',
-            'aria-label': `La Kinh Bát Tự chiếu cung ${targetBranch}`,
-          },
+          'div',
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag pro-tag' }, 'DÀNH CHO DÂN CHUYÊN · LA KINH 5 VÒNG ĐỒNG TÂM'),
+          h('span', { className: 'col-hint' }, 'Bấm chọn sao Thần Sát để soi phương vị')
+        ),
+
+        // Khung tròn La Kinh SVG
+        h(
+          'div',
+          { className: 'compass-svg-container' },
           h(
-            'defs',
-            null,
+            'svg',
+            {
+              viewBox: '0 0 600 600',
+              className: 'compass-master-svg',
+              role: 'img',
+              'aria-label': 'La Kinh 24 Sơn Hướng',
+            },
             h(
-              'radialGradient',
-              { id: 'compassCoreGlow', cx: '50%', cy: '50%', r: '50%' },
-              h('stop', { offset: '0%', stopColor: '#d4af37', stopOpacity: '0.35' }),
-              h('stop', { offset: '55%', stopColor: '#b91c1c', stopOpacity: '0.16' }),
-              h('stop', { offset: '100%', stopColor: '#090506', stopOpacity: '0' })
+              'defs',
+              null,
+              h(
+                'radialGradient',
+                { id: 'compassCoreGlow', cx: '50%', cy: '50%', r: '50%' },
+                h('stop', { offset: '0%', stopColor: 'var(--gold)', stopOpacity: '0.15' }),
+                h('stop', { offset: '70%', stopColor: 'var(--cinnabar)', stopOpacity: '0.04' }),
+                h('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
+              )
             ),
-            h(
-              'linearGradient',
-              { id: 'constellationBeamGrad', x1: cx, y1: cy, x2: beamEnd.x, y2: beamEnd.y, gradientUnits: 'userSpaceOnUse' },
-              h('stop', { offset: '0%', stopColor: '#d4af37', stopOpacity: '0.95' }),
-              h('stop', { offset: '60%', stopColor: '#ef4444', stopOpacity: '0.85' }),
-              h('stop', { offset: '100%', stopColor: '#fde047', stopOpacity: '1' })
-            )
-          ),
 
-          // Background Aura
-          h('circle', { cx, cy, r: 215, fill: 'url(#compassCoreGlow)' }),
-          h('circle', { cx, cy, r: 210, className: 'compass-ring-outer' }),
-          h('circle', { cx, cy, r: 182, className: 'compass-ring-bagua' }),
-          h('circle', { cx, cy, r: 124, className: 'compass-ring-branches' }),
-          h('circle', { cx, cy, r: 62, className: 'compass-ring-inner' }),
+            // Nền La Kinh
+            h('circle', { cx: 300, cy: 300, r: 285, fill: 'url(#compassCoreGlow)' }),
+            h('circle', { cx: 300, cy: 300, r: 280, className: 'compass-ring-outer' }),
+            h('circle', { cx: 300, cy: 300, r: 260, className: 'compass-ring-middle' }),
+            h('circle', { cx: 300, cy: 300, r: 215, className: 'compass-ring-inner', strokeDasharray: '2 6' }),
+            h('circle', { cx: 300, cy: 300, r: 155, className: 'compass-ring-inner' }),
+            h('circle', { cx: 300, cy: 300, r: 85, className: 'compass-ring-core' }),
 
-          // 24 Mountain Degree Ticks
-          Array.from({ length: 24 }, (_, idx) => {
-            const deg = idx * 15;
-            const p1 = polarToCartesian(cx, cy, 182, deg);
-            const p2 = polarToCartesian(cx, cy, 210, deg);
-            return h('line', {
-              key: `tick-${idx}`,
-              x1: p1.x,
-              y1: p1.y,
-              x2: p2.x,
-              y2: p2.y,
-              className: 'compass-spoke-line',
-            });
-          }),
-
-          // 8 Bagua Trigrams
-          BAGUA_RING.map(bg => {
-            const pos = polarToCartesian(cx, cy, 196, bg.angle);
-            return h(
-              'text',
-              {
-                key: bg.name,
-                x: pos.x,
-                y: pos.y + 5,
-                textAnchor: 'middle',
-                className: 'compass-bagua-glyph',
-              },
-              bg.trigram
-            );
-          }),
-
-          // Active Constellation Beam from Center to Target Branch
-          h(
-            'g',
-            { className: 'celestial-beam-group' },
-            h('line', {
-              x1: cx,
-              y1: cy,
-              x2: beamEnd.x,
-              y2: beamEnd.y,
-              stroke: 'url(#constellationBeamGrad)',
-              strokeWidth: '3.5',
-              strokeLinecap: 'round',
-              className: 'celestial-constellation-beam',
+            // 24 Vạch Sơn Hướng
+            Array.from({ length: 24 }).map((_, idx) => {
+              const deg = idx * 15;
+              const rad = (deg * Math.PI) / 180;
+              return h('line', {
+                key: idx,
+                x1: 300 + 260 * Math.cos(rad),
+                y1: 300 + 260 * Math.sin(rad),
+                x2: 300 + 280 * Math.cos(rad),
+                y2: 300 + 280 * Math.sin(rad),
+                stroke: idx % 2 === 0 ? 'var(--gold)' : 'var(--line)',
+                strokeWidth: idx % 2 === 0 ? 1.5 : 0.8,
+              });
             }),
-            h('circle', {
-              cx: beamEnd.x,
-              cy: beamEnd.y,
-              r: 28,
-              className: 'celestial-active-pulse-ring',
-            })
-          ),
 
-          // 12 Earthly Branches Nodes
-          BRANCHES.map((b, idx) => {
-            const deg = idx * 30;
-            const pos = polarToCartesian(cx, cy, 152, deg);
-            const meta = BRANCH_META[b];
-            const elTheme = ELEMENT_THEME[meta.element] || ELEMENT_THEME['Thổ'];
-            const matchedPillars = branchPillarsMap[b] || [];
-            const isTarget = b === targetBranch;
-            const hasPillar = matchedPillars.length > 0;
+            // 12 Cung Địa Chi trên La Kinh
+            [
+              { name: 'Tý', han: '子', deg: 270 },
+              { name: 'Sửu', han: '丑', deg: 300 },
+              { name: 'Dần', han: '寅', deg: 330 },
+              { name: 'Mão', han: '卯', deg: 0 },
+              { name: 'Thìn', han: '辰', deg: 30 },
+              { name: 'Tỵ', han: '巳', deg: 60 },
+              { name: 'Ngọ', han: '午', deg: 90 },
+              { name: 'Mùi', han: '未', deg: 120 },
+              { name: 'Thân', han: '申', deg: 150 },
+              { name: 'Dậu', han: '酉', deg: 180 },
+              { name: 'Tuất', han: '戌', deg: 210 },
+              { name: 'Hợi', han: '亥', deg: 240 },
+            ].map((b) => {
+              const rad = (b.deg * Math.PI) / 180;
+              const x = 300 + 235 * Math.cos(rad);
+              const y = 300 + 235 * Math.sin(rad);
+              const isPillar = pillarBranches.includes(b.name);
+              const isStarPos = curStar.branch === b.name;
 
-            return h(
-              'g',
-              {
-                key: b,
-                onClick: () => setSelectedBranch(b),
-                className: `compass-branch-node ${isTarget ? 'is-target' : ''} ${hasPillar ? 'has-pillar' : ''}`,
-                style: { cursor: 'pointer' },
-              },
-              h('circle', {
-                cx: pos.x,
-                cy: pos.y,
-                r: isTarget ? 24 : 20,
-                fill: isTarget ? 'rgba(185, 28, 28, 0.88)' : hasPillar ? 'rgba(38, 18, 22, 0.95)' : 'rgba(15, 9, 11, 0.9)',
-                stroke: isTarget ? '#fde047' : hasPillar ? elTheme.color : 'rgba(212, 175, 55, 0.3)',
-                strokeWidth: isTarget ? '2.5' : hasPillar ? '1.8' : '1',
-              }),
-              h(
-                'text',
-                {
-                  x: pos.x,
-                  y: pos.y - 3,
-                  textAnchor: 'middle',
-                  fill: isTarget ? '#fef08a' : elTheme.color,
-                  fontSize: '14',
-                  fontWeight: '700',
-                },
-                meta.han
-              ),
-              h(
-                'text',
-                {
-                  x: pos.x,
-                  y: pos.y + 12,
-                  textAnchor: 'middle',
-                  fill: '#f5ebe6',
-                  fontSize: '10',
-                },
-                b
-              ),
-              hasPillar &&
+              return h(
+                'g',
+                { key: b.name, className: isStarPos ? 'compass-node-highlight' : '' },
+                isStarPos &&
+                  h('circle', {
+                    cx: x,
+                    cy: y - 2,
+                    r: 16,
+                    fill: 'var(--cinnabar)',
+                    opacity: 0.35,
+                  }),
                 h(
                   'text',
                   {
-                    x: pos.x,
-                    y: pos.y - 26,
+                    x,
+                    y: y + 4,
                     textAnchor: 'middle',
-                    fill: '#fbbf24',
-                    fontSize: '9',
-                    fontWeight: '700',
+                    className: 'compass-han-char',
+                    fill: isStarPos ? 'var(--gold)' : isPillar ? 'var(--ink)' : 'var(--muted)',
+                    fontSize: isStarPos ? 16 : isPillar ? 14 : 12,
+                    fontWeight: isStarPos || isPillar ? '600' : '400',
                   },
-                  `[${matchedPillars.join('/')}]`
+                  b.han
                 )
-            );
-          }),
+              );
+            }),
 
-          // Center Taiji Core
-          h(
-            'g',
-            { className: 'compass-core-group' },
-            h('circle', { cx, cy, r: 42, fill: 'rgba(18, 8, 10, 0.96)', stroke: '#d4af37', strokeWidth: '1.5' }),
-            h(
-              'text',
-              { x: cx, y: cy - 6, textAnchor: 'middle', fill: '#d4af37', fontSize: '18', fontWeight: '700' },
-              chart.dayMasterMeta?.han || '命'
-            ),
-            h(
-              'text',
-              { x: cx, y: cy + 12, textAnchor: 'middle', fill: '#f5ebe6', fontSize: '10' },
-              `Nhật chủ ${chart.dayStem}`
-            ),
-            h(
-              'text',
-              { x: cx, y: cy + 25, textAnchor: 'middle', fill: '#f87171', fontSize: '9' },
-              `→ Cung ${targetBranch}`
-            )
-          )
-        )
-      ),
+            // 8 Quẻ Bát Quái Tiên Thiên
+            [
+              { han: '☰', name: 'Càn', deg: 270 },
+              { han: '☱', name: 'Đoài', deg: 315 },
+              { han: '☲', name: 'Ly', deg: 0 },
+              { han: '☳', name: 'Chấn', deg: 45 },
+              { han: '☴', name: 'Tốn', deg: 90 },
+              { han: '☵', name: 'Khảm', deg: 135 },
+              { han: '☶', name: 'Cấn', deg: 180 },
+              { han: '☷', name: 'Khôn', deg: 225 },
+            ].map((g) => {
+              const rad = (g.deg * Math.PI) / 180;
+              const x = 300 + 185 * Math.cos(rad);
+              const y = 300 + 185 * Math.sin(rad);
+              return h(
+                'text',
+                {
+                  key: g.name,
+                  x,
+                  y: y + 5,
+                  textAnchor: 'middle',
+                  className: 'compass-trigram',
+                  fill: 'var(--gold)',
+                  fontSize: 16,
+                  opacity: 0.75,
+                },
+                g.han
+              );
+            }),
 
-      // Right Column: Star Selector & Palace Decree
-      h(
-        'div',
-        { className: 'celestial-info-column' },
-        h(
-          'div',
-          { className: 'celestial-palace-readout' },
-          h(
-            'div',
-            { className: 'palace-readout-top' },
-            h('span', { className: 'palace-glyph-badge' }, `${bMeta.han} · Cung ${targetBranch}`),
-            h('span', { className: 'palace-dir-tag' }, `Phương vị: ${bMeta.direction} · Mùa: ${bMeta.season}`)
-          ),
-          h(
-            'h3',
-            { className: 'palace-star-heading' },
-            activeStar ? `✦ ${activeStar.name} (${activeStar.han})` : `Phương vị Cung ${targetBranch}`
-          ),
-          h(
-            'p',
-            { className: 'palace-star-desc' },
-            activeStar?.desc || 'Khí mạch lưu thông qua 12 địa chi, phản ánh nhịp chuyển vần của đất trời.'
-          ),
-          h(
-            'div',
-            { className: 'palace-meta-strip' },
-            h('span', null, `Linh thú: ${bMeta.animal}`),
-            h('span', null, `Giờ ứng: ${bMeta.hours}`),
+            // Tâm La Kinh: Thái Cực Khắc Chỉ Tơ
             h(
-              'span',
-              null,
-              branchPillarsMap[targetBranch]
-                ? `★ Đóng tại Trụ: ${branchPillarsMap[targetBranch].join(', ')}`
-                : 'Cung lưu niên / chiếu hợp'
+              'g',
+              { className: 'compass-taiji-center' },
+              h('circle', { cx: 300, cy: 300, r: 50, fill: 'var(--paper-card)', stroke: 'var(--cinnabar)', strokeWidth: 1.5 }),
+              h('path', {
+                d: 'M300 250 A25 25 0 0 1 300 300 A25 25 0 0 0 300 350 A50 50 0 0 1 300 250 Z',
+                fill: 'var(--cinnabar)',
+                opacity: 0.7,
+              }),
+              h('circle', { cx: 300, cy: 275, r: 5, fill: 'var(--paper-card)' }),
+              h('circle', { cx: 300, cy: 325, r: 5, fill: 'var(--cinnabar)' })
             )
           )
         ),
 
-        h('h4', { className: 'shensha-list-title' }, 'CỬU DIỆU THẦN SÁT CỔ PHÁP (Chạm để xoay tia La Kinh)'),
+        // Danh sách Thần Sát chọn nhanh
         h(
           'div',
-          { className: 'shensha-grid' },
-          shenSha.map(st => {
-            const isSel = activeStar && activeStar.id === st.id;
-            return h(
-              'button',
-              {
-                key: st.id,
-                type: 'button',
-                onClick: () => {
-                  setSelectedStarId(st.id);
-                  setSelectedBranch(st.matchedPillars?.[0]?.branch || st.primaryBranch);
+          { className: 'shensha-picker-panel' },
+          h('h4', { className: 'picker-label' }, 'Các Chòm Sao Hiện Diện Trong Lá Số:'),
+          h(
+            'div',
+            { className: 'shensha-chips-wrap' },
+            shenShaList.map((star, sIdx) => {
+              const isSelected = curStar.name === star.name;
+              return h(
+                'button',
+                {
+                  key: sIdx,
+                  type: 'button',
+                  className: `shensha-pill ${isSelected ? 'is-selected' : ''} ${star.nature === 'cát' ? 'pill-cat' : 'pill-bien'}`,
+                  onClick: () => setSelectedStar(star),
                 },
-                className: `shensha-card-btn ${isSel ? 'is-selected' : ''} ${st.present ? 'is-present' : 'is-latent'}`,
-              },
-              h(
-                'div',
-                { className: 'shensha-btn-top' },
-                h('strong', null, st.name),
-                h(
-                  'span',
-                  { className: `shensha-status-badge status-${st.present ? 'present' : 'latent'}` },
-                  st.present ? `Nhập mệnh (${st.matchedPillars.map(m => m.label).join('/')})` : `Chiếu cung ${st.primaryBranch}`
-                )
-              ),
-              h('small', null, `${st.han} · Tọa cung: ${st.targets.join(', ')}`)
-            );
-          })
+                h(SparklesIcon, { React, size: 12, color: isSelected ? 'var(--gold)' : 'currentColor' }),
+                h('span', null, star.name),
+                h('small', null, `(${star.branch})`)
+              );
+            })
+          )
+        )
+      ),
+
+      // ================= CỘT PHẢI: LỜI GIẢI ĐỜI THƯỜNG =================
+      h(
+        'div',
+        { className: 'split-column split-column-guide' },
+        h(
+          'div',
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · GIẢI MÃ SAO CHIẾU MỆNH'),
+          h('span', { className: 'col-hint' }, `Đang soi: ${curStar.name}`)
+        ),
+
+        // Thẻ Giải Nghĩa Sao Đang Chọn
+        h(
+          'div',
+          { className: 'guide-card-primary' },
+          h(
+            'div',
+            { className: 'guide-card-head' },
+            h(
+              'div',
+              { className: 'guide-card-badge' },
+              h(SparklesIcon, { React, size: 14, color: 'var(--gold)' }),
+              h('span', null, starGuide.title)
+            ),
+            h('span', { className: 'guide-period-pill' }, starGuide.nature)
+          ),
+          h('h3', { className: 'guide-headline' }, `Khí Chất Của ${curStar.name} Trong Đời Sống Thực Tế`),
+          h('p', { className: 'guide-meaning-body' }, starGuide.simpleDesc),
+          h(
+            'div',
+            { className: 'guide-prompt-quote' },
+            h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
+            h('span', null, `Đóng tại cung ${curStar.branch}: ${starGuide.advice}`)
+          )
+        ),
+
+        // Cẩm nang người mới: Hiểu đúng về Thần Sát
+        h(
+          'div',
+          { className: 'guide-card-secondary' },
+          h('h4', { className: 'card-sec-title' }, 'Góc Nhìn Khách Quan Về "Thần Sát"'),
+          h(
+            'p',
+            { className: 'card-sec-desc' },
+            'Trong cổ học Đông Phương, "Thần Sát" không phải là thần thánh hay ma quỷ ban phước giáng họa, mà là những mô thức tâm lý và cơ hội tương tác xã hội lặp đi lặp lại.'
+          ),
+          h(
+            'div',
+            { className: 'guide-traits-grid' },
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Quý Nhân'),
+              h('strong', null, 'Quan hệ tương trợ'),
+              h('p', null, 'Khả năng kết nối và được người có uy tín giúp đỡ đúng thời điểm.')
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Đào Hoa'),
+              h('strong', null, 'Duyên vận & Cảm xúc'),
+              h('p', null, 'Sức hút giao tiếp, năng khiếu thẩm mỹ và độ nhạy cảm với người khác.')
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Dịch Mã'),
+              h('strong', null, 'Vận động & Xa xứ'),
+              h('p', null, 'Sự linh hoạt đổi mới, cơ duyên đi xa để mở rộng tầm nhìn.')
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Văn Xương'),
+              h('strong', null, 'Trí tuệ & Học vấn'),
+              h('p', null, 'Khả năng tự học, sáng tạo nội dung và diễn đạt bằng văn từ.')
+            )
+          )
+        ),
+
+        // Lời khuyên kích hoạt
+        h(
+          'div',
+          { className: 'guide-card-action' },
+          h(CheckCircleIcon, { React, size: 16, color: 'var(--gold)' }),
+          h(
+            'div',
+            { className: 'guide-action-text' },
+            h('strong', null, 'Cách vận dụng tốt nhất:'),
+            h('p', null, 'Đừng lo lắng khi thấy các tên gọi có vẻ nghiêm trọng. Nắm rõ ưu thế của từng sao giúp bạn chủ động phát huy điểm mạnh và cẩn trọng trước những điểm mù.')
+          )
         )
       )
     )

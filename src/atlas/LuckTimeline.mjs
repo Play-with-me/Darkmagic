@@ -1,348 +1,319 @@
-// src/atlas/LuckTimeline.mjs
-// Bản Đồ 5: Sóng Sinh Khí Đại Vận 80 Năm & Bảng Lưu Niên Ấn Triện Chu Sa
+/**
+ * src/atlas/LuckTimeline.mjs
+ * ĐỒ BẢN V: ĐẠI VẬN LƯU NIÊN THỦY TRIỀU ĐỒ & CHU SA ẤN
+ * Bố cục Split-View:
+ * - Cột Trái: Đồ thị Thủy Triều 8 Đại Vận (80 năm) + Lưới Lưu Niên + Chu Sa Ấn
+ * - Cột Phải: Lời giải đời thường giải mã nhịp điệu thăng trầm và thời cơ cuộc đời cho người mới
+ */
 
+import {
+  MilestoneIcon,
+  SparklesIcon,
+  BookOpenIcon,
+  InfoIcon,
+  CheckCircleIcon,
+  AwardIcon,
+  ArrowUpRightIcon,
+} from './icons.mjs';
 import { ELEMENT_THEME } from './bazi-engine-ext.mjs';
 
-function buildSmoothWavePath(points) {
-  if (!points || points.length === 0) return '';
-  let d = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i];
-    const p1 = points[i + 1];
-    const midX = (p0.x + p1.x) / 2;
-    d += ` C ${midX} ${p0.y}, ${midX} ${p1.y}, ${p1.x} ${p1.y}`;
-  }
-  return d;
-}
-
-export function LuckTimeline({ React, chart, onQuickNote }) {
+export function LuckTimeline({ React, chart }) {
   const h = React.createElement;
-  const cycles = chart.timeline?.cycles || [];
-  const annuals = chart.timeline?.annuals || [];
+  const timeline = chart.timeline || { cycles: [], annuals: [] };
+  const cycles = timeline.cycles || [];
+  const annuals = timeline.annuals || [];
 
-  const currentCycle = cycles.find(c => c.isCurrent) || cycles[2] || cycles[0];
-  const [selectedCycleIdx, setSelectedCycleIdx] = React.useState(currentCycle?.index || 1);
-  const [hoveredCycle, setHoveredCycle] = React.useState(null);
+  const defaultCycleIdx = cycles.findIndex((c) => c.isCurrent);
+  const [selectedCycleIdx, setSelectedCycleIdx] = React.useState(defaultCycleIdx >= 0 ? defaultCycleIdx : 2);
+  const [selectedYear, setSelectedYear] = React.useState(new Date().getFullYear());
 
-  const activeCycle = hoveredCycle || cycles.find(c => c.index === selectedCycleIdx) || currentCycle;
+  const curCycle = cycles[selectedCycleIdx] || cycles[0] || {
+    name: 'Bính Dần',
+    han: '丙寅',
+    tenGod: 'Chính tài',
+    startAge: 25,
+    endAge: 34,
+    startYear: 2020,
+    endYear: 2029,
+    guidance: {
+      theme: 'Tài Chính Minh Bạch & Tích Lũy Vững Chắc',
+      observe: 'Cơ hội phát triển tài chính qua công việc chuyên môn ổn định.',
+      caution: 'Tránh đầu cơ rủi ro cao hoặc chi tiêu phung phí.',
+      action: 'Tập trung xây dựng nền móng sự nghiệp và tích lũy dài hạn.',
+    },
+  };
 
-  // SVG Wave Geometry
-  const svgW = 820;
-  const svgH = 230;
-  const padX = 56;
-  const usableW = svgW - padX * 2;
-
-  const wavePoints = cycles.map((c, i) => {
-    const x = padX + (i / Math.max(1, cycles.length - 1)) * usableW;
-    const score = c.stage?.score || 60;
-    const y = svgH - 42 - ((score - 20) / 85) * (svgH - 92);
-    return { x, y, cycle: c };
-  });
-
-  const wavePath = buildSmoothWavePath(wavePoints);
-  const areaPath = wavePoints.length > 1
-    ? `${wavePath} L ${wavePoints[wavePoints.length - 1].x} ${svgH - 28} L ${wavePoints[0].x} ${svgH - 28} Z`
-    : '';
+  const curAnnual = annuals.find((a) => a.year === selectedYear) || annuals[0] || {};
+  const cycleTheme = ELEMENT_THEME[curCycle.element] || ELEMENT_THEME['Hỏa'];
 
   return h(
     'section',
     {
-      id: 'map-luck-timeline',
-      className: 'atlas-card atlas-timeline-section',
-      'aria-label': 'Bản đồ 5: Sóng Vận Trình Đại Vận & Lưu Niên',
+      id: 'luck-timeline',
+      className: 'atlas-chapter-section ritual-mist-card',
+      'aria-label': 'Đồ Bản V: Đại Vận Lưu Niên Thủy Triều Đồ',
     },
+    // Tiêu đề chương
     h(
-      'div',
-      { className: 'atlas-card-header' },
+      'header',
+      { className: 'chapter-header' },
       h(
         'div',
-        { className: 'atlas-card-title-group' },
-        h('span', { className: 'atlas-map-kicker' }, 'ĐẠI BẢN ĐỒ 05 · ĐẠI VẬN & LƯU NIÊN (大運流年圖)'),
-        h('h2', { className: 'atlas-card-title' }, 'Sóng Sinh Khí 80 Năm & Ấn Triện Lưu Niên'),
-        h(
-          'p',
-          { className: 'atlas-card-subtitle' },
-          'Đường sóng Trường Sinh khắc họa sự thăng trầm của 8 chu kỳ Đại Vận (mỗi vận 10 năm). Chạm vào từng đỉnh sóng để soi chiếu cơ duyên và bước hành động.'
-        )
+        { className: 'chapter-badge' },
+        h(MilestoneIcon, { React, size: 14, color: 'var(--gold)' }),
+        h('span', null, 'ĐỒ BẢN V · ĐẠI VẬN THỦY TRIỀU (大運流年)')
+      ),
+      h('h2', { className: 'chapter-title' }, 'Đại Vận Lưu Niên Thủy Triều Đồ & Chu Sa Ấn'),
+      h(
+        'p',
+        { className: 'chapter-desc' },
+        'Đời người như con thuyền trên sông lớn, Đại Vận 10 năm là dòng nước xuôi ngược. Bấm chọn từng Đại Vận bên trái để đóng ấn Chu Sa và đọc cẩm nang hành động bên phải.'
       )
     ),
 
-    // Living Life-Wave SVG
+    // Bố cục Chia Đôi (Split View)
     h(
       'div',
-      { className: 'life-wave-svg-wrap' },
+      { className: 'chapter-split-layout' },
+
+      // ================= CỘT TRÁI: ĐỒ THỊ CHUYÊN SÂU =================
       h(
-        'svg',
-        {
-          viewBox: `0 0 ${svgW} ${svgH}`,
-          className: 'living-life-wave-svg',
-          role: 'img',
-          'aria-label': 'Biểu đồ Sóng Sinh Khí 8 Đại Vận',
-        },
+        'div',
+        { className: 'split-column split-column-tech' },
         h(
-          'defs',
-          null,
+          'div',
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag pro-tag' }, 'DÀNH CHO DÂN CHUYÊN · ĐỒ THỊ 8 ĐẠI VẬN (80 NĂM)'),
+          h('span', { className: 'col-hint' }, 'Bấm chọn Đại Vận để kích hoạt Chu Sa Ấn')
+        ),
+
+        // Đồ thị Sóng Thủy Triều 8 Đại Vận SVG
+        h(
+          'div',
+          { className: 'timeline-svg-container' },
           h(
-            'linearGradient',
-            { id: 'waveAreaGrad', x1: '0%', y1: '0%', x2: '0%', y2: '100%' },
-            h('stop', { offset: '0%', stopColor: '#dc2626', stopOpacity: '0.38' }),
-            h('stop', { offset: '60%', stopColor: '#d4af37', stopOpacity: '0.12' }),
-            h('stop', { offset: '100%', stopColor: '#090506', stopOpacity: '0' })
-          ),
-          h(
-            'linearGradient',
-            { id: 'waveLineGrad', x1: '0%', y1: '0%', x2: '100%', y2: '0%' },
-            h('stop', { offset: '0%', stopColor: '#f87171' }),
-            h('stop', { offset: '50%', stopColor: '#fde047' }),
-            h('stop', { offset: '100%', stopColor: '#34d399' })
+            'svg',
+            {
+              viewBox: '0 0 680 260',
+              className: 'luck-wave-svg',
+              role: 'img',
+              'aria-label': 'Đồ thị nhịp điệu 8 Đại Vận',
+            },
+            h(
+              'defs',
+              null,
+              h(
+                'linearGradient',
+                { id: 'waveFill', x1: '0', y1: '0', x2: '0', y2: '1' },
+                h('stop', { offset: '0%', stopColor: 'var(--gold)', stopOpacity: '0.22' }),
+                h('stop', { offset: '100%', stopColor: 'var(--cinnabar)', stopOpacity: '0.02' })
+              )
+            ),
+
+            // Các vạch lưới ngang chỉ tơ
+            [60, 110, 160, 210].map((y, idx) =>
+              h('line', {
+                key: idx,
+                x1: 40,
+                y1: y,
+                x2: 640,
+                y2: y,
+                stroke: 'var(--line)',
+                strokeWidth: 0.8,
+                strokeDasharray: '2 4',
+                opacity: 0.5,
+              })
+            ),
+
+            // Đồ thị dạng đường cong mềm mại
+            cycles.length > 1 &&
+              h('path', {
+                d: cycles.reduce((acc, c, idx) => {
+                  const x = 50 + idx * 80;
+                  const y = 200 - ((c.stage?.score || 50) / 100) * 140;
+                  return idx === 0 ? `M ${x} ${y}` : `${acc} L ${x} ${y}`;
+                }, ''),
+                fill: 'none',
+                stroke: 'var(--gold)',
+                strokeWidth: 2,
+              }),
+
+            // Vùng diện tích mờ phía dưới đường sóng
+            cycles.length > 1 &&
+              h('path', {
+                d: `${cycles.reduce((acc, c, idx) => {
+                  const x = 50 + idx * 80;
+                  const y = 200 - ((c.stage?.score || 50) / 100) * 140;
+                  return idx === 0 ? `M ${x} ${y}` : `${acc} L ${x} ${y}`;
+                }, '')} L ${50 + (cycles.length - 1) * 80} 220 L 50 220 Z`,
+                fill: 'url(#waveFill)',
+              }),
+
+            // 8 Cột Mốc Đại Vận trên sóng
+            cycles.map((c, idx) => {
+              const x = 50 + idx * 80;
+              const y = 200 - ((c.stage?.score || 50) / 100) * 140;
+              const isSelected = selectedCycleIdx === idx;
+              const theme = ELEMENT_THEME[c.element] || cycleTheme;
+
+              return h(
+                'g',
+                {
+                  key: idx,
+                  className: `wave-node ${isSelected ? 'is-selected-cycle' : ''}`,
+                  onClick: () => setSelectedCycleIdx(idx),
+                  style: { cursor: 'pointer' },
+                },
+                // Vòng hào quang nếu chọn
+                isSelected &&
+                  h('circle', {
+                    cx: x,
+                    cy: y,
+                    r: 22,
+                    fill: 'none',
+                    stroke: 'var(--cinnabar-bright)',
+                    strokeWidth: 1.5,
+                    strokeDasharray: '2 3',
+                  }),
+                h('circle', {
+                  cx: x,
+                  cy: y,
+                  r: isSelected ? 12 : 7,
+                  fill: isSelected ? 'var(--cinnabar-bright)' : theme.color,
+                  stroke: 'var(--paper-card)',
+                  strokeWidth: 2,
+                }),
+                // Chữ Hán Thư Pháp Can Chi
+                h(
+                  'text',
+                  {
+                    x,
+                    y: y - 18,
+                    textAnchor: 'middle',
+                    className: 'wave-han-char',
+                    fill: isSelected ? 'var(--gold)' : 'var(--ink)',
+                    fontSize: isSelected ? 15 : 12,
+                    fontWeight: isSelected ? '600' : '400',
+                  },
+                  c.han
+                ),
+                // Độ tuổi & Năm
+                h(
+                  'text',
+                  {
+                    x,
+                    y: 235,
+                    textAnchor: 'middle',
+                    className: 'wave-age-label',
+                    fill: isSelected ? 'var(--gold)' : 'var(--muted)',
+                    fontSize: 9,
+                  },
+                  `${c.startAge}t`
+                )
+              );
+            })
           )
         ),
 
-        // Horizontal Guide Lines
-        [45, 95, 145, 195].map((gy, idx) =>
-          h('line', {
-            key: idx,
-            x1: padX - 20,
-            y1: gy,
-            x2: svgW - padX + 20,
-            y2: gy,
-            className: 'wave-grid-line',
-          })
-        ),
-
-        // Area under curve
-        areaPath && h('path', { d: areaPath, fill: 'url(#waveAreaGrad)' }),
-
-        // Animated Spline Path
-        wavePath &&
-          h('path', {
-            d: wavePath,
-            fill: 'none',
-            stroke: 'url(#waveLineGrad)',
-            strokeWidth: '3.5',
-            className: 'wave-spline-animated',
-          }),
-
-        // Nodes along the wave
-        wavePoints.map(pt => {
-          const c = pt.cycle;
-          const isAct = activeCycle && activeCycle.index === c.index;
-          const elTheme = ELEMENT_THEME[c.element] || ELEMENT_THEME['Thủy'];
-
-          return h(
-            'g',
-            {
-              key: c.index,
-              onClick: () => setSelectedCycleIdx(c.index),
-              onMouseEnter: () => setHoveredCycle(c),
-              onMouseLeave: () => setHoveredCycle(null),
-              className: `wave-node-group ${isAct ? 'is-active' : ''} ${c.isCurrent ? 'is-current-cycle' : ''}`,
-              style: { cursor: 'pointer' },
-            },
-            c.isCurrent &&
-              h('circle', {
-                cx: pt.x,
-                cy: pt.y,
-                r: 22,
-                className: 'wave-current-halo',
-              }),
-            h('circle', {
-              cx: pt.x,
-              cy: pt.y,
-              r: isAct ? 12 : 9,
-              fill: c.isCurrent ? '#b91c1c' : '#160b0d',
-              stroke: isAct ? '#fde047' : elTheme.color,
-              strokeWidth: isAct ? '3' : '2',
-            }),
-            h(
-              'text',
-              {
-                x: pt.x,
-                y: pt.y - 18,
-                textAnchor: 'middle',
-                fill: isAct ? '#fef08a' : '#f5ebe6',
-                fontSize: '12',
-                fontWeight: '700',
-              },
-              `${c.han} · ${c.name}`
-            ),
-            h(
-              'text',
-              {
-                x: pt.x,
-                y: pt.y - 33,
-                textAnchor: 'middle',
-                fill: '#fbbf24',
-                fontSize: '10',
-              },
-              `${c.stage?.name} (${c.stage?.score}%)`
-            ),
-            h(
-              'text',
-              {
-                x: pt.x,
-                y: svgH - 8,
-                textAnchor: 'middle',
-                fill: c.isCurrent ? '#f87171' : '#b89f97',
-                fontSize: '11',
-                fontWeight: c.isCurrent ? '700' : '400',
-              },
-              `${c.startYear}–${c.endYear} (${c.startAge}t)`
-            )
-          );
-        })
-      )
-    ),
-
-    // Selector Pills for 8 Cycles
-    h(
-      'div',
-      { className: 'dayun-pills-row' },
-      cycles.map(c => {
-        const isSel = activeCycle && activeCycle.index === c.index;
-        return h(
-          'button',
-          {
-            key: c.index,
-            type: 'button',
-            onClick: () => setSelectedCycleIdx(c.index),
-            className: `dayun-cycle-btn ${isSel ? 'is-selected' : ''} ${c.isCurrent ? 'is-current' : ''}`,
-          },
-          c.isCurrent && h('span', { className: 'current-cycle-dot' }, 'ẤN ĐƯƠNG VẬN'),
-          h('strong', null, `Vận ${c.index}: ${c.name}`),
-          h('small', null, `${c.startYear}–${c.endYear} · ${c.tenGod}`)
-        );
-      })
-    ),
-
-    // Selected 10-Year Cycle Guidance Box
-    activeCycle &&
-      h(
-        'div',
-        { className: 'dayun-guidance-panel' },
+        // Lưới 10 năm Lưu Niên trong giai đoạn hiện tại
         h(
           'div',
-          { className: 'dayun-guidance-header' },
+          { className: 'annuals-timeline-panel' },
+          h('h4', { className: 'panel-subtitle' }, 'Các Năm Lưu Niên Gần Nhất (Bấm chọn để soi vận năm):'),
           h(
             'div',
-            null,
-            h(
-              'span',
-              { className: 'dayun-kicker' },
-              `ĐẠI VẬN THỨ ${activeCycle.index} (${activeCycle.startYear}–${activeCycle.endYear} · ${activeCycle.startAge}–${activeCycle.endAge} TUỔI)`
-            ),
-            h(
-              'h3',
-              null,
-              `${activeCycle.han} ${activeCycle.name} · Chủ tinh ${activeCycle.tenGod} · Vòng ${activeCycle.stage?.name}`
-            ),
-            h('p', { className: 'dayun-nayin-sub' }, `Nạp âm: ${activeCycle.naYin} — Chủ đề: ${activeCycle.guidance?.theme}`)
-          ),
-          activeCycle.isCurrent &&
-            h('span', { className: 'cinnabar-seal-badge' }, '印 ĐẠI VẬN HIỆN TẠI')
-        ),
-        h(
-          'div',
-          { className: 'dayun-three-columns' },
-          h(
-            'div',
-            { className: 'dayun-col-box' },
-            h('h4', null, '👁️ Cơ Duyên Quan Sát'),
-            h('p', null, activeCycle.guidance?.observe)
-          ),
-          h(
-            'div',
-            { className: 'dayun-col-box' },
-            h('h4', null, '⚠️ Điều Cần Thận Trọng'),
-            h('p', null, activeCycle.guidance?.caution)
-          ),
-          h(
-            'div',
-            { className: 'dayun-col-box' },
-            h('h4', null, '🧭 Bước Hành Động Thực Tế'),
-            h('p', null, activeCycle.guidance?.action)
+            { className: 'annuals-chips-grid' },
+            annuals.map((yr) => {
+              const isSelected = selectedYear === yr.year;
+              return h(
+                'button',
+                {
+                  key: yr.year,
+                  type: 'button',
+                  className: `annual-chip ${isSelected ? 'is-selected-year' : ''} ${yr.isCurrent ? 'is-now-year' : ''}`,
+                  onClick: () => setSelectedYear(yr.year),
+                },
+                h('span', { className: 'annual-year-num' }, yr.year),
+                h('strong', { className: 'annual-han-name' }, `${yr.han} · ${yr.name}`),
+                h('small', { className: 'annual-god' }, yr.tenGod)
+              );
+            })
           )
         )
       ),
 
-    // 10-Year Annual Table (Lưu Niên) with Current Year Cinnabar Stamp Pulse
-    h(
-      'div',
-      { className: 'liunian-table-section' },
-      h('h3', { className: 'liunian-heading' }, '📜 BẢNG LƯU NIÊN 10 NĂM & ẤN TRIỆN CHU SA ĐƯƠNG NIÊN (2022–2031)'),
+      // ================= CỘT PHẢI: LỜI GIẢI ĐỜI THƯỜNG =================
       h(
         'div',
-        { className: 'liunian-table-wrap' },
+        { className: 'split-column split-column-guide' },
         h(
-          'table',
-          { className: 'liunian-table' },
+          'div',
+          { className: 'column-header-bar' },
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · NHỊP ĐIỆU CUỘC ĐỜI'),
+          h('span', { className: 'col-hint' }, `Đang soi: Đại Vận ${curCycle.name} (${curCycle.startAge}–${curCycle.endAge} tuổi)`)
+        ),
+
+        // Thẻ Giải Mã Đại Vận Đang Chọn
+        h(
+          'div',
+          { className: 'guide-card-primary' },
           h(
-            'thead',
-            null,
+            'div',
+            { className: 'guide-card-head' },
             h(
-              'tr',
-              null,
-              h('th', null, 'Năm Lưu Niên'),
-              h('th', null, 'Can Chi & Nạp Âm'),
-              h('th', null, 'Thập Thần & Trường Sinh'),
-              h('th', null, 'Chủ Đề Vận Niên & Lời Khuyên Hành Sự'),
-              h('th', null, 'Ghi Sổ')
-            )
+              'div',
+              { className: 'guide-card-badge' },
+              h(MilestoneIcon, { React, size: 14, color: 'var(--gold)' }),
+              h('span', null, `Thời Ký ${curCycle.startAge} – ${curCycle.endAge} Tuổi`)
+            ),
+            h('span', { className: 'guide-period-pill' }, `${curCycle.startYear} – ${curCycle.endYear}`)
           ),
+          h('h3', { className: 'guide-headline' }, curCycle.guidance?.theme || 'Giai Đoạn Bứt Phá Năng Lực'),
+          h('p', { className: 'guide-meaning-body' }, curCycle.guidance?.observe || 'Môi trường thuận lợi mở rộng kinh nghiệm.'),
           h(
-            'tbody',
-            null,
-            annuals.map(row =>
+            'div',
+            { className: 'guide-prompt-quote' },
+            h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
+            h('span', null, `Lời khuyên cốt lõi: ${curCycle.guidance?.action || 'Kiên trì mục tiêu.'}`)
+          )
+        ),
+
+        // Thẻ Chi Tiết Năm Lưu Niên Đang Chọn
+        curAnnual.year &&
+          h(
+            'div',
+            { className: 'guide-card-secondary' },
+            h('h4', { className: 'card-sec-title' }, `Điểm Rơi Vận Khí Năm ${curAnnual.year} (${curAnnual.name} · ${curAnnual.han})`),
+            h(
+              'div',
+              { className: 'guide-traits-grid' },
               h(
-                'tr',
-                {
-                  key: row.year,
-                  className: row.isCurrent ? 'liunian-current-row stamp-pulse-row' : '',
-                },
-                h(
-                  'td',
-                  { className: 'liunian-year-cell' },
-                  h('strong', null, row.year),
-                  row.isCurrent &&
-                    h('span', { className: 'cinnabar-year-stamp' }, '印 ĐƯƠNG NIÊN')
-                ),
-                h(
-                  'td',
-                  null,
-                  h('strong', { className: 'liunian-ganzhi' }, `${row.han} · ${row.name}`),
-                  h('small', { className: 'liunian-nayin' }, row.naYin)
-                ),
-                h(
-                  'td',
-                  null,
-                  h('span', { className: 'liunian-tengod' }, row.tenGod),
-                  h('small', { className: 'liunian-stage' }, ` · ${row.stage?.name} (${row.stage?.score}%)`)
-                ),
-                h(
-                  'td',
-                  null,
-                  h('strong', { className: 'liunian-theme' }, row.theme),
-                  h('p', { className: 'liunian-advice' }, row.advice)
-                ),
-                h(
-                  'td',
-                  null,
-                  h(
-                    'button',
-                    {
-                      type: 'button',
-                      className: 'liunian-save-btn',
-                      onClick: () =>
-                        onQuickNote &&
-                        onQuickNote(
-                          `Lưu Niên ${row.year} (${row.name} - ${row.tenGod}): ${row.theme}. ${row.advice}`
-                        ),
-                    },
-                    '✎ Lưu'
-                  )
-                )
+                'div',
+                { className: 'trait-box' },
+                h('span', { className: 'trait-label' }, 'Quan Hệ Với Bạn'),
+                h('strong', null, curAnnual.tenGod),
+                h('p', null, curAnnual.theme)
+              ),
+              h(
+                'div',
+                { className: 'trait-box' },
+                h('span', { className: 'trait-label' }, 'Vòng Sinh Khí'),
+                h('strong', null, curAnnual.stage?.name || 'Bình hòa'),
+                h('p', null, curAnnual.stage?.omen || 'Khí thế thuận buồm xuôi gió.')
               )
             )
+          ),
+
+        // Chu Sa Ấn Xác Nhận Chiêm Nghiệm
+        h(
+          'div',
+          { className: 'guide-card-action cinnabar-seal-card' },
+          h(AwardIcon, { React, size: 20, color: 'var(--cinnabar-bright)' }),
+          h(
+            'div',
+            { className: 'guide-action-text' },
+            h('strong', null, 'Chu Sa Ấn Pháp Quyết:'),
+            h('p', null, `Thời thế thay đổi sau mỗi 10 năm. Khi gặp vận thuận lợi hãy dũng cảm vươn buồm; khi gặp vận thử thách hãy kiên nhẫn tích lũy nội lực, chờ ngày gió lên.`)
           )
         )
       )
