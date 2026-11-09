@@ -91,4 +91,4 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - **Loại bỏ +2.0 điểm Thủy ảo khi khuyết giờ**: Trụ giờ chưa rõ không gán nhầm hành Thủy hay nhãn `[ Thủy ]` giả.
 - **Sửa lỗi lệch nút chọn Đại Vận**: Đồng bộ chỉ số 0-based `cIdx`, bấm chọn tuổi nào nhảy đúng chu kỳ đó.
 - **Biểu đồ sóng 80 năm**: Bổ sung đĩa ngọc đen nhẹ, nhãn `★ NAY` tại chu kỳ hiện tại và song ngữ Hán - Việt.
-- **Atomic Commits**: `e25247a`. Dev server `?v=atlas11` HTTP 200 OK.
+- **Atomic Commits**: `e25247a` & `afb455b`. Toàn bộ 17 commit mới nhất đã được đẩy thành công lên GitHub `origin/main` (commit head: `afb455b`). Dev server `?v=atlas11` HTTP 200 OK.
