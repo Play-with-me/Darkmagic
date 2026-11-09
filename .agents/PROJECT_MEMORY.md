@@ -74,8 +74,8 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - Fix: Updated loader.mjs to export env with ACCEPT_NEW_READINGS = 'true'.
 - Verified: Rendered SSR payload now passes acceptNewReadings: true, allowing users to enter birth info and view Bazi matrix.
 
-## 2026-11-09 — Full-Width (98vw) Viewport & 4-Layer Plain-Language Explanations
-- **Mở rộng toàn màn hình**: Phá bỏ giới hạn hẹp 860px của `.reading-content` cũ; `.workspace.reading-result-view` và `.atlas-chart-result-container` mở rộng đạt 98vw (~1800px trên desktop), chia đôi cân đối 52% Trái (đồ bản chuyên sâu) / 48% Phải (lời giải đời thường).
-- **Thanh chọn nhanh (Quick-Switch Tabs)**: Bổ sung thanh tab nút bấm chọn nhanh trực tiếp trên đỉnh cột giải thích ở cả 5 đồ bản (4 Trụ, Thần Sát, 5 Hành, 10 Thần, 8 Đại Vận & 10 Lưu Niên).
-- **Cột Phải 4 Chiều Đời Thường**: Mở rộng lời giải dễ hiểu không mê tín gồm Sự Nghiệp & Tiền Tài, Tình Cảm & Người Thân, Thế Mạnh Bẩm Sinh, Điểm Mù Cần Tránh, Dưỡng Sinh Thể Chất, và Kim Chỉ Nam Ứng Dụng Hàng Ngày.
-- **Atomic Commits**: `fc3a97e` (full-width CSS), `6890dd0` (engine dictionary), `df75bad` (map 1 & 2), `547771a` (map 3, 4, 5). Đã kiểm thử 100% không lỗi SSR và HTTP 200 OK.
+## 2026-11-09 — Zero-Card Open Inscription Layout & 60fps Ambient Ritual Motion Engine
+- **Loại bỏ 100% khung card bao bọc**: Gỡ bỏ `.ritual-mist-card`, viền bo hộp, nền đục che khuất Bát Quái và bài thơ bay. Chuyển toàn bộ 5 đồ bản sang phong cách Kinh Thư Khắc Nổi (Zero-Card Inscription) thuần khiết trên nền đen huyền bí với các đường kẻ mảnh tinh tế.
+- **Thay thế toàn bộ Emoji bằng Ấn Triện Chữ Hán Cổ Phong**: Loại bỏ 100% emoji hiện đại (💼, ❤️, ⚡, ⚠️, 🥗, 🎨, 🧘, ⚔️, 🌟, 🎯...), thay bằng đại tự Hán Triện tôn nghiêm (`事業`, `姻緣`, `天賦`, `慎行`, `養生`, `空間`, `心性`, `財帛`, `戰略`, `契機`, `警示`, `踐行`) và icon Lucide SVG cao cấp.
+- **Cơ chế Ambient Ritual Motion 60fps**: Tích hợp `AmbientRitualField` (8 hạt lửa kim sa và chu sa trôi bồng bềnh), Thiên Bàn quay nghịch hướng vũ trụ (`celestial-orbit-cw` 140s / `celestial-orbit-ccw` 95s), đường sinh khí lấp lánh (`qi-stream-line`), và ấn triện nhịp thở nguyên thần (`aura-breathe`).
+- **Atomic Commits**: `1b822c2` (CSS keyframes & zero-card), `8d3afd8` (AmbientRitualField & GrandMasterMap), `d6d2d47` (5 maps guides & CJK seals). Đã kiểm thử SSR và dev server `?v=atlas7` HTTP 200 OK.
