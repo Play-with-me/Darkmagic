@@ -36,11 +36,199 @@ export const BRANCH_META = {
 };
 
 export const ELEMENT_THEME = {
-  'Mộc':  { color: '#34d399', glow: 'rgba(52, 211, 153, 0.28)', han: '木', guardian: 'Thanh Long (Đông Phương)', trait: 'Nhân từ, sinh sôi, vươn lên, sáng tạo' },
-  'Hỏa':  { color: '#f87171', glow: 'rgba(248, 113, 113, 0.32)', han: '火', guardian: 'Chu Tước (Nam Phương)',    trait: 'Nhiệt huyết, lễ nghĩa, rực rỡ, minh triết' },
-  'Thổ':  { color: '#fbbf24', glow: 'rgba(251, 191, 36, 0.28)',  han: '土', guardian: 'Câu Trần (Trung Cung)',    trait: 'Bao dung, chữ tín, vững chãi, hậu đức' },
-  'Kim':  { color: '#e2e8f0', glow: 'rgba(226, 232, 240, 0.28)', han: '金', guardian: 'Bạch Hổ (Tây Phương)',     trait: 'Quyết đoán, trọng nghĩa, sắc bén, kỷ luật' },
-  'Thủy': { color: '#60a5fa', glow: 'rgba(96, 165, 250, 0.30)',  han: '水', guardian: 'Huyền Vũ (Bắc Phương)',    trait: 'Trí tuệ, thâm trầm, linh hoạt, uyển chuyển' },
+  'Mộc':  { color: '#789e82', glow: 'rgba(120, 158, 130, 0.22)', bg: 'rgba(120, 158, 130, 0.12)', border: 'rgba(120, 158, 130, 0.35)', han: '木', guardian: 'Thanh Long (Đông Phương)', trait: 'Nhân từ, sinh sôi, vươn lên, sáng tạo' },
+  'Hỏa':  { color: '#c9655b', glow: 'rgba(201, 101, 91, 0.24)', bg: 'rgba(201, 101, 91, 0.12)', border: 'rgba(201, 101, 91, 0.35)', han: '火', guardian: 'Chu Tước (Nam Phương)',    trait: 'Nhiệt huyết, lễ nghĩa, rực rỡ, minh triết' },
+  'Thổ':  { color: '#c2966d', glow: 'rgba(194, 150, 109, 0.22)', bg: 'rgba(194, 150, 109, 0.12)', border: 'rgba(194, 150, 109, 0.35)', han: '土', guardian: 'Câu Trần (Trung Cung)',    trait: 'Bao dung, chữ tín, vững chãi, hậu đức' },
+  'Kim':  { color: '#c7bfb8', glow: 'rgba(199, 191, 184, 0.20)', bg: 'rgba(199, 191, 184, 0.12)', border: 'rgba(199, 191, 184, 0.35)', han: '金', guardian: 'Bạch Hổ (Tây Phương)',     trait: 'Quyết đoán, trọng nghĩa, sắc bén, kỷ luật' },
+  'Thủy': { color: '#6d88a3', glow: 'rgba(109, 136, 163, 0.22)', bg: 'rgba(109, 136, 163, 0.12)', border: 'rgba(109, 136, 163, 0.35)', han: '水', guardian: 'Huyền Vũ (Bắc Phương)',    trait: 'Trí tuệ, thâm trầm, linh hoạt, uyển chuyển' },
+};
+
+// 10 Hình Tượng Bản Mệnh Nhật Chủ (Dành riêng cho người mới hiểu trong 10 giây)
+export const DAY_MASTER_ARCHETYPES = {
+  'Giáp': {
+    name: 'Giáp Mộc',
+    han: '甲木',
+    archetype: 'Cây Cổ Thụ Ngàn Năm',
+    tagline: 'Vươn cao ngay thẳng · Trượng nghĩa gánh vác',
+    personality: 'Bạn mang khí chất của cây đại thụ giữa đại ngàn: khẳng khái, cương trực, luôn muốn tiến về phía trước và che chở cho người xung quanh.',
+    superpower: 'Bản lĩnh trụ cột, không bao giờ chịu khuất phục trước gian nan, đáng tin cậy tuyệt đối.',
+    shadow: 'Đôi lúc quá cứng nhắc, khó hạ mình nhận sai; khi gặp bão lớn dễ gãy nếu không học cách mềm dẻo.',
+    habitAdvice: 'Học cách lắng nghe lời khuyên mềm mỏng, hòa mình vào thiên nhiên hoặc cây xanh để nuôi dưỡng sinh khí.',
+  },
+  'Ất': {
+    name: 'Ất Mộc',
+    han: '乙木',
+    archetype: 'Cành Hoa Dây Leo Mềm Mại',
+    tagline: 'Uyển chuyển thích nghi · Sức sống tiềm tàng',
+    personality: 'Bạn như dây leo hay nhành phong lan uyển chuyển: khéo léo trong giao tiếp, giỏi thích ứng với mọi hoàn cảnh và biết nương tựa đúng chỗ.',
+    superpower: 'Khả năng sinh tồn bền bỉ, dễ hòa nhập cộng đồng và kết nối các mối quan hệ quý báu.',
+    shadow: 'Dễ do dự, phụ thuộc vào ý kiến người khác, cảm xúc bên trong phức tạp và hay lo nghĩ vu vơ.',
+    habitAdvice: 'Xây dựng sự tự tin nội tại, xác lập ranh giới cá nhân rõ ràng trong các mối quan hệ tình cảm.',
+  },
+  'Bính': {
+    name: 'Bính Hỏa',
+    han: '丙火',
+    archetype: 'Ánh Thái Dương Rực Rỡ',
+    tagline: 'Tỏa sáng ấm áp · Nhiệt thành vị tha',
+    personality: 'Bạn như vầng thái dương tỏa sáng không màng đền đáp: cởi mở, hào sảng, tràn đầy năng lượng tích cực và luôn mang lại nụ cười cho tập thể.',
+    superpower: 'Sức hút tự nhiên, khả năng truyền cảm hứng và thổi bùng nhiệt huyết cho những người xung quanh.',
+    shadow: 'Tính khí bốc đồng, mau giận mau quên; đôi khi tiêu tốn quá nhiều năng lượng cho người ngoài mà quên chăm sóc bản thân.',
+    habitAdvice: 'Tập thiền định hoặc đi dạo bên mặt nước tĩnh lặng để làm dịu nhiệt lượng nội tâm.',
+  },
+  'Đinh': {
+    name: 'Đinh Hỏa',
+    han: '丁火',
+    archetype: 'Ngọn Nến Đêm Đông',
+    tagline: 'Âm thầm soi sáng · Tinh tế sâu sắc',
+    personality: 'Bạn như ngọn nến lung linh trong màn đêm: ấm áp kín đáo, giàu lòng trắc ẩn, suy nghĩ thấu đáo và có đôi mắt nhìn thấu tâm can người khác.',
+    superpower: 'Khả năng quan sát cực kỳ nhạy bén, thiên hướng nghiên cứu chuyên sâu hoặc sáng tạo nghệ thuật tinh xảo.',
+    shadow: 'Dễ suy nghĩ nhiều sinh ra muộn phiền; cảm xúc nhạy cảm quá mức trước thái độ vô tình của người thân.',
+    habitAdvice: 'Giữ môi trường sống ngăn nắp, tiếp xúc với ánh nắng sớm để xua tan cảm giác hoài nghi.',
+  },
+  'Mậu': {
+    name: 'Mậu Thổ',
+    han: '戊土',
+    archetype: 'Dãy Núi Đá Sừng Sững',
+    tagline: 'Vững như bàn thạch · Trầm tĩnh bao dung',
+    personality: 'Bạn như dãy núi đá hùng vĩ đứng vững trước bão giông: trầm tĩnh, giữ chữ tín hàng đầu, chậm mà chắc, là chỗ dựa an tâm nhất của bạn bè.',
+    superpower: 'Sức chịu đựng phi thường, lòng trung thành và khả năng gìn giữ những bí mật lớn lao.',
+    shadow: 'Chậm thay đổi, bảo thủ trước những ý tưởng mới mẻ; khi đã giận thì khó lòng nguôi ngoai.',
+    habitAdvice: 'Chủ động đón nhận những luồng gió mới, luyện tập thể dục đều đặn để cơ thể không bị đình trệ.',
+  },
+  'Kỷ': {
+    name: 'Kỷ Thổ',
+    han: '己土',
+    archetype: 'Mảnh Đất Phù Sa Màu Mỡ',
+    tagline: 'Bao dung dưỡng dục · Thấu hiểu đa chiều',
+    personality: 'Bạn như mảnh đất phù sa phì nhiêu: hiền hòa, bao dung, có năng khiếu chăm sóc và ươm mầm tài năng cho người khác phát triển.',
+    superpower: 'Đa tài đa nghệ, thấu tình đạt lý, biết cách hòa giải xung đột một cách êm đẹp.',
+    shadow: 'Hay ôm đồm chuyện thiên hạ, dễ bị người khác lợi dụng lòng tốt hoặc không biết cách từ chối.',
+    habitAdvice: 'Học cách nói "Không" một cách dứt khoát; dành thời gian riêng để tự bồi đắp tri thức cho chính mình.',
+  },
+  'Canh': {
+    name: 'Canh Kim',
+    han: '庚金',
+    archetype: 'Thanh Bảo Kiếm Thép',
+    tagline: 'Cương trực dứt khoát · Trọng nghĩa khinh tài',
+    personality: 'Bạn như thanh kiếm báu rèn trong lửa đỏ: thẳng thắn, công bằng, ghét sự giả dối, có ý chí sắt đá và tác phong dứt khoát như sấm chớp.',
+    superpower: 'Khả năng giải quyết dứt điểm các khủng hoảng phức tạp, đi đầu mở đường trong gian khó.',
+    shadow: 'Lời nói đôi khi quá thẳng thắn khiến người khác tổn thương; tính tình có phần nóng nảy và hiếu thắng.',
+    habitAdvice: 'Học cách mài giũa lời nói mềm mại hơn; tập pha trà hoặc nghe nhạc cổ điển để làm dịu chất thép.',
+  },
+  'Tân': {
+    name: 'Tân Kim',
+    han: '辛金',
+    archetype: 'Viên Ngọc Quý Tinh Xảo',
+    tagline: 'Thanh cao tinh khiết · Tự tôn hoàn mỹ',
+    personality: 'Bạn như viên ngọc quý được mài giũa tỉ mỉ: thanh lịch, có gu thẩm mỹ cao, cầu toàn, coi trọng danh dự và luôn muốn xuất hiện chỉnh chu nhất.',
+    superpower: 'Trực giác thẩm mỹ tuyệt vời, sự tinh tế trong tiểu tiết và khả năng tỏa sáng rực rỡ khi được đặt đúng vị trí.',
+    shadow: 'Dễ tự ái, khó chịu trước sự cẩu thả của người khác; đôi khi quá khắt khe với chính bản thân mình.',
+    habitAdvice: 'Học cách chấp nhận những điều chưa hoàn hảo trong cuộc sống để tâm hồn được thanh thản.',
+  },
+  'Nhâm': {
+    name: 'Nhâm Thủy',
+    han: '壬水',
+    archetype: 'Đại Dương Sóng Cuộn',
+    tagline: 'Phóng khoáng tự do · Trí tuệ mênh mông',
+    personality: 'Bạn như dòng nước đại dương mênh mông: thông minh, phóng khoáng, tầm nhìn xa rộng, không thích bị gò bó trong những khuôn khổ chật hẹp.',
+    superpower: 'Khả năng thích ứng siêu phàm, tư duy chiến lược và sự dũng cảm đối diện với sóng lớn cuộc đời.',
+    shadow: 'Dễ thay đổi ý định, thiếu kiên nhẫn với các việc lặp đi lặp lại tỉ mỉ; khi xúc động dễ như sóng thần quét qua.',
+    habitAdvice: 'Xây dựng kỷ luật thời gian cụ thể; ghi chép mục tiêu ra giấy để dòng nước có bờ kè định hướng.',
+  },
+  'Quý': {
+    name: 'Quý Thủy',
+    han: '癸水',
+    archetype: 'Cơn Mưa Xuân Dịu Dàng',
+    tagline: 'Thanh thuần lắng đọng · Trực giác tâm linh',
+    personality: 'Bạn như hạt sương ban mai hay cơn mưa phùn mùa xuân: thâm trầm, nhẹ nhàng, giàu cảm xúc, có trực giác tâm linh và sự nhạy cảm tuyệt vời.',
+    superpower: 'Khả năng thẩm thấu tri thức ngầm, đồng cảm sâu sắc với nỗi đau của người khác và sự kiên nhẫn vô hạn.',
+    shadow: 'Dễ chìm vào cảm giác u sầu nội tâm; hay suy nghĩ tiêu cực hoặc hoài nghi bản thân khi ở một mình lâu.',
+    habitAdvice: 'Tập thể dục ngoài trời, tiếp xúc với ánh nắng ban mai và chia sẻ tâm sự với bạn bè thân thiết.',
+  },
+};
+
+// Cẩm nang giải mã 4 Trụ cho người mới
+export const PILLAR_ROLES_BEGINNER = [
+  {
+    pillar: 'Trụ Năm',
+    theme: 'Gốc Rễ Gia Đình & Niên Thiếu',
+    period: 'Từ 1 – 16 tuổi',
+    meaning: 'Đại diện cho phúc ấm của ông bà cha mẹ, môi trường bạn lớn lên và hình ảnh đầu tiên người lạ cảm nhận về bạn.',
+    question: 'Nền tảng cội nguồn nào đã hình thành nên con người bạn hôm nay?',
+  },
+  {
+    pillar: 'Trụ Tháng',
+    theme: 'Sự Nghiệp & Năng Lực Xã Hội',
+    period: 'Từ 17 – 32 tuổi',
+    meaning: 'Cột trụ quan trọng nhất về mặt sự nghiệp: thể hiện tài năng kiếm tiền, môi trường làm việc lý tưởng và năng lực ứng biến.',
+    question: 'Môi trường làm việc nào giúp bạn phát huy tối đa sức mạnh bản thân?',
+  },
+  {
+    pillar: 'Trụ Ngày',
+    theme: 'Bản Ngã Cốt Lõi & Hôn Nhân',
+    period: 'Từ 33 – 48 tuổi',
+    meaning: 'Thiên Can là chính bạn, Địa Chi là người bạn đời. Trụ này tiết lộ nội tâm thầm kín nhất và mẫu người tương hợp bền lâu.',
+    question: 'Bạn thực sự là ai khi rũ bỏ mọi chức danh, và bạn cần ai bên cạnh?',
+  },
+  {
+    pillar: 'Trụ Giờ',
+    theme: 'Tư Duy Sáng Tạo & Hậu Vận',
+    period: 'Từ 49 tuổi trở đi',
+    meaning: 'Đại diện cho con cái, học trò, những dự án tâm huyết của cuộc đời và sự an yên trong tâm hồn khi về già.',
+    question: 'Di sản và giá trị tinh thần nào bạn muốn để lại cho đời?',
+  },
+];
+
+// Cẩm nang giải mã Sao Thần Sát đời thường cho người mới
+export const SHENSHA_BEGINNER_MEANINGS = {
+  'Thiên Ất Quý Nhân': {
+    title: 'Sao Quý Nhân Phù Trợ',
+    nature: 'Đại Cát',
+    simpleDesc: 'Trong những thời điểm khó khăn bế tắc nhất, bạn luôn có người xuất hiện mở đường dẫn lối hoặc gỡ rối kịp thời.',
+    advice: 'Hãy sống chân thành và giữ chữ tín, phước lành từ quý nhân sẽ luôn bên bạn.',
+  },
+  'Văn Xương Quý Nhân': {
+    title: 'Sao Trí Tuệ & Thi Cử',
+    nature: 'Cát Tinh',
+    simpleDesc: 'Bạn có khiếu học nhanh hiểu rộng, khéo léo trong văn chương chữ nghĩa, làm việc liên quan đến tài liệu, ý tưởng rất sắc bén.',
+    advice: 'Nên đọc sách thường xuyên và trau chuốt kỹ năng viết lách, truyền đạt.',
+  },
+  'Đào Hoa': {
+    title: 'Sao Duyên Dáng & Thu Hút',
+    nature: 'Trung Tính / Duyên Vận',
+    simpleDesc: 'Bạn có sức hút tự nhiên trong ánh mắt, nụ cười và giọng nói; dễ tạo thiện cảm và được người khác phái chú ý.',
+    advice: 'Biết chọn lọc mối quan hệ chân thành, tránh cả nể để không vướng vào thị phi tình cảm.',
+  },
+  'Dịch Mã': {
+    title: 'Sao Xê Dịch & Bứt Phá',
+    nature: 'Vận Động Cát Tinh',
+    simpleDesc: 'Bạn là người không chịu ngồi yên một chỗ, càng đi xa, công tác hoặc làm việc quốc tế thì cơ hội càng rộng mở.',
+    advice: 'Dám bước ra khỏi vùng an toàn, phát triển sự nghiệp ở các thành phố lớn hoặc môi trường đa quốc gia.',
+  },
+  'Hoa Cái': {
+    title: 'Sao Nghệ Thuật & Chiều Sâu',
+    nature: 'Thanh Cao Tinh',
+    simpleDesc: 'Bạn có tâm hồn nghệ sĩ, chiều sâu triết học và trực giác tâm linh mạnh mẽ; thích những khoảnh khắc tĩnh lặng một mình.',
+    advice: 'Dành không gian riêng cho sở thích sáng tạo, thiền định hoặc nghiên cứu chuyên môn độc lập.',
+  },
+  'Lộc Tồn': {
+    title: 'Sao Tài Lộc Trời Ban',
+    nature: 'Phúc Tinh',
+    simpleDesc: 'Khả năng tích lũy tài chính tự thân vững chắc; biết cách giữ tiền và ít khi rơi vào cảnh túng thiếu hoàn toàn.',
+    advice: 'Tích lũy tài sản dài hạn, đầu tư an toàn và chia sẻ một phần may mắn cho cộng đồng.',
+  },
+  'Kình Dương': {
+    title: 'Sao Bản Lĩnh Thép',
+    nature: 'Nghịch Cảnh Tinh',
+    simpleDesc: 'Tính khí cương liệt, không ngại va chạm, có sức bền phi thường để vượt qua nghịch cảnh và lội ngược dòng.',
+    advice: 'Học cách tiết chế sự nóng vội; chuyển hóa năng lượng chiến đấu vào các mục tiêu thể thao hoặc công việc cạnh tranh cao.',
+  },
+  'Không Vong': {
+    title: 'Vùng Trống Siêu Thoát',
+    nature: 'Triết Học Tinh',
+    simpleDesc: 'Tâm hồn không quá bám chấp vào danh lợi vật chất vụn vặt; dễ ngộ ra chân lý cuộc đời và có cái nhìn nhẹ nhõm hơn người thường.',
+    advice: 'Đừng quá cưỡng cầu những điều đã qua; thuận theo tự nhiên sẽ thấy lòng thanh thản.',
+  },
 };
 
 // 12 Vòng Trường Sinh
@@ -706,6 +894,43 @@ export function enrichBaziChart(chart) {
     });
   });
 
+  const archetype = DAY_MASTER_ARCHETYPES[dayStem] || DAY_MASTER_ARCHETYPES['Nhâm'];
+
+  // Xác định 3 điểm cốt lõi người mới cần biết trong 30 giây đầu tiên
+  const dominantElementEntry = Object.entries(weightedCounts).sort((a, b) => b[1] - a[1])[0] || [dayElement, 1];
+  const missingElements = Object.entries(weightedCounts).filter(([_, v]) => v === 0).map(([k]) => k);
+
+  const beginnerGuide = {
+    archetype,
+    pillarsGuide: PILLAR_ROLES_BEGINNER,
+    takeaways: [
+      {
+        id: 'archetype',
+        label: 'Hình Tượng Bản Mệnh',
+        title: archetype.archetype,
+        subtitle: archetype.tagline,
+        detail: archetype.personality,
+      },
+      {
+        id: 'dominant',
+        label: 'Ngũ Khí Nổi Trội Nhất',
+        title: `Hành ${dominantElementEntry[0]} (${dominantElementEntry[1].toFixed(1)} điểm)`,
+        subtitle: ELEMENT_THEME[dominantElementEntry[0]]?.trait || 'Khí chất chủ đạo',
+        detail: `Hành ${dominantElementEntry[0]} chiếm ưu thế trong lá số, định hình phong cách hành động và tư duy tự nhiên của bạn.`,
+      },
+      {
+        id: 'remedy',
+        label: 'Chất Liệu Cần Bổ Dưỡng',
+        title: `Bổ trợ Hành ${yongShen.yongShen.element}`,
+        subtitle: yongShen.isStrong ? 'Thân Vượng · Tiết khí thư thái' : 'Thân Nhược · Tiếp thêm nguyên khí',
+        detail: missingElements.length > 0 
+          ? `Lá số hiện khuyết hành ${missingElements.join(', ')}. Hãy chú trọng dung nạp năng lượng hành ${yongShen.yongShen.element} vào lối sống.`
+          : `Lá số tương đối hài hòa. Hãy phát huy tối đa năng lực của hành ${yongShen.yongShen.element} trong sự nghiệp.`,
+      },
+    ],
+    shenShaMeanings: SHENSHA_BEGINNER_MEANINGS,
+  };
+
   return {
     ...chart,
     dayStem,
@@ -721,5 +946,6 @@ export function enrichBaziChart(chart) {
     yongShen,
     timeline,
     tenGodList: Object.values(tenGodStats),
+    beginnerGuide,
   };
 }
