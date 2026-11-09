@@ -249,8 +249,26 @@ export function LuckTimeline({ React, chart }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · NHỊP ĐIỆU CUỘC ĐỜI'),
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · NHỊP ĐIỆU CUỘC ĐỜI & ĐẠI VẬN'),
           h('span', { className: 'col-hint' }, `Đang soi: Đại Vận ${curCycle.name} (${curCycle.startAge}–${curCycle.endAge} tuổi)`)
+        ),
+
+        // Hàng nút chọn nhanh Đại Vận 10 năm
+        h(
+          'div',
+          { className: 'quick-switch-tabs' },
+          cycles.map((c) =>
+            h(
+              'button',
+              {
+                key: c.index,
+                type: 'button',
+                className: `switch-tab-btn ${curCycle.index === c.index ? 'is-active' : ''}`,
+                onClick: () => setSelectedCycleIdx(c.index),
+              },
+              `${c.startAge}–${c.endAge}t: ${c.name}${c.isCurrent ? ' ★' : ''}`
+            )
+          )
         ),
 
         // Thẻ Giải Mã Đại Vận Đang Chọn
@@ -264,7 +282,7 @@ export function LuckTimeline({ React, chart }) {
               'div',
               { className: 'guide-card-badge' },
               h(MilestoneIcon, { React, size: 14, color: 'var(--gold)' }),
-              h('span', null, `Thời Ký ${curCycle.startAge} – ${curCycle.endAge} Tuổi`)
+              h('span', null, `Đại Vận ${curCycle.startAge} – ${curCycle.endAge} Tuổi (${curCycle.han})`)
             ),
             h('span', { className: 'guide-period-pill' }, `${curCycle.startYear} – ${curCycle.endYear}`)
           ),
@@ -274,35 +292,87 @@ export function LuckTimeline({ React, chart }) {
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Lời khuyên cốt lõi: ${curCycle.guidance?.action || 'Kiên trì mục tiêu.'}`)
+            h('span', null, `Chiến lược cốt lõi: ${curCycle.guidance?.action || 'Kiên trì mục tiêu dài hạn.'}`)
+          ),
+
+          // Lưới 4 Chiều Chiến Lược 10 Năm (Xu thế, Cơ hội, Cẩn trọng, Hành động)
+          h(
+            'div',
+            { className: 'guide-domains-grid' },
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '⚔️ Nhịp Điệu Chiến Lược'),
+              h('p', { className: 'domain-card-desc' }, curCycle.tenGod.includes('Tài') || curCycle.tenGod.includes('Thương') ? 'Vận Tiến Công: Thời điểm vàng mở rộng kinh doanh, đầu tư và bứt phá danh tiếng.' : 'Vận Tích Lũy: Tập trung học tập, củng cố nội lực, xây dựng nền tảng vững chắc.')
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '🌟 Cơ Hội Bứt Phá'),
+              h('p', { className: 'domain-card-desc' }, curCycle.guidance?.observe)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '⚠️ Điểm Cần Cẩn Trọng'),
+              h('p', { className: 'domain-card-desc' }, curCycle.guidance?.caution)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '🎯 Hành Động Đề Xuất'),
+              h('p', { className: 'domain-card-desc' }, curCycle.guidance?.action)
+            )
           )
         ),
 
-        // Thẻ Chi Tiết Năm Lưu Niên Đang Chọn
-        curAnnual.year &&
+        // Thẻ Chi Tiết Năm Lưu Niên Đang Chọn (có thanh chọn nhanh các năm)
+        h(
+          'div',
+          { className: 'guide-card-secondary' },
+          h('h4', { className: 'card-sec-title' }, `Điểm Rơi Vận Khí Năm ${curAnnual.year} (${curAnnual.name} · ${curAnnual.han})`),
+          // Hàng nút chọn nhanh năm
           h(
             'div',
-            { className: 'guide-card-secondary' },
-            h('h4', { className: 'card-sec-title' }, `Điểm Rơi Vận Khí Năm ${curAnnual.year} (${curAnnual.name} · ${curAnnual.han})`),
-            h(
-              'div',
-              { className: 'guide-traits-grid' },
+            { className: 'quick-switch-tabs', style: { marginBottom: '12px' } },
+            annuals.map((yr) =>
               h(
-                'div',
-                { className: 'trait-box' },
-                h('span', { className: 'trait-label' }, 'Quan Hệ Với Bạn'),
-                h('strong', null, curAnnual.tenGod),
-                h('p', null, curAnnual.theme)
-              ),
-              h(
-                'div',
-                { className: 'trait-box' },
-                h('span', { className: 'trait-label' }, 'Vòng Sinh Khí'),
-                h('strong', null, curAnnual.stage?.name || 'Bình hòa'),
-                h('p', null, curAnnual.stage?.omen || 'Khí thế thuận buồm xuôi gió.')
+                'button',
+                {
+                  key: yr.year,
+                  type: 'button',
+                  className: `switch-tab-btn ${curAnnual.year === yr.year ? 'is-active' : ''}`,
+                  onClick: () => setSelectedYear(yr.year),
+                },
+                `${yr.year} ${yr.name}${yr.isCurrent ? ' (Hiện tại)' : ''}`
               )
             )
           ),
+          h(
+            'div',
+            { className: 'guide-traits-grid' },
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Quan Hệ Với Bạn'),
+              h('strong', null, curAnnual.tenGod),
+              h('p', null, curAnnual.theme)
+            ),
+            h(
+              'div',
+              { className: 'trait-box' },
+              h('span', { className: 'trait-label' }, 'Vòng Sinh Khí'),
+              h('strong', null, curAnnual.stage?.name || 'Bình hòa'),
+              h('p', null, curAnnual.stage?.omen || 'Khí thế thuận buồm xuôi gió.')
+            )
+          ),
+          h(
+            'div',
+            { className: 'guide-prompt-quote', style: { marginTop: '12px' } },
+            h(InfoIcon, { React, size: 14, color: 'var(--copper-gold)' }),
+            h('span', null, `Lời khuyên cho năm ${curAnnual.year}: ${curAnnual.advice || 'Chủ động điều phối công việc linh hoạt.'}`)
+          )
+        ),
 
         // Chu Sa Ấn Xác Nhận Chiêm Nghiệm
         h(

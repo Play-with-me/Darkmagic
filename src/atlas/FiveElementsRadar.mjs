@@ -48,6 +48,10 @@ export function FiveElementsRadar({ React, chart }) {
       excess: 'Nếu Mộc quá vượng: dễ bướng bỉnh, thiếu linh hoạt, hay suy nghĩ ôm đồm.',
       deficient: 'Nếu Mộc khuyết thiếu: dễ chán nản, thiếu định hướng dài hạn, hay do dự trước cơ hội.',
       lifestyle: 'Thêm cây xanh vào bàn làm việc, tập thói quen dậy sớm đi bộ dưới bóng cây, học thêm kỹ năng mới.',
+      health: 'Chăm sóc gan mật, điều tiết cảm xúc bực bội, ngủ trước 23h để gan đào thải độc tố tốt nhất.',
+      environment: 'Không gian sống thoáng đãng, nhiều ánh sáng tự nhiên, trang trí nội thất gỗ mộc tự nhiên.',
+      careerFields: 'Giáo dục, nông nghiệp hữu cơ, y dược thảo mộc, xuất bản, kiến trúc và sáng tạo nội dung.',
+      mindset: 'Rèn tính mềm dẻo như cây tre trước gió bão: kiên định gốc rễ nhưng linh hoạt cành lá.',
     },
     'Hỏa': {
       virtue: 'Nhiệt Huyết & Khả Năng Lan Tỏa',
@@ -55,6 +59,10 @@ export function FiveElementsRadar({ React, chart }) {
       excess: 'Nếu Hỏa quá vượng: dễ nóng vội, bốc đồng, nói nhanh hơn nghĩ, mau kiệt sức.',
       deficient: 'Nếu Hỏa khuyết thiếu: thiếu nhiệt tình, ngại xuất hiện trước đám đông, tay chân dễ lạnh.',
       lifestyle: 'Tắm nắng sớm 15 phút mỗi ngày, dùng ánh đèn vàng ấm, giữ nụ cười và sự chủ động khi chào hỏi.',
+      health: 'Dưỡng tim mạch và tuần hoàn máu, tránh làm việc quá sức khi trời nắng gắt, uống trà hoa cúc.',
+      environment: 'Không gian ấm cúng, sử dụng sắc đỏ son / cam đất / tím trầm tạo điểm nhấn sinh động.',
+      careerFields: 'Truyền thông giải trí, marketing, nhà hàng ẩm thực, công nghệ cao, quan hệ công chúng.',
+      mindset: 'Học cách làm nguội cái đầu trước khi đưa ra các quyết định quan trọng; dùng sự nhiệt tâm để sưởi ấm người khác.',
     },
     'Thổ': {
       virtue: 'Chữ Tín & Sự Ổn Định Vững Chắc',
@@ -62,6 +70,10 @@ export function FiveElementsRadar({ React, chart }) {
       excess: 'Nếu Thổ quá vượng: chậm thích nghi, bảo thủ, hay lo xa cho chuyện gia đình.',
       deficient: 'Nếu Thổ khuyết thiếu: thiếu kiên nhẫn tích lũy, dễ thay đổi mục tiêu giữa chừng.',
       lifestyle: 'Giữ môi trường sống ngăn nắp, tôn trọng lời hứa, tập thiền tĩnh tâm hoặc làm vườn nhẹ nhàng.',
+      health: 'Chăm sóc tỳ vị và hệ tiêu hóa, ăn uống đúng giờ, tránh suy nghĩ quá nhiều trong lúc ăn.',
+      environment: 'Nội thất gốm sứ, đá phong thủy, màu vàng đất, nâu trầm tạo cảm giác che chở, an toàn.',
+      careerFields: 'Bất động sản, xây dựng, bảo hiểm, kho bãi, quản lý nhân sự và các ngành nông lâm nghiệp.',
+      mindset: 'Giữ chữ tín làm gốc; biết bao dung nhưng phải thiết lập ranh giới rõ ràng để không bị lợi dụng.',
     },
     'Kim': {
       virtue: 'Kỷ Luật & Trực Giác Quyết Đoán',
@@ -69,6 +81,10 @@ export function FiveElementsRadar({ React, chart }) {
       excess: 'Nếu Kim quá vượng: quá khắt khe với bản thân và người khác, lời nói dễ làm tổn thương.',
       deficient: 'Nếu Kim khuyết thiếu: thiếu nguyên tắc, dễ thỏa hiệp với sự cẩu thả, khó dứt khoát buông bỏ.',
       lifestyle: 'Lập thời gian biểu rõ ràng, giữ đồ dùng kim loại/đồng hồ sạch bóng, tập hít thở sâu nuôi dưỡng phổi.',
+      health: 'Dưỡng phổi và hệ hô hấp, tránh nơi khói bụi, giữ ấm cổ họng và tập yoga hít thở dưỡng khí.',
+      environment: 'Không gian tối giản (minimalism), sắc trắng, ánh bạc và các vật phẩm kim khí tinh xảo.',
+      careerFields: 'Tài chính ngân hàng, luật pháp, cơ khí chính xác, quân đội, an ninh và kiểm toán.',
+      mindset: 'Lấy sự cương trực làm giáp, lấy lòng từ bi làm khiên; nói lời ái ngữ để giữ hòa khí.',
     },
     'Thủy': {
       virtue: 'Trí Tuệ & Khả Năng Thích Nghi',
@@ -76,6 +92,10 @@ export function FiveElementsRadar({ React, chart }) {
       excess: 'Nếu Thủy quá vượng: cảm xúc thất thường như sóng biển, hay suy diễn phức tạp hóa vấn đề.',
       deficient: 'Nếu Thủy khuyết thiếu: tư duy cứng nhắc, ngại thay đổi phương pháp, uống ít nước.',
       lifestyle: 'Uống đủ nước ấm mỗi ngày, nghe tiếng sóng/nhạc êm dịu, rèn luyện sự tĩnh lặng nội tâm trước khi quyết định.',
+      health: 'Bồi dưỡng thận và hệ bài tiết, giữ ấm lòng bàn chân, tránh thức khuya làm tổn hao chân âm.',
+      environment: 'Bể cá cảnh, đài phun nước mini, sắc xanh lam / đen tuyền mang lại cảm giác sâu thẳm tĩnh tại.',
+      careerFields: 'Logistic hàng hải, công nghệ thông tin, ngoại giao, tư vấn tâm lý, nghiên cứu chiến lược.',
+      mindset: 'Mềm mại như nước luồn qua kẽ đá: gặp chướng ngại vật thì uốn lượn đi qua, không đối đầu vô ích.',
     },
   };
 
@@ -303,8 +323,28 @@ export function FiveElementsRadar({ React, chart }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · CÂN BẰNG NĂNG LƯỢNG'),
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · CÂN BẰNG NĂNG LƯỢNG & SỨC KHỎE'),
           h('span', { className: 'col-hint' }, `Đang soi: Hành ${selectedEl}`)
+        ),
+
+        // Hàng nút chọn nhanh 5 Hành
+        h(
+          'div',
+          { className: 'quick-switch-tabs' },
+          ELEMENTS.map((el) => {
+            const score = (weightedCounts[el] || 0).toFixed(1);
+            const theme = ELEMENT_THEME[el];
+            return h(
+              'button',
+              {
+                key: el,
+                type: 'button',
+                className: `switch-tab-btn ${selectedEl === el ? 'is-active' : ''}`,
+                onClick: () => setSelectedEl(el),
+              },
+              `${theme.han} Hành ${el} (${score}đ)`
+            );
+          })
         ),
 
         // Thẻ Giải Mã Thân Vượng / Thân Nhược
@@ -318,9 +358,9 @@ export function FiveElementsRadar({ React, chart }) {
               'div',
               { className: 'guide-card-badge' },
               h(ScaleIcon, { React, size: 14, color: 'var(--gold)' }),
-              h('span', null, yongShen.isStrong ? 'Thể Trạng Thân Vượng' : 'Thể Trạng Thân Nhược')
+              h('span', null, yongShen.isStrong ? 'Thể Trạng: Thân Vượng' : 'Thể Trạng: Thân Nhược')
             ),
-            h('span', { className: 'guide-period-pill' }, 'Nguyên Khí')
+            h('span', { className: 'guide-period-pill' }, 'Nguyên Khí Sinh Mệnh')
           ),
           h('h3', { className: 'guide-headline' }, yongShen.isStrong ? 'Thân Vượng: Động cơ mạnh, cần nơi tỏa nhiệt' : 'Thân Nhược: Tinh tế nhạy cảm, cần nạp dưỡng khí'),
           h(
@@ -334,15 +374,15 @@ export function FiveElementsRadar({ React, chart }) {
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Dụng Thần cứu cánh: Hành ${yongShen.yongShen.element} — ${yongShen.yongShen.desc || 'Chìa khóa mở khóa vượng vận.'}`)
+            h('span', null, `Chất liệu cứu cánh (Dụng Thần): Bổ trợ Hành ${yongShen.yongShen.element} — ${yongShen.yongShen.desc || 'Chìa khóa mở khóa vượng vận thuận hòa.'}`)
           )
         ),
 
-        // Thẻ Chi Tiết Hành Đang Chọn
+        // Thẻ Chi Tiết Hành Đang Chọn & 4 Chiều Đời Sống
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, `Hành ${selectedEl} (${curTheme.han}) Trong Tâm Tính & Lối Sống`),
+          h('h4', { className: 'card-sec-title' }, `Hành ${selectedEl} (${curTheme.han}) Trong Tâm Tính & Ứng Dụng Thực Tế`),
           h('p', { className: 'card-sec-desc' }, curGuide.meaning),
           h(
             'div',
@@ -357,9 +397,39 @@ export function FiveElementsRadar({ React, chart }) {
             h(
               'div',
               { className: 'trait-box' },
-              h('span', { className: 'trait-label' }, 'Biểu Hiện'),
-              h('strong', null, (weightedCounts[selectedEl] || 0) > 2.5 ? 'Đang Vượng' : (weightedCounts[selectedEl] || 0) === 0 ? 'Khuyết Thiếu' : 'Vừa Vặn'),
+              h('span', { className: 'trait-label' }, 'Biểu Hiện Trong Lá Số'),
+              h('strong', null, (weightedCounts[selectedEl] || 0) > 2.5 ? 'Đang Rất Vượng' : (weightedCounts[selectedEl] || 0) === 0 ? 'Khuyết Thiếu' : 'Hài Hòa Vừa Vặn'),
               h('p', null, (weightedCounts[selectedEl] || 0) > 2.5 ? curGuide.excess : curGuide.deficient)
+            )
+          ),
+
+          // Lưới 4 Chiều Ứng Dụng Ngũ Hành Đời Thường
+          h(
+            'div',
+            { className: 'guide-domains-grid' },
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '🥗 Dưỡng Sinh & Thể Chất'),
+              h('p', { className: 'domain-card-desc' }, curGuide.health)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '🎨 Màu Sắc & Không Gian'),
+              h('p', { className: 'domain-card-desc' }, curGuide.environment)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '💼 Nghề Nghiệp Thích Hợp'),
+              h('p', { className: 'domain-card-desc' }, curGuide.careerFields)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '🧘 Thói Quen Nuôi Dưỡng'),
+              h('p', { className: 'domain-card-desc' }, curGuide.mindset)
             )
           )
         ),
@@ -372,7 +442,7 @@ export function FiveElementsRadar({ React, chart }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, `Cách bồi đắp hành ${selectedEl} trong đời sống:`),
+            h('strong', null, `Cách bồi đắp hành ${selectedEl} trong đời sống hôm nay:`),
             h('p', null, curGuide.lifestyle)
           )
         )

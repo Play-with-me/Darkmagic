@@ -211,8 +211,26 @@ export function TenGodsProfileMap({ React, chart }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI MỚI · BẢN ĐỒ TÂM LÝ & NGHỀ NGHIỆP'),
-          h('span', { className: 'col-hint' }, `Đang soi: ${curGod.name}`)
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · BẢN ĐỒ TÂM LÝ & NĂNG LỰC TÀI CHÍNH'),
+          h('span', { className: 'col-hint' }, `Đang soi: ${curGod.name} (${curGod.count.toFixed(1)} điểm)`)
+        ),
+
+        // Hàng nút chọn nhanh 10 Thần cho người đọc
+        h(
+          'div',
+          { className: 'quick-switch-tabs' },
+          tenGodList.map((g, gIdx) =>
+            h(
+              'button',
+              {
+                key: gIdx,
+                type: 'button',
+                className: `switch-tab-btn ${curGod.name === g.name ? 'is-active' : ''}`,
+                onClick: () => setSelectedGodName(g.name),
+              },
+              `${g.name} (${g.count.toFixed(1)})`
+            )
+          )
         ),
 
         // Thẻ Giải Nghĩa Thập Thần Đang Chọn
@@ -230,13 +248,43 @@ export function TenGodsProfileMap({ React, chart }) {
             ),
             h('span', { className: 'guide-period-pill' }, curGod.group)
           ),
-          h('h3', { className: 'guide-headline' }, `Thiên Hướng Thực Tế Của ${curGod.name}`),
+          h('h3', { className: 'guide-headline' }, `Thiên Hướng Năng Lực Của ${curGod.name}`),
           h('p', { className: 'guide-meaning-body' }, curGodMeaning.modernRole),
           h(
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Môi trường tỏa sáng: ${curGodMeaning.career}`)
+            h('span', null, `Môi trường phát huy rực rỡ nhất: ${curGodMeaning.career}`)
+          ),
+
+          // Lưới 4 Chiều Năng Lực (Môi trường, Kiếm tiền, Sức mạnh, Cạm bẫy)
+          h(
+            'div',
+            { className: 'guide-domains-grid' },
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '💼 Nghề Nghiệp Đắc Dụng'),
+              h('p', { className: 'domain-card-desc' }, curGodMeaning.career)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '💰 Tư Duy Kiếm & Giữ Tiền'),
+              h('p', { className: 'domain-card-desc' }, curGod.group.includes('Tài') ? 'Nhạy bén với các luồng tiền thực tế, tích lũy hoặc nhân vốn hiệu quả.' : 'Tài chính đến như hệ quả tất yếu từ chuyên môn vững vàng và giá trị tạo ra.')
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '⚡ Ưu Thế Bẩm Sinh'),
+              h('p', { className: 'domain-card-desc' }, curGod.desc)
+            ),
+            h(
+              'div',
+              { className: 'domain-card' },
+              h('div', { className: 'domain-card-head' }, '⚠️ Cạm Bẫy Cần Đề Phòng'),
+              h('p', { className: 'domain-card-desc' }, curGodMeaning.shadow)
+            )
           )
         ),
 
@@ -244,23 +292,24 @@ export function TenGodsProfileMap({ React, chart }) {
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, 'Điểm Mạnh Tự Nhiên & Điểm Mù Cần Nhận Biết'),
+          h('h4', { className: 'card-sec-title' }, `Chiếu Chỉ Dụng Thần Định Mệnh: ${yongShen.pattern}`),
+          h('p', { className: 'card-sec-desc' }, `Lá số của bạn lấy ${yongShen.yongShen.name} (Hành ${yongShen.yongShen.element}) làm Dụng Thần cốt lõi để cân bằng cục diện, hóa giải điểm nghẽn năng lượng.`),
           h(
             'div',
             { className: 'guide-traits-grid' },
             h(
               'div',
               { className: 'trait-box' },
-              h('span', { className: 'trait-label' }, 'Điểm Mạnh Cốt Lõi'),
-              h('strong', { style: { color: godTheme.color } }, curGod.name),
-              h('p', null, curGod.desc)
+              h('span', { className: 'trait-label' }, 'Dụng Thần Khai Mở'),
+              h('strong', { style: { color: 'var(--gold)' } }, `${yongShen.yongShen.name} (${yongShen.yongShen.element})`),
+              h('p', null, yongShen.yongShen.desc || 'Chìa khóa đưa sự nghiệp lên tầm cao mới.')
             ),
             h(
               'div',
               { className: 'trait-box' },
-              h('span', { className: 'trait-label' }, 'Điểm Mù Cần Tránh'),
-              h('strong', null, 'Cảnh giác nội tâm'),
-              h('p', null, curGodMeaning.shadow)
+              h('span', { className: 'trait-label' }, 'Hỷ Thần Tương Trợ'),
+              h('strong', null, `${yongShen.xiShen?.name || 'Hỷ Khí'} (${yongShen.xiShen?.element || 'Mộc'})`),
+              h('p', null, yongShen.xiShen?.desc || 'Cộng sự, người đồng hành đắc lực.')
             )
           )
         ),
@@ -273,7 +322,7 @@ export function TenGodsProfileMap({ React, chart }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, 'Ứng dụng vào công việc:'),
+            h('strong', null, 'Ứng dụng vào công việc hôm nay:'),
             h('p', null, `Hãy chọn những dự án cho phép bạn vận dụng ${curGodMeaning.modernRole.toLowerCase()} và tránh các tình huống ${curGodMeaning.shadow.toLowerCase()}`)
           )
         )
