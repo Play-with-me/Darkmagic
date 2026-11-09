@@ -71,6 +71,18 @@ export function CelestialWheel({ React, chart }) {
 
   const pillarBranches = (chart.pillars || []).map((p) => p.branch);
 
+  const BRANCH_DEGREES = {
+    'Tý': 270, 'Sửu': 300, 'Dần': 330, 'Mão': 0, 'Thìn': 30, 'Tỵ': 60,
+    'Ngọ': 90, 'Mùi': 120, 'Thân': 150, 'Dậu': 180, 'Tuất': 210, 'Hợi': 240
+  };
+  const starDeg = curStar.branch ? BRANCH_DEGREES[curStar.branch] : null;
+  const starBranchPos = starDeg !== null && starDeg !== undefined
+    ? {
+        x: 300 + 235 * Math.cos((starDeg * Math.PI) / 180),
+        y: 300 + 235 * Math.sin((starDeg * Math.PI) / 180),
+      }
+    : null;
+
   return h(
     'section',
     {

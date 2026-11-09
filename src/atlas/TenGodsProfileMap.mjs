@@ -33,6 +33,7 @@ export function TenGodsProfileMap({ React, chart }) {
     name: 'Chính tài',
     group: 'Tài Tinh',
     element: 'Thổ',
+    count: 0,
     desc: 'Tài chính minh bạch, cần cù tích lũy, trọng chữ tín.',
   };
 
@@ -212,7 +213,7 @@ export function TenGodsProfileMap({ React, chart }) {
           'div',
           { className: 'column-header-bar' },
           h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · BẢN ĐỒ TÂM LÝ & NĂNG LỰC TÀI CHÍNH'),
-          h('span', { className: 'col-hint' }, `Đang soi: ${curGod.name} (${curGod.count.toFixed(1)} điểm)`)
+          h('span', { className: 'col-hint' }, `Đang soi: ${curGod.name} (${(curGod.count || 0).toFixed(1)} điểm)`)
         ),
 
         // Hàng nút chọn nhanh 10 Thần cho người đọc
@@ -228,7 +229,7 @@ export function TenGodsProfileMap({ React, chart }) {
                 className: `switch-tab-btn ${curGod.name === g.name ? 'is-active' : ''}`,
                 onClick: () => setSelectedGodName(g.name),
               },
-              `${g.name} (${g.count.toFixed(1)})`
+              `${g.name} (${(g.count || 0).toFixed(1)})`
             )
           )
         ),
