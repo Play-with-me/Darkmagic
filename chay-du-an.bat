@@ -1,11 +1,15 @@
 @echo off
 chcp 65001 > nul
-title Mệnh Quán - Khởi động Máy chủ Bát Tự Chiêm Nghiệm
+title Mệnh Quán - Khởi động Máy chủ Bát Tự Chiêm Nghiệm (5 Đại Đồ Bản)
 echo.
 echo ======================================================
 echo    MỆNH QUÁN - ĐÔNG PHƯƠNG BÁT TỰ CHIÊM NGHIỆM
 echo ======================================================
 echo.
+if not exist "menh-quan-ritual-release\dist\server\index.js" (
+  echo Đang giải nén gói phát hành menh-quan-ritual-release...
+  tar -xzf "menh-quan-ritual-release\ritual-release.tar.gz" -C "menh-quan-ritual-release"
+)
 echo Đang khởi chạy máy chủ tại http://127.0.0.1:5173/ ...
 start "" "http://127.0.0.1:5173/"
 "C:\AI Engineering\runtime\node.exe" --import ./register.mjs ./server.mjs

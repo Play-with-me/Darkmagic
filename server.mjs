@@ -1,12 +1,24 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
-import app from './menh-quan-ritual-release/dist/server/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const RELEASE_DIR = path.resolve(__dirname, 'menh-quan-ritual-release');
+const SERVER_ENTRY = path.resolve(RELEASE_DIR, 'dist/server/index.js');
+if (!fs.existsSync(SERVER_ENTRY)) {
+  const archivePath = path.resolve(RELEASE_DIR, 'ritual-release.tar.gz');
+  if (fs.existsSync(archivePath)) {
+    console.log('📦 Đang tự động giải nén gói phát hành ritual-release.tar.gz...');
+    execFileSync('tar', ['-xzf', archivePath, '-C', RELEASE_DIR], { stdio: 'inherit' });
+  }
+}
+
+const { default: app } = await import('./menh-quan-ritual-release/dist/server/index.js');
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5173;
 const HOST = process.env.HOST || '127.0.0.1';
