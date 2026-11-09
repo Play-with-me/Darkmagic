@@ -22,6 +22,43 @@ import {
   ArrowUpRightIcon,
 } from './icons.mjs';
 
+// Lớp hạt tàn hương vàng kim & đốm lửa chu sa trôi lơ lửng huyền ảo
+function AmbientRitualField({ React }) {
+  const h = React.createElement;
+  const embers = [
+    { x: '8%', duration: '14s', delay: '0s', size: 3, opacity: 0.65, color: '#e88b78' },
+    { x: '20%', duration: '18s', delay: '3s', size: 2, opacity: 0.5, color: '#c4a365' },
+    { x: '35%', duration: '16s', delay: '7s', size: 3.5, opacity: 0.7, color: '#bf4b45' },
+    { x: '48%', duration: '20s', delay: '2s', size: 2, opacity: 0.45, color: '#d69a88' },
+    { x: '62%', duration: '15s', delay: '5s', size: 3, opacity: 0.65, color: '#e88b78' },
+    { x: '75%', duration: '19s', delay: '1s', size: 2.5, opacity: 0.5, color: '#c4a365' },
+    { x: '88%', duration: '17s', delay: '8s', size: 3, opacity: 0.7, color: '#bf4b45' },
+    { x: '94%', duration: '21s', delay: '4s', size: 2, opacity: 0.4, color: '#d69a88' },
+  ];
+
+  return h(
+    'div',
+    { className: 'ambient-ritual-layer', 'aria-hidden': 'true' },
+    embers.map((e, idx) =>
+      h('div', {
+        key: idx,
+        className: 'ambient-ember',
+        style: {
+          left: e.x,
+          width: `${e.size}px`,
+          height: `${e.size}px`,
+          backgroundColor: e.color,
+          boxShadow: `0 0 8px ${e.color}`,
+          '--ember-duration': e.duration,
+          '--ember-delay': e.delay,
+          '--ember-opacity': e.opacity,
+          '--ember-drift-x': idx % 2 === 0 ? '35px' : '-35px',
+        },
+      })
+    )
+  );
+}
+
 export function AtlasChartResult({
   React,
   chart,
@@ -159,6 +196,9 @@ export function AtlasChartResult({
   return h(
     'div',
     { className: 'atlas-chart-result-container' },
+
+    // Lớp hiệu ứng tàn hương & huyền khí lơ lửng toàn màn hình
+    h(AmbientRitualField, { React }),
 
     // 1. ĐẠI MỆNH BÀN TỔNG HỢP Ở ĐẦU TRANG
     h(GrandMasterMap, {

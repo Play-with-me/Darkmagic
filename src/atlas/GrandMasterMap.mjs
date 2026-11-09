@@ -80,255 +80,271 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
       )
     ),
 
-    // 2. Khu vực Đồ Bản Tròn Tổng Hợp (Interactive Master Compass)
+    // 2. KHU VỰC BỐ CỤC CHIA ĐÔI: TRÁI ĐẠI LA KINH / PHẢI 3 ĐÚC KẾT KINH THƯ
     React.createElement(
       'div',
-      { className: 'grand-master-visual-frame' },
+      { className: 'grand-master-split-body' },
+
+      // CỘT TRÁI: ĐỒ BẢN LA KINH TỔNG HỢP VỚI CHUYỂN ĐỘNG THIÊN THỂ 60FPS
       React.createElement(
-        'svg',
-        {
-          viewBox: '0 0 700 700',
-          className: 'grand-master-svg',
-          role: 'img',
-          'aria-label': 'Sơ đồ Đại Mệnh Bàn La Kinh',
-        },
+        'div',
+        { className: 'grand-master-visual-frame' },
         React.createElement(
-          'defs',
-          null,
+          'svg',
+          {
+            viewBox: '0 0 700 700',
+            className: 'grand-master-svg',
+            role: 'img',
+            'aria-label': 'Sơ đồ Đại Mệnh Bàn La Kinh',
+          },
           React.createElement(
-            'radialGradient',
-            { id: 'masterGlow', cx: '50%', cy: '50%', r: '50%' },
-            React.createElement('stop', { offset: '0%', stopColor: elTheme.color, stopOpacity: '0.18' }),
-            React.createElement('stop', { offset: '60%', stopColor: 'var(--cinnabar)', stopOpacity: '0.06' }),
-            React.createElement('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
-          )
-        ),
+            'defs',
+            null,
+            React.createElement(
+              'radialGradient',
+              { id: 'masterGlow', cx: '50%', cy: '50%', r: '50%' },
+              React.createElement('stop', { offset: '0%', stopColor: elTheme.color, stopOpacity: '0.18' }),
+              React.createElement('stop', { offset: '60%', stopColor: 'var(--cinnabar)', stopOpacity: '0.06' }),
+              React.createElement('stop', { offset: '100%', stopColor: 'transparent', stopOpacity: '0' })
+            )
+          ),
 
-        // Nền hào quang mờ
-        React.createElement('circle', { cx: 350, cy: 350, r: 335, fill: 'url(#masterGlow)' }),
+          // Nền hào quang mờ
+          React.createElement('circle', { cx: 350, cy: 350, r: 335, fill: 'url(#masterGlow)' }),
 
-        // Vành ngoài cùng: Vòng hào quang nét chỉ tơ
-        React.createElement('circle', { cx: 350, cy: 350, r: 330, className: 'compass-ring-outer' }),
-        React.createElement('circle', { cx: 350, cy: 350, r: 322, className: 'compass-ring-thin', strokeDasharray: '3 6' }),
+          // Vòng ngoài cùng: Vòng hào quang nét chỉ tơ tự xoay chậm theo chiều kim đồng hồ
+          React.createElement(
+            'g',
+            { className: 'celestial-orbit-cw' },
+            React.createElement('circle', { cx: 350, cy: 350, r: 330, className: 'compass-ring-outer', stroke: 'var(--line)', fill: 'none', strokeWidth: 1.2 }),
+            React.createElement('circle', { cx: 350, cy: 350, r: 322, className: 'compass-ring-thin', stroke: 'var(--gold)', fill: 'none', strokeDasharray: '3 6', opacity: 0.7 })
+          ),
 
-        // Vòng 12 Địa Chi & 24 Sơn (Font Minh Thể)
-        React.createElement(
-          'g',
-          { className: 'compass-branches-group' },
-          circleBranches.map((br) => {
-            const rad = (br.angle * Math.PI) / 180;
-            const x = 350 + 295 * Math.cos(rad);
-            const y = 350 + 295 * Math.sin(rad);
-            const isPillarBranch = pillars.some((p) => p.branch === br.name);
-            const brElTheme = ELEMENT_THEME[br.element] || elTheme;
+          // Vòng 12 Địa Chi & 24 Sơn (Tự xoay chậm như thiên thể vũ trụ)
+          React.createElement(
+            'g',
+            { className: 'compass-branches-group celestial-orbit-cw' },
+            circleBranches.map((br) => {
+              const rad = (br.angle * Math.PI) / 180;
+              const x = 350 + 295 * Math.cos(rad);
+              const y = 350 + 295 * Math.sin(rad);
+              const isPillarBranch = pillars.some((p) => p.branch === br.name);
+              const brElTheme = ELEMENT_THEME[br.element] || elTheme;
+
+              return React.createElement(
+                'g',
+                {
+                  key: br.name,
+                  className: `compass-branch-node ${isPillarBranch ? 'is-active-pillar' : ''}`,
+                },
+                React.createElement('line', {
+                  x1: 350 + 280 * Math.cos(rad),
+                  y1: 350 + 280 * Math.sin(rad),
+                  x2: 350 + 310 * Math.cos(rad),
+                  y2: 350 + 310 * Math.sin(rad),
+                  stroke: isPillarBranch ? 'var(--gold)' : 'var(--line)',
+                  strokeWidth: isPillarBranch ? 2 : 1,
+                }),
+                React.createElement(
+                  'text',
+                  {
+                    x,
+                    y: y + 5,
+                    textAnchor: 'middle',
+                    className: 'compass-han-text',
+                    fill: isPillarBranch ? 'var(--gold)' : 'var(--muted)',
+                    fontSize: isPillarBranch ? 16 : 13,
+                    fontWeight: isPillarBranch ? '600' : '400',
+                  },
+                  br.han
+                ),
+                React.createElement(
+                  'text',
+                  {
+                    x: 350 + 265 * Math.cos(rad),
+                    y: 350 + 265 * Math.sin(rad) + 4,
+                    textAnchor: 'middle',
+                    className: 'compass-viet-text',
+                    fill: isPillarBranch ? brElTheme.color : 'var(--soft)',
+                    fontSize: 10,
+                  },
+                  br.name
+                )
+              );
+            })
+          ),
+
+          // Vòng Trung Giới: 5 Cung Ngũ Hành tự xoay chậm ngược chiều
+          React.createElement(
+            'g',
+            { className: 'celestial-orbit-ccw' },
+            React.createElement('circle', { cx: 350, cy: 350, r: 235, className: 'compass-ring-middle', stroke: 'var(--line)', fill: 'none', strokeWidth: 1 }),
+            React.createElement('circle', { cx: 350, cy: 350, r: 215, className: 'compass-ring-thin', stroke: 'var(--cinnabar)', fill: 'none', strokeDasharray: '4 8', opacity: 0.6 })
+          ),
+
+          // Các tia mạch khí chảy liên tục từ tâm đến 4 Trụ Can Chi
+          pillars.map((p, idx) => {
+            const angles = [300, 30, 120, 210]; // 4 góc bố trí 4 trụ
+            const rad = (angles[idx] * Math.PI) / 180;
+            const x = 350 + 175 * Math.cos(rad);
+            const y = 350 + 175 * Math.sin(rad);
+            const pStemTheme = ELEMENT_THEME[p.stemElement] || elTheme;
+            const isHovered = hoveredPillar === idx;
 
             return React.createElement(
               'g',
               {
-                key: br.name,
-                className: `compass-branch-node ${isPillarBranch ? 'is-active-pillar' : ''}`,
+                key: p.label,
+                className: `master-pillar-station ${isHovered ? 'is-hovered' : ''}`,
+                onMouseEnter: () => setHoveredPillar(idx),
+                onMouseLeave: () => setHoveredPillar(null),
+                style: { cursor: 'pointer' },
+                onClick: () => onNavigateChapter && onNavigateChapter('bazi-matrix'),
               },
               React.createElement('line', {
-                x1: 350 + 280 * Math.cos(rad),
-                y1: 350 + 280 * Math.sin(rad),
-                x2: 350 + 310 * Math.cos(rad),
-                y2: 350 + 310 * Math.sin(rad),
-                stroke: isPillarBranch ? 'var(--gold)' : 'var(--line)',
-                strokeWidth: isPillarBranch ? 2 : 1,
+                x1: 350,
+                y1: 350,
+                x2: x,
+                y2: y,
+                className: 'qi-stream-line',
+                stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)',
+                strokeWidth: p.isDayMaster ? 2.5 : 1.4,
+                opacity: isHovered || p.isDayMaster ? 1 : 0.7,
               }),
+              React.createElement('circle', {
+                cx: x,
+                cy: y,
+                r: p.isDayMaster ? 32 : 26,
+                fill: 'rgba(11, 16, 14, 0.4)',
+                stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--line)',
+                strokeWidth: p.isDayMaster ? 2 : 1,
+              }),
+              // Chữ Hán Can Chi Trụ (Thư pháp bút lông)
               React.createElement(
                 'text',
                 {
                   x,
-                  y: y + 5,
+                  y: y - 2,
                   textAnchor: 'middle',
-                  className: 'compass-han-text',
-                  fill: isPillarBranch ? 'var(--gold)' : 'var(--muted)',
-                  fontSize: isPillarBranch ? 16 : 13,
-                  fontWeight: isPillarBranch ? '600' : '400',
+                  className: 'master-pillar-han',
+                  fill: pStemTheme.color,
+                  fontSize: p.isDayMaster ? 20 : 16,
                 },
-                br.han
+                `${p.stemHan}${p.branchHan}`
               ),
               React.createElement(
                 'text',
                 {
-                  x: 350 + 265 * Math.cos(rad),
-                  y: 350 + 265 * Math.sin(rad) + 4,
+                  x,
+                  y: y + 15,
                   textAnchor: 'middle',
-                  className: 'compass-viet-text',
-                  fill: isPillarBranch ? brElTheme.color : 'var(--soft)',
+                  className: 'master-pillar-name',
+                  fill: 'var(--ink)',
                   fontSize: 10,
                 },
-                br.name
+                p.name
+              ),
+              React.createElement(
+                'text',
+                {
+                  x,
+                  y: y + 42,
+                  textAnchor: 'middle',
+                  className: 'master-pillar-role-badge',
+                  fill: p.isDayMaster ? 'var(--cinnabar-soft)' : 'var(--muted)',
+                  fontSize: 9,
+                  letterSpacing: 1,
+                },
+                idx === 2 ? 'NHẬT CHỦ' : `TRỤ ${p.label.toUpperCase()}`
               )
             );
-          })
-        ),
+          }),
 
-        // Vòng Trung Giới: 5 Cung Ngũ Hành
-        React.createElement('circle', { cx: 350, cy: 350, r: 235, className: 'compass-ring-middle' }),
-        React.createElement('circle', { cx: 350, cy: 350, r: 215, className: 'compass-ring-thin', strokeDasharray: '4 8' }),
-
-        // Các tia liên kết từ tâm đến 4 Trụ Can Chi
-        pillars.map((p, idx) => {
-          const angles = [300, 30, 120, 210]; // 4 góc bố trí 4 trụ
-          const rad = (angles[idx] * Math.PI) / 180;
-          const x = 350 + 175 * Math.cos(rad);
-          const y = 350 + 175 * Math.sin(rad);
-          const pStemTheme = ELEMENT_THEME[p.stemElement] || elTheme;
-          const isHovered = hoveredPillar === idx;
-
-          return React.createElement(
+          // Tâm Đại Mệnh Bàn: Thái Cực Âm Dương & Chu Sa Ấn Chương Nhật Chủ mang nhịp thở hào quang
+          React.createElement(
             'g',
-            {
-              key: p.label,
-              className: `master-pillar-station ${isHovered ? 'is-hovered' : ''}`,
-              onMouseEnter: () => setHoveredPillar(idx),
-              onMouseLeave: () => setHoveredPillar(null),
-              style: { cursor: 'pointer' },
-              onClick: () => onNavigateChapter && onNavigateChapter('bazi-matrix'),
-            },
-            React.createElement('line', {
-              x1: 350,
-              y1: 350,
-              x2: x,
-              y2: y,
-              stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--line)',
-              strokeWidth: p.isDayMaster ? 2.5 : 1.2,
-              strokeDasharray: p.isDayMaster ? 'none' : '3 3',
-              opacity: isHovered || p.isDayMaster ? 1 : 0.6,
+            { className: 'grand-master-core aura-breathe' },
+            React.createElement('circle', {
+              cx: 350,
+              cy: 350,
+              r: 72,
+              fill: 'rgba(11, 16, 14, 0.5)',
+              stroke: 'var(--cinnabar)',
+              strokeWidth: 2,
             }),
             React.createElement('circle', {
-              cx: x,
-              cy: y,
-              r: p.isDayMaster ? 32 : 26,
-              fill: 'var(--paper-card)',
-              stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--line)',
-              strokeWidth: p.isDayMaster ? 2 : 1,
+              cx: 350,
+              cy: 350,
+              r: 64,
+              fill: 'none',
+              stroke: 'var(--gold)',
+              strokeWidth: 0.8,
+              strokeDasharray: '2 4',
             }),
-            // Chữ Hán Can Chi Trụ (Thư pháp bút lông)
+            // Chữ Hán Thư Pháp lớn của Nhật Can
             React.createElement(
               'text',
               {
-                x,
-                y: y - 2,
+                x: 350,
+                y: 348,
                 textAnchor: 'middle',
-                className: 'master-pillar-han',
-                fill: pStemTheme.color,
-                fontSize: p.isDayMaster ? 20 : 16,
+                className: 'master-core-brush-han',
+                fill: elTheme.color,
+                fontSize: 44,
               },
-              `${p.stemHan}${p.branchHan}`
+              dayStemHan
             ),
             React.createElement(
               'text',
               {
-                x,
-                y: y + 15,
+                x: 350,
+                y: 382,
                 textAnchor: 'middle',
-                className: 'master-pillar-name',
-                fill: 'var(--ink)',
+                className: 'master-core-sub',
+                fill: 'var(--gold)',
                 fontSize: 10,
+                letterSpacing: 2,
               },
-              p.name
-            ),
-            React.createElement(
-              'text',
-              {
-                x,
-                y: y + 42,
-                textAnchor: 'middle',
-                className: 'master-pillar-role-badge',
-                fill: p.isDayMaster ? 'var(--cinnabar-soft)' : 'var(--muted)',
-                fontSize: 9,
-                letterSpacing: 1,
-              },
-              idx === 2 ? 'NHẬT CHỦ' : `TRỤ ${p.label.toUpperCase()}`
+              `${dayStem} ${dayElement.toUpperCase()}`
             )
-          );
-        }),
-
-        // Tâm Đại Mệnh Bàn: Thái Cực Âm Dương & Chu Sa Ấn Chương Nhật Chủ
-        React.createElement(
-          'g',
-          { className: 'grand-master-core' },
-          React.createElement('circle', {
-            cx: 350,
-            cy: 350,
-            r: 72,
-            fill: 'var(--void)',
-            stroke: 'var(--cinnabar)',
-            strokeWidth: 2,
-          }),
-          React.createElement('circle', {
-            cx: 350,
-            cy: 350,
-            r: 64,
-            fill: 'none',
-            stroke: 'var(--gold)',
-            strokeWidth: 0.8,
-            strokeDasharray: '2 4',
-          }),
-          // Chữ Hán Thư Pháp lớn của Nhật Can
-          React.createElement(
-            'text',
-            {
-              x: 350,
-              y: 348,
-              textAnchor: 'middle',
-              className: 'master-core-brush-han',
-              fill: elTheme.color,
-              fontSize: 44,
-            },
-            dayStemHan
-          ),
-          React.createElement(
-            'text',
-            {
-              x: 350,
-              y: 382,
-              textAnchor: 'middle',
-              className: 'master-core-sub',
-              fill: 'var(--gold)',
-              fontSize: 10,
-              letterSpacing: 2,
-            },
-            `${dayStem} ${dayElement.toUpperCase()}`
           )
         )
-      )
-    ),
-
-    // 3. 3 Thẻ Đọc Nhanh 30 Giây Cho Người Mới (Beginner Core Takeaways)
-    React.createElement(
-      'div',
-      { className: 'master-takeaways-container' },
-      React.createElement(
-        'div',
-        { className: 'takeaways-header-row' },
-        React.createElement(BookOpenIcon, { React, size: 16, color: 'var(--gold)' }),
-        React.createElement('h3', null, 'Cẩm Nang 30 Giây Thấu Hiểu Bản Thân'),
-        React.createElement('span', { className: 'takeaways-badge' }, 'Dành cho người mới')
       ),
+
+      // CỘT PHẢI: 3 MỤC ĐÚC KẾT KINH THƯ KHẮC NỔI 30 GIÂY (ZERO-CARD, ZERO-EMOJI)
       React.createElement(
         'div',
-        { className: 'master-takeaways-grid' },
-        takeaways.map((item) =>
-          React.createElement(
+        { className: 'master-takeaways-column' },
+        React.createElement(
+          'div',
+          { className: 'takeaways-header-row' },
+          React.createElement(BookOpenIcon, { React, size: 16, color: 'var(--gold)' }),
+          React.createElement('h3', null, 'Cẩm Nang 30 Giây Thấu Hiểu Bản Thân'),
+          React.createElement('span', { className: 'takeaways-badge' }, 'ĐÚC KẾT CỐT LÕI')
+        ),
+        takeaways.map((item) => {
+          let sealHan = '本命';
+          if (item.id === 'dominant') sealHan = '氣勢';
+          if (item.id === 'remedy') sealHan = '補養';
+
+          return React.createElement(
             'div',
-            { key: item.id, className: 'takeaway-card' },
+            { key: item.id, className: 'takeaway-editorial-row' },
             React.createElement(
               'div',
               { className: 'takeaway-label-row' },
-              item.id === 'archetype' && React.createElement(SparklesIcon, { React, size: 14, color: 'var(--gold)' }),
-              item.id === 'dominant' && React.createElement(ScaleIcon, { React, size: 14, color: elTheme.color }),
-              item.id === 'remedy' && React.createElement(AwardIcon, { React, size: 14, color: 'var(--cinnabar-soft)' }),
-              React.createElement('span', { className: 'takeaway-tag' }, item.label)
+              React.createElement(
+                'span',
+                { className: 'takeaway-tag' },
+                React.createElement('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px' } }, sealHan),
+                item.label
+              )
             ),
             React.createElement('h4', { className: 'takeaway-title' }, item.title),
             React.createElement('div', { className: 'takeaway-sub' }, item.subtitle),
             React.createElement('p', { className: 'takeaway-body' }, item.detail)
-          )
-        )
+          );
+        })
       )
     ),
 
