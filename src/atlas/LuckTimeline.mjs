@@ -302,25 +302,45 @@ export function LuckTimeline({ React, chart }) {
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '⚔️ Nhịp Điệu Chiến Lược'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '戰略'),
+                'Nhịp Điệu Chiến Lược'
+              ),
               h('p', { className: 'domain-card-desc' }, curCycle.tenGod.includes('Tài') || curCycle.tenGod.includes('Thương') ? 'Vận Tiến Công: Thời điểm vàng mở rộng kinh doanh, đầu tư và bứt phá danh tiếng.' : 'Vận Tích Lũy: Tập trung học tập, củng cố nội lực, xây dựng nền tảng vững chắc.')
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '🌟 Cơ Hội Bứt Phá'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '契機'),
+                'Cơ Hội Bứt Phá'
+              ),
               h('p', { className: 'domain-card-desc' }, curCycle.guidance?.observe)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '⚠️ Điểm Cần Cẩn Trọng'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '警示'),
+                'Điểm Cần Cẩn Trọng'
+              ),
               h('p', { className: 'domain-card-desc' }, curCycle.guidance?.caution)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '🎯 Hành Động Đề Xuất'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '踐行'),
+                'Hành Động Đề Xuất'
+              ),
               h('p', { className: 'domain-card-desc' }, curCycle.guidance?.action)
             )
           )
@@ -377,7 +397,7 @@ export function LuckTimeline({ React, chart }) {
         // Chu Sa Ấn Xác Nhận Chiêm Nghiệm
         h(
           'div',
-          { className: 'guide-card-action cinnabar-seal-card' },
+          { className: 'guide-card-action cinnabar-seal-card aura-breathe' },
           h(AwardIcon, { React, size: 20, color: 'var(--cinnabar-bright)' }),
           h(
             'div',

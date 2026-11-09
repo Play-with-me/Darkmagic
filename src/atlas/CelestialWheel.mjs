@@ -159,89 +159,110 @@ export function CelestialWheel({ React, chart }) {
               });
             }),
 
-            // 12 Cung Địa Chi trên La Kinh
-            [
-              { name: 'Tý', han: '子', deg: 270 },
-              { name: 'Sửu', han: '丑', deg: 300 },
-              { name: 'Dần', han: '寅', deg: 330 },
-              { name: 'Mão', han: '卯', deg: 0 },
-              { name: 'Thìn', han: '辰', deg: 30 },
-              { name: 'Tỵ', han: '巳', deg: 60 },
-              { name: 'Ngọ', han: '午', deg: 90 },
-              { name: 'Mùi', han: '未', deg: 120 },
-              { name: 'Thân', han: '申', deg: 150 },
-              { name: 'Dậu', han: '酉', deg: 180 },
-              { name: 'Tuất', han: '戌', deg: 210 },
-              { name: 'Hợi', han: '亥', deg: 240 },
-            ].map((b) => {
-              const rad = (b.deg * Math.PI) / 180;
-              const x = 300 + 235 * Math.cos(rad);
-              const y = 300 + 235 * Math.sin(rad);
-              const isPillar = pillarBranches.includes(b.name);
-              const isStarPos = curStar.branch === b.name;
+            // Tia chùm sáng thiên thể từ tâm La Kinh phóng tới cung chi tương ứng
+            starBranchPos &&
+              h('line', {
+                x1: 300,
+                y1: 300,
+                x2: starBranchPos.x,
+                y2: starBranchPos.y,
+                className: 'qi-stream-line',
+                stroke: 'var(--cinnabar-bright)',
+                strokeWidth: 2,
+                opacity: 0.85,
+              }),
 
-              return h(
-                'g',
-                { key: b.name, className: isStarPos ? 'compass-node-highlight' : '' },
-                isStarPos &&
-                  h('circle', {
-                    cx: x,
-                    cy: y - 2,
-                    r: 16,
-                    fill: 'var(--cinnabar)',
-                    opacity: 0.35,
-                  }),
-                h(
-                  'text',
-                  {
-                    x,
-                    y: y + 4,
-                    textAnchor: 'middle',
-                    className: 'compass-han-char',
-                    fill: isStarPos ? 'var(--gold)' : isPillar ? 'var(--ink)' : 'var(--muted)',
-                    fontSize: isStarPos ? 16 : isPillar ? 14 : 12,
-                    fontWeight: isStarPos || isPillar ? '600' : '400',
-                  },
-                  b.han
-                )
-              );
-            }),
-
-            // 8 Quẻ Bát Quái Tiên Thiên
-            [
-              { han: '☰', name: 'Càn', deg: 270 },
-              { han: '☱', name: 'Đoài', deg: 315 },
-              { han: '☲', name: 'Ly', deg: 0 },
-              { han: '☳', name: 'Chấn', deg: 45 },
-              { han: '☴', name: 'Tốn', deg: 90 },
-              { han: '☵', name: 'Khảm', deg: 135 },
-              { han: '☶', name: 'Cấn', deg: 180 },
-              { han: '☷', name: 'Khôn', deg: 225 },
-            ].map((g) => {
-              const rad = (g.deg * Math.PI) / 180;
-              const x = 300 + 185 * Math.cos(rad);
-              const y = 300 + 185 * Math.sin(rad);
-              return h(
-                'text',
-                {
-                  key: g.name,
-                  x,
-                  y: y + 5,
-                  textAnchor: 'middle',
-                  className: 'compass-trigram',
-                  fill: 'var(--gold)',
-                  fontSize: 16,
-                  opacity: 0.75,
-                },
-                g.han
-              );
-            }),
-
-            // Tâm La Kinh: Thái Cực Khắc Chỉ Tơ
+            // 12 Cung Địa Chi trên La Kinh (Xoay chậm thuận chiều kim đồng hồ)
             h(
               'g',
-              { className: 'compass-taiji-center' },
-              h('circle', { cx: 300, cy: 300, r: 50, fill: 'var(--paper-card)', stroke: 'var(--cinnabar)', strokeWidth: 1.5 }),
+              { className: 'celestial-orbit-cw' },
+              [
+                { name: 'Tý', han: '子', deg: 270 },
+                { name: 'Sửu', han: '丑', deg: 300 },
+                { name: 'Dần', han: '寅', deg: 330 },
+                { name: 'Mão', han: '卯', deg: 0 },
+                { name: 'Thìn', han: '辰', deg: 30 },
+                { name: 'Tỵ', han: '巳', deg: 60 },
+                { name: 'Ngọ', han: '午', deg: 90 },
+                { name: 'Mùi', han: '未', deg: 120 },
+                { name: 'Thân', han: '申', deg: 150 },
+                { name: 'Dậu', han: '酉', deg: 180 },
+                { name: 'Tuất', han: '戌', deg: 210 },
+                { name: 'Hợi', han: '亥', deg: 240 },
+              ].map((b) => {
+                const rad = (b.deg * Math.PI) / 180;
+                const x = 300 + 235 * Math.cos(rad);
+                const y = 300 + 235 * Math.sin(rad);
+                const isPillar = pillarBranches.includes(b.name);
+                const isStarPos = curStar.branch === b.name;
+
+                return h(
+                  'g',
+                  { key: b.name, className: isStarPos ? 'compass-node-highlight' : '' },
+                  isStarPos &&
+                    h('circle', {
+                      cx: x,
+                      cy: y - 2,
+                      r: 16,
+                      fill: 'var(--cinnabar)',
+                      opacity: 0.35,
+                    }),
+                  h(
+                    'text',
+                    {
+                      x,
+                      y: y + 4,
+                      textAnchor: 'middle',
+                      className: 'compass-han-char',
+                      fill: isStarPos ? 'var(--gold)' : isPillar ? 'var(--ink)' : 'var(--muted)',
+                      fontSize: isStarPos ? 16 : isPillar ? 14 : 12,
+                      fontWeight: isStarPos || isPillar ? '600' : '400',
+                    },
+                    b.han
+                  )
+                );
+              })
+            ),
+
+            // 8 Quẻ Bát Quái Tiên Thiên (Xoay chậm ngược chiều)
+            h(
+              'g',
+              { className: 'celestial-orbit-ccw' },
+              [
+                { han: '☰', name: 'Càn', deg: 270 },
+                { han: '☱', name: 'Đoài', deg: 315 },
+                { han: '☲', name: 'Ly', deg: 0 },
+                { han: '☳', name: 'Chấn', deg: 45 },
+                { han: '☴', name: 'Tốn', deg: 90 },
+                { han: '☵', name: 'Khảm', deg: 135 },
+                { han: '☶', name: 'Cấn', deg: 180 },
+                { han: '☷', name: 'Khôn', deg: 225 },
+              ].map((g) => {
+                const rad = (g.deg * Math.PI) / 180;
+                const x = 300 + 185 * Math.cos(rad);
+                const y = 300 + 185 * Math.sin(rad);
+                return h(
+                  'text',
+                  {
+                    key: g.name,
+                    x,
+                    y: y + 5,
+                    textAnchor: 'middle',
+                    className: 'compass-trigram',
+                    fill: 'var(--gold)',
+                    fontSize: 16,
+                    opacity: 0.75,
+                  },
+                  g.han
+                );
+              })
+            ),
+
+            // Tâm La Kinh: Thái Cực mang nhịp thở hào quang
+            h(
+              'g',
+              { className: 'compass-taiji-center aura-breathe' },
+              h('circle', { cx: 300, cy: 300, r: 50, fill: 'rgba(11, 16, 14, 0.4)', stroke: 'var(--cinnabar)', strokeWidth: 1.5 }),
               h('path', {
                 d: 'M300 250 A25 25 0 0 1 300 300 A25 25 0 0 0 300 350 A50 50 0 0 1 300 250 Z',
                 fill: 'var(--cinnabar)',
@@ -333,7 +354,7 @@ export function CelestialWheel({ React, chart }) {
             h('span', null, `Tọa độ cung ${curStar.branch} (${curStar.palace}): ${starGuide.advice || 'Vận dụng thế mạnh này vào các quyết định lớn.'}`)
           ),
 
-          // Lưới 4 Chiều Ứng Dụng Sao (Sự nghiệp, Tình cảm, Việc nên làm, Việc nên tránh)
+          // Lưới 4 Chiều Ứng Dụng Sao (Sự nghiệp, Tình cảm, Việc nên làm, Việc nên tránh - Không dùng emoji)
           starGuide.careerPower &&
             h(
               'div',
@@ -341,25 +362,45 @@ export function CelestialWheel({ React, chart }) {
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '💼 Năng Lực Sự Nghiệp'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '事業'),
+                  'Năng Lực Sự Nghiệp'
+                ),
                 h('p', { className: 'domain-card-desc' }, starGuide.careerPower)
               ),
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '❤️ Duyên Vận & Xã Giao'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '姻緣'),
+                  'Duyên Vận & Xã Giao'
+                ),
                 h('p', { className: 'domain-card-desc' }, starGuide.relationshipEffect)
               ),
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '✅ Việc Nên Làm'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '天命'),
+                  'Việc Thuận Thiên Mệnh'
+                ),
                 h('p', { className: 'domain-card-desc' }, starGuide.dos)
               ),
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '⛔ Điều Nên Tránh'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '慎行'),
+                  'Điều Cần Thận Trọng'
+                ),
                 h('p', { className: 'domain-card-desc' }, starGuide.donts)
               )
             )

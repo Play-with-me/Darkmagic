@@ -352,7 +352,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
             h('span', null, beginnerPillarInfo.question)
           ),
 
-          // Lưới 4 Chiều Đời Thường (Sự nghiệp, Tình cảm, Thế mạnh, Điểm mù)
+          // Lưới 4 Chiều Đời Thường (Sự nghiệp, Tình cảm, Thế mạnh, Điểm mù - Không dùng emoji)
           beginnerPillarInfo.domains &&
             h(
               'div',
@@ -360,25 +360,45 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '💼 Sự Nghiệp & Tiền Tài'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '事業'),
+                  'Sự Nghiệp & Tiền Tài'
+                ),
                 h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.career)
               ),
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '❤️ Tình Cảm & Gia Đạo'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '姻緣'),
+                  'Tình Cảm & Gia Đạo'
+                ),
                 h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.relationships)
               ),
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '⚡ Thế Mạnh Tự Nhiên'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '天賦'),
+                  'Thế Mạnh Tự Nhiên'
+                ),
                 h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.strength)
               ),
               h(
                 'div',
                 { className: 'domain-card' },
-                h('div', { className: 'domain-card-head' }, '⚠️ Điểm Mù Cần Thận Trọng'),
+                h(
+                  'div',
+                  { className: 'domain-card-head' },
+                  h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '4px', fontSize: '13px' } }, '慎行'),
+                  'Điểm Mù Cần Thận Trọng'
+                ),
                 h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.blindspot)
               )
             )

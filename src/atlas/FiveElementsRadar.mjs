@@ -184,6 +184,7 @@ export function FiveElementsRadar({ React, chart }) {
             // Đường Tương Khắc hình ngôi sao 5 cánh (Mộc khắc Thổ, Thổ khắc Thủy, Thủy khắc Hỏa, Hỏa khắc Kim, Kim khắc Mộc)
             h('path', {
               d: 'M250 70 L350 380 L90 190 L410 190 L150 380 Z',
+              className: 'qi-stream-line',
               fill: 'rgba(21, 26, 24, 0.45)',
               stroke: 'var(--line)',
               strokeWidth: 1.2,
@@ -255,7 +256,7 @@ export function FiveElementsRadar({ React, chart }) {
             // Tâm Trận Đồ: Trạng thái Thân Vượng / Thân Nhược
             h(
               'g',
-              { className: 'penta-center-seal' },
+              { className: 'penta-center-seal aura-breathe' },
               h('circle', { cx: 250, cy: 240, r: 42, fill: 'var(--void)', stroke: 'var(--cinnabar)', strokeWidth: 1.2 }),
               h(
                 'text',
@@ -410,25 +411,45 @@ export function FiveElementsRadar({ React, chart }) {
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '🥗 Dưỡng Sinh & Thể Chất'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '養生'),
+                'Dưỡng Sinh & Thể Chất'
+              ),
               h('p', { className: 'domain-card-desc' }, curGuide.health)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '🎨 Màu Sắc & Không Gian'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '空間'),
+                'Màu Sắc & Không Gian'
+              ),
               h('p', { className: 'domain-card-desc' }, curGuide.environment)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '💼 Nghề Nghiệp Thích Hợp'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '事業'),
+                'Nghề Nghiệp Thích Hợp'
+              ),
               h('p', { className: 'domain-card-desc' }, curGuide.careerFields)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '🧘 Thói Quen Nuôi Dưỡng'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '心性'),
+                'Thói Quen Nuôi Dưỡng'
+              ),
               h('p', { className: 'domain-card-desc' }, curGuide.mindset)
             )
           )

@@ -174,7 +174,7 @@ export function TenGodsProfileMap({ React, chart }) {
         // Thẻ Dụng Thần — Hỷ Thần — Kỵ Thần
         h(
           'div',
-          { className: 'yongshen-decree-box' },
+          { className: 'yongshen-decree-box aura-breathe' },
           h('h4', { className: 'decree-title' }, 'Dụng Thần Pháp Quyết (Chìa Khóa Cải Mệnh)'),
           h(
             'div',
@@ -264,25 +264,45 @@ export function TenGodsProfileMap({ React, chart }) {
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '💼 Nghề Nghiệp Đắc Dụng'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '事業'),
+                'Nghề Nghiệp Đắc Dụng'
+              ),
               h('p', { className: 'domain-card-desc' }, curGodMeaning.career)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '💰 Tư Duy Kiếm & Giữ Tiền'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '財帛'),
+                'Tư Duy Kiếm & Giữ Tiền'
+              ),
               h('p', { className: 'domain-card-desc' }, curGod.group.includes('Tài') ? 'Nhạy bén với các luồng tiền thực tế, tích lũy hoặc nhân vốn hiệu quả.' : 'Tài chính đến như hệ quả tất yếu từ chuyên môn vững vàng và giá trị tạo ra.')
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '⚡ Ưu Thế Bẩm Sinh'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '天賦'),
+                'Ưu Thế Bẩm Sinh'
+              ),
               h('p', { className: 'domain-card-desc' }, curGod.desc)
             ),
             h(
               'div',
               { className: 'domain-card' },
-              h('div', { className: 'domain-card-head' }, '⚠️ Cạm Bẫy Cần Đề Phòng'),
+              h(
+                'div',
+                { className: 'domain-card-head' },
+                h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '慎行'),
+                'Cạm Bẫy Cần Đề Phòng'
+              ),
               h('p', { className: 'domain-card-desc' }, curGodMeaning.shadow)
             )
           )
