@@ -81,3 +81,9 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - **Tách Lớp Nền Đĩa Thiên Bàn Ngọc Đen (Obsidian Celestial Plate)**: Bổ sung đĩa ngọc đen 98% (`#1d2722` -> `#0a0f0d`) viền đồng hồng hào quang mờ cho Đại Mệnh Bàn, La Kinh 24 Sơn và Ngũ Giác Tinh, ngăn hoàn toàn Bát Quái nền cắt xuyên, khắc phục triệt để tình trạng bản đồ dính màu tối với nền web.
 - **Nâng Cấp Bảng Màu Tương Phản Chuẩn WCAG AAA**: Toàn bộ vạch sơn và vòng tròn chuyển sang đồng hồng sa `#d69a88` và vàng kim `#c4a365`, 12 Địa Chi dùng Hán tự vàng kim `#f7dfb9` và tên Quốc ngữ trắng ngà `#f3ebe4`, trạm Tứ Trụ Can Chi phát sáng ngũ hành trên nền ngọc tối nổi bật.
 - **Atomic Commits**: `1b822c2` (CSS zero-card), `8d3afd8` (ambient engine), `d6d2d47` (CJK seals), `9cd11fd` (runtime fixes), `81a6cf2` (obsidian plates & high-contrast palette). Dev server `?v=atlas9` HTTP 200 OK.
+
+## 2026-11-09 — Vietnamese Typography Elevation & Hidden Stems Seal Upgrade
+- **Khắc phục triệt để lỗi bể font tiếng Việt tại hàng Tàng Can và Lưu Niên**: Gỡ bỏ triệt để `var(--font-han-serif)` khỏi các thẻ chứa văn bản Quốc ngữ. Trước đó, các font CJK (`Noto Serif SC`, `Noto Serif TC`, `SimSun`) không chứa ký tự Latin có dấu tiếng Việt (`á`, `ậ`, `í`, `ỷ`), khiến Windows/trình duyệt fallback sang font chữ đánh máy đơn cách méo mó (`Gi á p`, `M ậ u`, `B í nh`).
+- **Nâng cấp Thẻ Tàng Can phong cách Ấn Triện Cổ Phong**: Kết hợp song hành đại tự Hán Triện của Thiên Can (`STEM_META[hs]?.han` màu Ngũ Hành) và tên Quốc ngữ (`hs`) bằng font `Noto Serif` trang nhã, sắc nét, đúng chuẩn kerning.
+- **Bổ sung Google Fonts chuẩn tiếng Việt**: Nạp đầy đủ bộ font `Noto Serif` và `Noto Sans` (bản subset tiếng Việt đầy đủ trọng số) vào `server.mjs` và CSS; nâng cache-buster lên `?v=atlas10`.
+- **Atomic Commit**: `fd6cc4b`. Toàn bộ module SSR và HTTP 200 xác minh đạt 100%.
