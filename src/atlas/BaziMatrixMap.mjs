@@ -52,6 +52,9 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
   }
 
   function renderElementBadge(el) {
+    if (!el) {
+      return h('span', { className: 'atlas-el-badge-unknown' }, 'Khuyết giờ');
+    }
     const theme = ELEMENT_THEME[el] || ELEMENT_THEME['Thủy'];
     return h(
       'span',
@@ -161,7 +164,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                 { className: 'row-highlight-stem' },
                 h('td', { className: 'row-title' }, '2. Thiên Can'),
                 pillars.map((p, idx) => {
-                  const pStemTheme = ELEMENT_THEME[p.stemElement] || stemTheme;
+                  const pStemTheme = p.stemElement ? (ELEMENT_THEME[p.stemElement] || stemTheme) : { color: '#8c7d74' };
                   return h(
                     'td',
                     {
@@ -170,7 +173,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                       onClick: () => handleSelect(idx),
                     },
                     h('div', { className: 'han-brush-char', style: { color: pStemTheme.color } }, p.stemHan),
-                    h('div', { className: 'viet-name-sub' }, p.stem),
+                    h('div', { className: 'viet-name-sub' }, p.stem || '—'),
                     renderElementBadge(p.stemElement)
                   );
                 })
@@ -181,7 +184,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                 { className: 'row-highlight-branch' },
                 h('td', { className: 'row-title' }, '3. Địa Chi'),
                 pillars.map((p, idx) => {
-                  const pBrTheme = ELEMENT_THEME[p.branchElement] || branchTheme;
+                  const pBrTheme = p.branchElement ? (ELEMENT_THEME[p.branchElement] || branchTheme) : { color: '#8c7d74' };
                   return h(
                     'td',
                     {
@@ -190,8 +193,8 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                       onClick: () => handleSelect(idx),
                     },
                     h('div', { className: 'han-brush-char', style: { color: pBrTheme.color } }, p.branchHan),
-                    h('div', { className: 'viet-name-sub' }, p.branch),
-                    h('div', { className: 'animal-sub' }, p.animal)
+                    h('div', { className: 'viet-name-sub' }, p.branch || '—'),
+                    h('div', { className: 'animal-sub' }, p.animal || 'Chưa rõ')
                   );
                 })
               ),
@@ -310,8 +313,8 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                       onMouseLeave: () => setHoveredInteraction(null),
                     },
                     h('span', { className: 'chip-type' }, int.type),
-                    h('strong', null, int.name),
-                    h('small', null, `(${int.pillars.join(' – ')})`)
+                    h('strong', null, int.name || int.badge),
+                    h('small', null, `(${int.pillarText || (int.pillarLabels ? 'Trụ ' + int.pillarLabels.join(' – Trụ ') : int.pillars.join(' – '))})`)
                   )
                 )
               )
@@ -436,15 +439,15 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Thiên Can'),
-              h('strong', { style: { color: stemTheme.color } }, `${curPillar.stem} (${stemTheme.han})`),
-              h('p', null, curPillar.isDayMaster ? 'Chính là bạn: trung tâm của toàn bộ sinh mệnh.' : `Định hình cách bạn tương tác với thế giới qua góc nhìn ${curPillar.stemRelation || 'ngoại cảnh'}.`)
+              h('strong', { style: { color: curPillar.stem ? stemTheme.color : '#8c7d74' } }, curPillar.stem ? `${curPillar.stem} (${stemTheme.han})` : 'Chưa xác định (Khuyết giờ)'),
+              h('p', null, curPillar.stem ? (curPillar.isDayMaster ? 'Chính là bạn: trung tâm của toàn bộ sinh mệnh.' : `Định hình cách bạn tương tác với thế giới qua góc nhìn ${curPillar.stemRelation || 'ngoại cảnh'}.`) : 'Cần nhập giờ sinh chính xác để giải mã chi tiết phương diện này.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Địa Chi'),
-              h('strong', { style: { color: branchTheme.color } }, `${curPillar.branch} (${curPillar.animal})`),
-              h('p', null, `Nền tảng thực tế, nguồn năng lượng nội tại và sức chịu đựng.`)
+              h('strong', { style: { color: curPillar.branch ? branchTheme.color : '#8c7d74' } }, curPillar.branch ? `${curPillar.branch} (${curPillar.animal})` : 'Chưa xác định'),
+              h('p', null, curPillar.branch ? 'Nền tảng thực tế, nguồn năng lượng nội tại và sức chịu đựng.' : 'Địa chi đại diện cho tâm nguyện và nơi nương tựa nội tâm.')
             ),
             h(
               'div',

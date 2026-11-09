@@ -110,6 +110,18 @@ export function LuckTimeline({ React, chart }) {
               )
             ),
 
+            // Đĩa nền ngọc đen tách lớp đồ thị
+            h('rect', {
+              x: 20,
+              y: 20,
+              width: 640,
+              height: 225,
+              rx: 6,
+              fill: 'rgba(16, 23, 20, 0.94)',
+              stroke: 'rgba(152, 123, 112, 0.28)',
+              strokeWidth: 1,
+            }),
+
             // Các vạch lưới ngang chỉ tơ
             [60, 110, 160, 210].map((y, idx) =>
               h('line', {
@@ -188,25 +200,55 @@ export function LuckTimeline({ React, chart }) {
                   'text',
                   {
                     x,
-                    y: y - 18,
+                    y: y - 22,
                     textAnchor: 'middle',
                     className: 'wave-han-char',
-                    fill: isSelected ? 'var(--gold)' : 'var(--ink)',
+                    fill: isSelected ? 'var(--gold)' : (c.isCurrent ? '#f7dfb9' : '#d9c8bd'),
                     fontSize: isSelected ? 15 : 12,
-                    fontWeight: isSelected ? '600' : '400',
+                    fontWeight: isSelected || c.isCurrent ? '700' : '600',
                   },
                   c.han
                 ),
+                // Tên tiếng Việt của chu kỳ
+                h(
+                  'text',
+                  {
+                    x,
+                    y: y - 10,
+                    textAnchor: 'middle',
+                    className: 'wave-viet-char',
+                    fill: isSelected ? 'var(--copper-gold)' : (c.isCurrent ? '#ffffff' : '#a89d95'),
+                    fontSize: 9.5,
+                    fontWeight: isSelected || c.isCurrent ? '600' : '500',
+                  },
+                  c.name
+                ),
+                // Huy hiệu "★ NAY" nếu là chu kỳ hiện tại
+                c.isCurrent &&
+                  h(
+                    'text',
+                    {
+                      x,
+                      y: y + 26,
+                      textAnchor: 'middle',
+                      className: 'wave-now-badge',
+                      fill: 'var(--cinnabar-bright)',
+                      fontSize: 8.5,
+                      fontWeight: '700',
+                    },
+                    '★ NAY'
+                  ),
                 // Độ tuổi & Năm
                 h(
                   'text',
                   {
                     x,
-                    y: 235,
+                    y: 232,
                     textAnchor: 'middle',
                     className: 'wave-age-label',
-                    fill: isSelected ? 'var(--gold)' : 'var(--muted)',
-                    fontSize: 9,
+                    fill: isSelected ? 'var(--gold)' : (c.isCurrent ? '#ffffff' : 'var(--muted)'),
+                    fontSize: 9.5,
+                    fontWeight: isSelected || c.isCurrent ? '600' : '400',
                   },
                   `${c.startAge}t`
                 )
@@ -263,14 +305,14 @@ export function LuckTimeline({ React, chart }) {
         h(
           'div',
           { className: 'quick-switch-tabs' },
-          cycles.map((c) =>
+          cycles.map((c, cIdx) =>
             h(
               'button',
               {
                 key: c.index,
                 type: 'button',
-                className: `switch-tab-btn ${curCycle.index === c.index ? 'is-active' : ''}`,
-                onClick: () => setSelectedCycleIdx(c.index),
+                className: `switch-tab-btn ${selectedCycleIdx === cIdx ? 'is-active' : ''}`,
+                onClick: () => setSelectedCycleIdx(cIdx),
               },
               `${c.startAge}–${c.endAge}t: ${c.name}${c.isCurrent ? ' ★' : ''}`
             )

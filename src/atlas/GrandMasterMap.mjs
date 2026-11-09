@@ -159,10 +159,30 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
             })
           ),
 
-          // Vòng 12 Địa Chi & 24 Sơn (Tự xoay chậm như thiên thể vũ trụ)
+          // Vòng 12 Địa Chi & 24 Sơn:
+          // 1. Nhóm vạch la bàn tự xoay 60fps mượt mà
           React.createElement(
             'g',
-            { className: 'compass-branches-group celestial-orbit-cw' },
+            { className: 'compass-ticks-rotating celestial-orbit-cw' },
+            circleBranches.map((br) => {
+              const rad = (br.angle * Math.PI) / 180;
+              const isPillarBranch = pillars.some((p) => p.branch === br.name);
+              return React.createElement('line', {
+                key: `tick-${br.name}`,
+                x1: 350 + 280 * Math.cos(rad),
+                y1: 350 + 280 * Math.sin(rad),
+                x2: 350 + 310 * Math.cos(rad),
+                y2: 350 + 310 * Math.sin(rad),
+                stroke: isPillarBranch ? '#f5d59f' : 'rgba(214, 154, 136, 0.6)',
+                strokeWidth: isPillarBranch ? 2.2 : 1.2,
+              });
+            })
+          ),
+
+          // 2. Nhóm chữ Địa Chi cố định vị trí (luôn đứng thẳng, không bao giờ bị lộn ngược đầu)
+          React.createElement(
+            'g',
+            { className: 'compass-branches-labels' },
             circleBranches.map((br) => {
               const rad = (br.angle * Math.PI) / 180;
               const x = 350 + 295 * Math.cos(rad);
@@ -176,14 +196,6 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   key: br.name,
                   className: `compass-branch-node ${isPillarBranch ? 'is-active-pillar' : ''}`,
                 },
-                React.createElement('line', {
-                  x1: 350 + 280 * Math.cos(rad),
-                  y1: 350 + 280 * Math.sin(rad),
-                  x2: 350 + 310 * Math.cos(rad),
-                  y2: 350 + 310 * Math.sin(rad),
-                  stroke: isPillarBranch ? '#f5d59f' : 'rgba(214, 154, 136, 0.6)',
-                  strokeWidth: isPillarBranch ? 2.2 : 1.2,
-                }),
                 React.createElement(
                   'text',
                   {
@@ -246,7 +258,8 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
             const rad = (angles[idx] * Math.PI) / 180;
             const x = 350 + 175 * Math.cos(rad);
             const y = 350 + 175 * Math.sin(rad);
-            const pStemTheme = ELEMENT_THEME[p.stemElement] || elTheme;
+            const isUnknown = p.isUnknown || (!p.stem && !p.branch);
+            const pStemTheme = (!isUnknown && p.stemElement) ? (ELEMENT_THEME[p.stemElement] || elTheme) : { color: '#8c7d74' };
             const isHovered = hoveredPillar === idx;
 
             return React.createElement(
@@ -264,9 +277,10 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                 y1: 350,
                 x2: x,
                 y2: y,
-                className: 'qi-stream-line',
-                stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)',
+                className: isUnknown ? 'qi-stream-line-dash' : 'qi-stream-line',
+                stroke: isUnknown ? 'rgba(152, 123, 112, 0.35)' : (p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)'),
                 strokeWidth: p.isDayMaster ? 2.5 : 1.6,
+                strokeDasharray: isUnknown ? '3 4' : undefined,
                 opacity: isHovered || p.isDayMaster ? 1 : 0.75,
               }),
               React.createElement('circle', {
@@ -274,7 +288,7 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                 cy: y,
                 r: p.isDayMaster ? 32 : 26,
                 fill: 'rgba(28, 38, 34, 0.96)',
-                stroke: p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)',
+                stroke: isUnknown ? 'rgba(152, 123, 112, 0.45)' : (p.isDayMaster ? 'var(--cinnabar-bright)' : 'var(--copper-gold)'),
                 strokeWidth: p.isDayMaster ? 2.4 : 1.4,
               }),
               // Chữ Hán Can Chi Trụ (Thư pháp bút lông)
@@ -285,11 +299,11 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   y: y - 2,
                   textAnchor: 'middle',
                   className: 'master-pillar-han',
-                  fill: pStemTheme.color,
+                  fill: isUnknown ? '#7d7067' : pStemTheme.color,
                   fontSize: p.isDayMaster ? 21 : 17,
                   fontWeight: '700',
                 },
-                `${p.stemHan}${p.branchHan}`
+                isUnknown ? '——' : `${p.stemHan}${p.branchHan}`
               ),
               React.createElement(
                 'text',
@@ -298,11 +312,11 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   y: y + 15,
                   textAnchor: 'middle',
                   className: 'master-pillar-name',
-                  fill: '#ffffff',
+                  fill: isUnknown ? '#a89d95' : '#ffffff',
                   fontSize: 10.5,
                   fontWeight: '600',
                 },
-                p.name
+                isUnknown ? 'Chưa rõ giờ' : p.name
               ),
               React.createElement(
                 'text',
@@ -311,12 +325,12 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
                   y: y + 42,
                   textAnchor: 'middle',
                   className: 'master-pillar-role-badge',
-                  fill: p.isDayMaster ? '#f2a79b' : '#e5b098',
+                  fill: isUnknown ? '#8c7d74' : (p.isDayMaster ? '#f2a79b' : '#e5b098'),
                   fontSize: 10,
                   fontWeight: '600',
                   letterSpacing: 1.5,
                 },
-                idx === 2 ? 'NHẬT CHỦ' : `TRỤ ${p.label.toUpperCase()}`
+                idx === 2 ? 'NHẬT CHỦ' : (isUnknown ? 'TRỤ GIỜ (KHUYẾT)' : `TRỤ ${p.label.toUpperCase()}`)
               )
             );
           }),

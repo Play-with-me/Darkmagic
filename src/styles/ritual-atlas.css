@@ -890,6 +890,17 @@ body:has(.atlas-chart-result-container) .workspace,
   margin-top: 4px;
 }
 
+.atlas-el-badge-unknown {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(152, 123, 112, 0.28);
+  border-radius: 3px;
+  padding: 1px 6px;
+  margin-top: 4px;
+}
+
 .hidden-stems-flex {
   display: flex;
   justify-content: center;
@@ -1035,8 +1046,18 @@ body:has(.atlas-chart-result-container) .workspace,
   font-family: var(--font-han-serif);
 }
 
+.compass-viet-char {
+  font-family: var(--sans);
+  letter-spacing: 0.2px;
+}
+
 .compass-trigram {
   font-family: var(--font-han-serif);
+}
+
+.compass-gua-name {
+  font-family: var(--sans);
+  letter-spacing: 0.2px;
 }
 
 .shensha-picker-panel {
@@ -1302,7 +1323,17 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .wave-han-char {
-  font-family: var(--font-han-serif);
+  font-family: var(--font-han-brush);
+}
+
+.wave-viet-char {
+  font-family: var(--serif);
+  letter-spacing: 0.1px;
+}
+
+.wave-now-badge {
+  font-family: var(--sans);
+  filter: drop-shadow(0 0 4px rgba(191, 75, 69, 0.45));
 }
 
 .annuals-timeline-panel {

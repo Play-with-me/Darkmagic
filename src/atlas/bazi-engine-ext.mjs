@@ -519,7 +519,7 @@ export function computeShenSha(dayStem, yearBranch, dayBranch, allPillars) {
       han: '羊刃',
       type: 'hung',
       targets: [duongNhanMap[dayStem]].filter(Boolean),
-      desc: 'Lưỡi đao cực vượng: ý chí sắt đá, dám nghĩ dám làm, nhưng cần tiết chế sự nóng nảy và剛cường quá mức.',
+      desc: 'Lưỡi đao cực vượng: ý chí sắt đá, dám nghĩ dám làm, nhưng cần tiết chế sự nóng nảy và cương cường quá mức.',
     },
   ];
 
@@ -530,11 +530,19 @@ export function computeShenSha(dayStem, yearBranch, dayBranch, allPillars) {
         matchedPillars.push({ index: idx, label: p.label, branch: p.branch });
       }
     });
+    const targetBranch = item.targets[0] || 'Tý';
+    const nature = item.type === 'cat' ? 'cát' : (item.type === 'hung' ? 'hung' : 'biến');
+    const palace = matchedPillars.length > 0
+      ? matchedPillars.map(m => `Trụ ${m.label}`).join(', ')
+      : 'Chiếu từ Lưu Niên / Đại Vận';
     stars.push({
       ...item,
       present: matchedPillars.length > 0,
       matchedPillars,
-      primaryBranch: item.targets[0] || 'Tý',
+      primaryBranch: targetBranch,
+      branch: targetBranch,
+      nature,
+      palace,
     });
   });
 
@@ -571,7 +579,7 @@ export function computeBranchInteractions(pillars) {
   const TUONG_HINH = {
     'Tý-Mão': 'Vô Lễ Chi Hình (Cần giữ lễ độ và sự mềm mỏng trong đối đãi)',
     'Dần-Tỵ': 'Vô Ân Chi Hình (Làm ơn cần chọn người, giữ tâm bình thản)',
-    'Tỵ-Thân': 'Vô Ân Chi Hình (Trong hợp có rèn, lấy誠tâm hóa giải)',
+    'Tỵ-Thân': 'Vô Ân Chi Hình (Trong hợp có rèn, lấy thành tâm hóa giải)',
     'Dần-Thân': 'Xung Kiêm Hình Khí (Năng lượng bứt phá mạnh, cần kỷ luật)',
     'Sửu-Tuất': 'Trì Thế Chi Hình (Càng thử thách càng rèn bản lĩnh kiên định)',
     'Tuất-Mùi': 'Trì Thế Chi Hình (Nội lực dày, cần mở lòng chia sẻ)',
@@ -599,9 +607,13 @@ export function computeBranchInteractions(pillars) {
             interactions.push({
               id: `${type}-${i}-${j}`,
               type,
+              name: badge,
               badge,
+              nature: (type === 'xung' || type === 'hai' || type === 'hinh') ? 'conflict' : 'harmony',
               pillars: [i, j],
+              pillarLabels: [pillars[i].label, pillars[j].label],
               pillarNames: [`Trụ ${pillars[i].label} (${b1})`, `Trụ ${pillars[j].label} (${b2})`],
+              pillarText: `Trụ ${pillars[i].label} – Trụ ${pillars[j].label}`,
               description: desc,
             });
           }
@@ -617,9 +629,13 @@ export function computeBranchInteractions(pillars) {
         interactions.push({
           id: `tuhinh-${i}-${j}`,
           type: 'hinh',
-          badge: 'Tự Hình · Nội省',
+          name: 'Tự Hình · Cẩn trọng',
+          badge: 'Tự Hình · Nội tỉnh',
+          nature: 'conflict',
           pillars: [i, j],
+          pillarLabels: [pillars[i].label, pillars[j].label],
           pillarNames: [`Trụ ${pillars[i].label} (${b1})`, `Trụ ${pillars[j].label} (${b2})`],
+          pillarText: `Trụ ${pillars[i].label} – Trụ ${pillars[j].label}`,
           description: `${b1} – ${b2} Tự Hình: Tự đặt tiêu chuẩn rất cao cho bản thân, cần học cách buông thư tâm trí.`,
         });
       }
@@ -631,9 +647,13 @@ export function computeBranchInteractions(pillars) {
     interactions.push({
       id: 'khi-mach-thang-ngay',
       type: 'hop',
+      name: 'Khí Mạch Nguyệt – Nhật',
       badge: 'Khí Mạch Nguyệt – Nhật',
+      nature: 'harmony',
       pillars: [1, 2],
-      pillarNames: [`Trụ Tháng (${pillars[1]?.branch || '—'})`, `Trụ Ngày (${pillars[2]?.branch || '—'})`],
+      pillarLabels: [pillars[1]?.label || 'Tháng', pillars[2]?.label || 'Ngày'],
+      pillarNames: [`Trụ ${pillars[1]?.label || 'Tháng'} (${pillars[1]?.branch || '—'})`, `Trụ ${pillars[2]?.label || 'Ngày'} (${pillars[2]?.branch || '—'})`],
+      pillarText: `Trụ ${pillars[1]?.label || 'Tháng'} – Trụ ${pillars[2]?.label || 'Ngày'}`,
       description: 'Tứ trụ bình hòa, không phạm xung hình trực diện: Nguyệt Lệnh và Nhật Chi giữ thế ổn định, tĩnh tại tự nhiên.',
     });
   }
@@ -667,26 +687,42 @@ export function analyzeYongShen(dayStem, dayElement, counts, monthBranch) {
   const xiShen = isStrong ? wealthEl : companionEl;
   const jiShen = isStrong ? resourceEl : powerEl;
 
+  const yongName = isStrong ? 'Thực Thương (Tiết Tú)' : 'Ấn Tinh (Sinh Thân)';
+  const xiName = isStrong ? 'Tài Tinh (Khai Lộc)' : 'Tỷ Kiếp (Trợ Thân)';
+  const jiName = isStrong ? 'Ấn Tinh (Thái Quá)' : 'Quan Sát (Áp Lực)';
+  const pattern = isStrong ? 'Thân Vượng · Thực Thương Tiết Tú' : 'Thân Nhược · Ấn Thụ Sinh Thân';
+
+  const yongReason = isStrong
+    ? `Nhật chủ ${dayStem} (${dayElement}) khí lực sung mãn, lấy hành ${yongShen} làm kênh tiết tú tài hoa và mở lối hanh thông.`
+    : `Nhật chủ ${dayStem} (${dayElement}) cần nguồn tiếp sức, lấy hành ${yongShen} làm gốc ấn thụ che chở và bồi đắp nội lực.`;
+  const xiReason = `Hành ${xiShen} tương trợ trực tiếp cho Dụng Thần ${yongShen}, mang lại cơ hội thuận lợi và quý nhân đồng hành.`;
+  const jiReason = `Khi hành ${jiShen} quá vượng dễ làm lệch cán cân mệnh cục; gặp năm/tháng thuộc hành này nên lấy tĩnh thắng động.`;
+
   return {
     isStrong,
     strengthLabel,
+    pattern,
     selfScore: Math.round((selfScore / (selfScore + otherScore)) * 100),
     yongShen: {
+      name: yongName,
       element: yongShen,
       role: 'Dụng Thần (Chân Mệnh Cứu Cánh)',
-      reason: isStrong
-        ? `Nhật chủ ${dayStem} (${dayElement}) khí lực sung mãn, lấy hành ${yongShen} làm kênh tiết tú tài hoa và mở lối hanh thông.`
-        : `Nhật chủ ${dayStem} (${dayElement}) cần nguồn tiếp sức, lấy hành ${yongShen} làm gốc ấn thụ che chở và bồi đắp nội lực.`,
+      desc: yongReason,
+      reason: yongReason,
     },
     xiShen: {
+      name: xiName,
       element: xiShen,
       role: 'Hỷ Thần (Quý Khí Phù Trợ)',
-      reason: `Hành ${xiShen} tương trợ trực tiếp cho Dụng Thần ${yongShen}, mang lại cơ hội thuận lợi và quý nhân đồng hành.`,
+      desc: xiReason,
+      reason: xiReason,
     },
     jiShen: {
+      name: jiName,
       element: jiShen,
       role: 'Kỵ Thần (Ám Khí Cần Tiết Chế)',
-      reason: `Khi hành ${jiShen} quá vượng dễ làm lệch cán cân mệnh cục; gặp năm/tháng thuộc hành này nên lấy tĩnh thắng động.`,
+      desc: jiReason,
+      reason: jiReason,
     },
   };
 }
@@ -878,18 +914,20 @@ export function enrichBaziChart(chart) {
     const kongWang = (stem && branch) ? getKongWang(stem, branch) : [];
 
     const palaceNames = ['Tổ Nghiệp & Căn Cơ', 'Nguyệt Lệnh & Sự Nghiệp', 'Bản Mệnh & Phối Ngẫu', 'Hậu Vận & Tâm Nguyện'];
+    const isUnknown = !stem && !branch;
     return {
       ...p,
       index: idx,
+      isUnknown,
       palaceTitle: palaceNames[idx] || p.label,
       stem,
       branch,
       stemHan: sMeta?.han || (p.raw ? p.raw[0] : '—'),
       branchHan: bMeta?.han || (p.raw ? p.raw[1] : '—'),
-      stemElement: sMeta?.element || p.elements?.[0] || 'Thủy',
-      branchElement: bMeta?.animal ? bMeta.element : (p.elements?.[1] || 'Thủy'),
-      polarity: sMeta?.polarity || 'Dương',
-      animal: bMeta?.animal || 'Ẩn tàng',
+      stemElement: sMeta?.element || (stem ? p.elements?.[0] : null),
+      branchElement: bMeta?.animal ? bMeta.element : (branch ? p.elements?.[1] : null),
+      polarity: sMeta?.polarity || (stem ? 'Dương' : null),
+      animal: bMeta?.animal || (branch ? 'Ẩn tàng' : 'Chưa rõ giờ sinh'),
       lifeStage,
       naYin,
       kongWang,
@@ -911,15 +949,15 @@ export function enrichBaziChart(chart) {
     }
   }
 
-  // Đếm ngũ hành toàn cục (Can Chi + Tàng Can có trọng số)
+  // Đếm ngũ hành toàn cục (Can Chi + Tàng Can có trọng số, không cộng điểm ảo nếu khuyết giờ)
   const counts = { Mộc: 0, Hỏa: 0, Thổ: 0, Kim: 0, Thủy: 0, ...(chart?.counts || {}) };
   const weightedCounts = { Mộc: 0, Hỏa: 0, Thổ: 0, Kim: 0, Thủy: 0 };
   enrichedPillars.forEach((p, idx) => {
     const weight = idx === 1 ? 1.5 : 1.0; // Nguyệt lệnh trọng số cao
-    if (p.stemElement && weightedCounts[p.stemElement] !== undefined) {
+    if (p.stem && p.stemElement && weightedCounts[p.stemElement] !== undefined) {
       weightedCounts[p.stemElement] += 1.0;
     }
-    if (p.branchElement && weightedCounts[p.branchElement] !== undefined) {
+    if (p.branch && p.branchElement && weightedCounts[p.branchElement] !== undefined) {
       weightedCounts[p.branchElement] += weight;
     }
     (p.hiddenStems || []).forEach((hs, hIdx) => {
@@ -937,32 +975,50 @@ export function enrichBaziChart(chart) {
 
   // Thống kê 10 Thập Thần
   const tenGodStats = {};
+  const GEN_ORDER = ['Mộc', 'Hỏa', 'Thổ', 'Kim', 'Thủy'];
+  const dIdx = Math.max(0, GEN_ORDER.indexOf(dayElement));
+  const elComp = dayElement;
+  const elOutput = GEN_ORDER[(dIdx + 1) % 5];
+  const elWealth = GEN_ORDER[(dIdx + 2) % 5];
+  const elPower = GEN_ORDER[(dIdx + 3) % 5];
+  const elResource = GEN_ORDER[(dIdx + 4) % 5];
+
   const ALL_TEN_GODS = [
-    { name: 'Tỷ kiên', group: 'Tỷ Kiếp (Đồng Minh)', element: dayElement, desc: 'Bản lĩnh tự chủ, ý chí độc lập, bạn bè đồng chí hướng.' },
-    { name: 'Kiếp tài', group: 'Tỷ Kiếp (Đồng Minh)', element: dayElement, desc: 'Sức bật cạnh tranh, hành động quyết liệt, dám đương đầu.' },
-    { name: 'Thực thần', group: 'Thực Thương (Tài Hoa)', element: yongShen.isStrong ? yongShen.yongShen.element : 'Hỏa', desc: 'Tư duy nghệ thuật, phúc lộc tự nhiên, tâm hồn rộng mở.' },
-    { name: 'Thương quan', group: 'Thực Thương (Tài Hoa)', element: yongShen.isStrong ? yongShen.yongShen.element : 'Hỏa', desc: 'Trí tuệ sắc bén, phá cách đổi mới, tài hùng biện xuất chúng.' },
-    { name: 'Chính tài', group: 'Tài Tinh (Tài Lộc)', element: 'Thổ', desc: 'Tài chính minh bạch, cần cù tích lũy, trọng chữ tín.' },
-    { name: 'Thiên tài', group: 'Tài Tinh (Tài Lộc)', element: 'Thổ', desc: 'Nhạy bén thương trường, cơ duyên bất ngờ, hào sảng rộng rãi.' },
-    { name: 'Chính quan', group: 'Quan Sát (Danh Vị)', element: 'Kim', desc: 'Kỷ luật, danh dự, trách nhiệm và vị thế chính thống.' },
-    { name: 'Thất sát', group: 'Quan Sát (Danh Vị)', element: 'Kim', desc: 'Uy quyền quyết đoán, bản lĩnh mở đường trong nghịch cảnh.' },
-    { name: 'Chính ấn', group: 'Ấn Tinh (Tri Thức)', element: 'Thủy', desc: 'Lòng nhân hậu, học vấn chính thống, quý nhân che chở.' },
-    { name: 'Thiên ấn', group: 'Ấn Tinh (Tri Thức)', element: 'Thủy', desc: 'Trực giác huyền học, tư duy độc bản, thấu suốt ẩn vi.' },
+    { name: 'Tỷ kiên', group: 'Tỷ Kiếp (Đồng Minh)', element: elComp, desc: 'Bản lĩnh tự chủ, ý chí độc lập, bạn bè đồng chí hướng.' },
+    { name: 'Kiếp tài', group: 'Tỷ Kiếp (Đồng Minh)', element: elComp, desc: 'Sức bật cạnh tranh, hành động quyết liệt, dám đương đầu.' },
+    { name: 'Thực thần', group: 'Thực Thương (Tài Hoa)', element: elOutput, desc: 'Tư duy nghệ thuật, phúc lộc tự nhiên, tâm hồn rộng mở.' },
+    { name: 'Thương quan', group: 'Thực Thương (Tài Hoa)', element: elOutput, desc: 'Trí tuệ sắc bén, phá cách đổi mới, tài hùng biện xuất chúng.' },
+    { name: 'Chính tài', group: 'Tài Tinh (Tài Lộc)', element: elWealth, desc: 'Tài chính minh bạch, cần cù tích lũy, trọng chữ tín.' },
+    { name: 'Thiên tài', group: 'Tài Tinh (Tài Lộc)', element: elWealth, desc: 'Nhạy bén thương trường, cơ duyên bất ngờ, hào sảng rộng rãi.' },
+    { name: 'Chính quan', group: 'Quan Sát (Danh Vị)', element: elPower, desc: 'Kỷ luật, danh dự, trách nhiệm và vị thế chính thống.' },
+    { name: 'Thất sát', group: 'Quan Sát (Danh Vị)', element: elPower, desc: 'Uy quyền quyết đoán, bản lĩnh mở đường trong nghịch cảnh.' },
+    { name: 'Chính ấn', group: 'Ấn Tinh (Tri Thức)', element: elResource, desc: 'Lòng nhân hậu, học vấn chính thống, quý nhân che chở.' },
+    { name: 'Thiên ấn', group: 'Ấn Tinh (Tri Thức)', element: elResource, desc: 'Trực giác huyền học, tư duy độc bản, thấu suốt ẩn vi.' },
   ];
+
+  function normalizeGodName(str) {
+    if (!str) return '';
+    const clean = str.includes('·') ? str.split('·')[1].trim() : str.trim();
+    return clean.toLowerCase();
+  }
 
   ALL_TEN_GODS.forEach(g => {
     tenGodStats[g.name] = { ...g, count: 0, locations: [] };
   });
 
   enrichedPillars.forEach(p => {
-    if (p.stemRelation && tenGodStats[p.stemRelation]) {
-      tenGodStats[p.stemRelation].count += 1;
-      tenGodStats[p.stemRelation].locations.push(`Thiên can Trụ ${p.label}`);
+    if (p.stemRelation) {
+      const match = ALL_TEN_GODS.find(g => g.name.toLowerCase() === normalizeGodName(p.stemRelation));
+      if (match && tenGodStats[match.name]) {
+        tenGodStats[match.name].count += 1;
+        tenGodStats[match.name].locations.push(`Thiên can Trụ ${p.label}`);
+      }
     }
     (p.hiddenRelations || []).forEach((rel, idx) => {
-      if (tenGodStats[rel]) {
-        tenGodStats[rel].count += idx === 0 ? 0.8 : 0.4;
-        tenGodStats[rel].locations.push(`Tàng can ${p.hiddenStems?.[idx] || ''} (Trụ ${p.label})`);
+      const match = ALL_TEN_GODS.find(g => g.name.toLowerCase() === normalizeGodName(rel));
+      if (match && tenGodStats[match.name]) {
+        tenGodStats[match.name].count += idx === 0 ? 0.8 : 0.4;
+        tenGodStats[match.name].locations.push(`Tàng can ${p.hiddenStems?.[idx] || ''} (Trụ ${p.label})`);
       }
     });
   });

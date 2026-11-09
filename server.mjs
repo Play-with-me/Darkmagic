@@ -115,7 +115,7 @@ const server = http.createServer(async (req, res) => {
       const clientAppPath = path.join(CLIENT_DIR, '_next/static/chunks/ClientApp-COG-eH4S.js');
       if (fs.existsSync(clientAppPath)) {
         const rawCode = fs.readFileSync(clientAppPath, 'utf-8');
-        const patched = rawCode.replaceAll('Reading-CEebwCfN.js', 'Reading-CEebwCfN.js?v=atlas10');
+        const patched = rawCode.replaceAll('Reading-CEebwCfN.js', 'Reading-CEebwCfN.js?v=atlas11');
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
@@ -180,11 +180,11 @@ const server = http.createServer(async (req, res) => {
     if (contentType.includes('text/html')) {
       let html = await webRes.text();
       html = html
-        .replaceAll('ClientApp-COG-eH4S.js', 'ClientApp-COG-eH4S.js?v=atlas10')
-        .replaceAll('Reading-CEebwCfN.js', 'Reading-CEebwCfN.js?v=atlas10')
+        .replaceAll('ClientApp-COG-eH4S.js', 'ClientApp-COG-eH4S.js?v=atlas11')
+        .replaceAll('Reading-CEebwCfN.js', 'Reading-CEebwCfN.js?v=atlas11')
         .replace(
           '</head>',
-          '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/atlas/ritual-atlas.css?v=atlas10"/></head>'
+          '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/atlas/ritual-atlas.css?v=atlas11"/></head>'
         );
       res.setHeader('Cache-Control', 'no-store');
       res.setHeader('Clear-Site-Data', '"cache"');

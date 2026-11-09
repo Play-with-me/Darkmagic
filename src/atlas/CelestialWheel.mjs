@@ -175,20 +175,24 @@ export function CelestialWheel({ React, chart }) {
             h('circle', { cx: 300, cy: 300, r: 155, className: 'compass-ring-inner', stroke: 'var(--copper-gold)', strokeOpacity: 0.6 }),
             h('circle', { cx: 300, cy: 300, r: 85, className: 'compass-ring-core', stroke: 'var(--cinnabar-bright)', strokeWidth: 1.5 }),
 
-            // 24 Vạch Sơn Hướng
-            Array.from({ length: 24 }).map((_, idx) => {
-              const deg = idx * 15;
-              const rad = (deg * Math.PI) / 180;
-              return h('line', {
-                key: idx,
-                x1: 300 + 260 * Math.cos(rad),
-                y1: 300 + 260 * Math.sin(rad),
-                x2: 300 + 280 * Math.cos(rad),
-                y2: 300 + 280 * Math.sin(rad),
-                stroke: idx % 2 === 0 ? '#f5d59f' : 'rgba(214, 154, 136, 0.6)',
-                strokeWidth: idx % 2 === 0 ? 1.6 : 1,
-              });
-            }),
+            // 24 Vạch Sơn Hướng (Xoay 60fps mượt mà)
+            h(
+              'g',
+              { className: 'celestial-orbit-cw' },
+              Array.from({ length: 24 }).map((_, idx) => {
+                const deg = idx * 15;
+                const rad = (deg * Math.PI) / 180;
+                return h('line', {
+                  key: idx,
+                  x1: 300 + 260 * Math.cos(rad),
+                  y1: 300 + 260 * Math.sin(rad),
+                  x2: 300 + 280 * Math.cos(rad),
+                  y2: 300 + 280 * Math.sin(rad),
+                  stroke: idx % 2 === 0 ? '#f5d59f' : 'rgba(214, 154, 136, 0.6)',
+                  strokeWidth: idx % 2 === 0 ? 1.6 : 1,
+                });
+              })
+            ),
 
             // Tia chùm sáng thiên thể từ tâm La Kinh phóng tới cung chi tương ứng
             starBranchPos &&
@@ -199,14 +203,14 @@ export function CelestialWheel({ React, chart }) {
                 y2: starBranchPos.y,
                 className: 'qi-stream-line',
                 stroke: 'var(--cinnabar-bright)',
-                strokeWidth: 2,
-                opacity: 0.85,
+                strokeWidth: 2.2,
+                opacity: 0.9,
               }),
 
-            // 12 Cung Địa Chi trên La Kinh (Xoay chậm thuận chiều kim đồng hồ)
+            // 12 Cung Địa Chi trên La Kinh (Giữ chữ đứng thẳng ngay ngắn, không xoay ngược đầu)
             h(
               'g',
-              { className: 'celestial-orbit-cw' },
+              { className: 'compass-branches-static' },
               [
                 { name: 'Tý', han: '子', deg: 270 },
                 { name: 'Sửu', han: '丑', deg: 300 },
@@ -233,32 +237,46 @@ export function CelestialWheel({ React, chart }) {
                   isStarPos &&
                     h('circle', {
                       cx: x,
-                      cy: y - 2,
-                      r: 16,
+                      cy: y + 2,
+                      r: 18,
                       fill: 'var(--cinnabar)',
-                      opacity: 0.35,
+                      opacity: 0.4,
+                      filter: 'drop-shadow(0 0 6px var(--cinnabar-bright))',
                     }),
                   h(
                     'text',
                     {
                       x,
-                      y: y + 4,
+                      y: y - 1,
                       textAnchor: 'middle',
                       className: 'compass-han-char',
                       fill: isStarPos ? '#f7dfb9' : isPillar ? '#f5d59f' : '#eddcd0',
-                      fontSize: isStarPos ? 17 : isPillar ? 15 : 13,
+                      fontSize: isStarPos ? 16 : isPillar ? 14 : 12.5,
                       fontWeight: isStarPos || isPillar ? '700' : '600',
                     },
                     b.han
+                  ),
+                  h(
+                    'text',
+                    {
+                      x,
+                      y: y + 11,
+                      textAnchor: 'middle',
+                      className: 'compass-viet-char',
+                      fill: isStarPos ? 'var(--gold)' : isPillar ? '#f3ebe4' : '#b3a297',
+                      fontSize: 9,
+                      fontWeight: isStarPos ? '700' : '500',
+                    },
+                    b.name
                   )
                 );
               })
             ),
 
-            // 8 Quẻ Bát Quái Tiên Thiên (Xoay chậm ngược chiều)
+            // 8 Quẻ Bát Quái Tiên Thiên (Giữ quẻ và tên quẻ đứng thẳng ngay ngắn)
             h(
               'g',
-              { className: 'celestial-orbit-ccw' },
+              { className: 'compass-trigrams-static' },
               [
                 { han: '☰', name: 'Càn', deg: 270 },
                 { han: '☱', name: 'Đoài', deg: 315 },
@@ -273,19 +291,36 @@ export function CelestialWheel({ React, chart }) {
                 const x = 300 + 185 * Math.cos(rad);
                 const y = 300 + 185 * Math.sin(rad);
                 return h(
-                  'text',
-                  {
-                    key: g.name,
-                    x,
-                    y: y + 5,
-                    textAnchor: 'middle',
-                    className: 'compass-trigram',
-                    fill: '#f7dfb9',
-                    fontSize: 18,
-                    fontWeight: '700',
-                    opacity: 0.9,
-                  },
-                  g.han
+                  'g',
+                  { key: g.name },
+                  h(
+                    'text',
+                    {
+                      x,
+                      y: y + 2,
+                      textAnchor: 'middle',
+                      className: 'compass-trigram',
+                      fill: '#f7dfb9',
+                      fontSize: 16,
+                      fontWeight: '700',
+                      opacity: 0.95,
+                    },
+                    g.han
+                  ),
+                  h(
+                    'text',
+                    {
+                      x,
+                      y: y + 12,
+                      textAnchor: 'middle',
+                      className: 'compass-gua-name',
+                      fill: 'var(--copper-gold)',
+                      fontSize: 8.5,
+                      fontWeight: '500',
+                      opacity: 0.85,
+                    },
+                    g.name
+                  )
                 );
               })
             ),
@@ -326,7 +361,7 @@ export function CelestialWheel({ React, chart }) {
                 },
                 h(SparklesIcon, { React, size: 12, color: isSelected ? 'var(--gold)' : 'currentColor' }),
                 h('span', null, star.name),
-                h('small', null, `(${star.branch})`)
+                h('small', null, `(${star.branch || star.primaryBranch || 'Cung Chi'})`)
               );
             })
           )
@@ -341,7 +376,7 @@ export function CelestialWheel({ React, chart }) {
           'div',
           { className: 'column-header-bar' },
           h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · GIẢI MÃ SAO CHIẾU MỆNH'),
-          h('span', { className: 'col-hint' }, `Đang soi: ${curStar.name} (${curStar.branch})`)
+          h('span', { className: 'col-hint' }, `Đang soi: ${curStar.name} (${curStar.branch || curStar.primaryBranch || 'Cung Chi'})`)
         ),
 
         // Hàng nút chọn nhanh Thần Sát cho người đọc
@@ -357,7 +392,7 @@ export function CelestialWheel({ React, chart }) {
                 className: `switch-tab-btn ${curStar.name === star.name ? 'is-active' : ''}`,
                 onClick: () => setSelectedStar(star),
               },
-              `${star.name} (${star.branch})`
+              `${star.name} (${star.branch || star.primaryBranch || 'Cung Chi'})`
             )
           )
         ),
@@ -375,7 +410,7 @@ export function CelestialWheel({ React, chart }) {
               h(SparklesIcon, { React, size: 14, color: 'var(--gold)' }),
               h('span', null, starGuide.title || curStar.name)
             ),
-            h('span', { className: 'guide-period-pill' }, starGuide.nature || 'Chiếu Cung Chi')
+            h('span', { className: 'guide-period-pill' }, starGuide.nature || curStar.nature || 'Chiếu Cung Chi')
           ),
           h('h3', { className: 'guide-headline' }, `Khí Chất Của ${curStar.name} Trong Đời Sống Thực Tế`),
           h('p', { className: 'guide-meaning-body' }, starGuide.simpleDesc || curStar.desc),
@@ -383,7 +418,7 @@ export function CelestialWheel({ React, chart }) {
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Tọa độ cung ${curStar.branch} (${curStar.palace}): ${starGuide.advice || 'Vận dụng thế mạnh này vào các quyết định lớn.'}`)
+            h('span', null, `Tọa độ cung ${curStar.branch || curStar.primaryBranch || 'Bản mệnh'} (${curStar.palace || 'Chiếu Cung'}): ${starGuide.advice || 'Vận dụng thế mạnh này vào các quyết định lớn.'}`)
           ),
 
           // Lưới 4 Chiều Ứng Dụng Sao (Sự nghiệp, Tình cảm, Việc nên làm, Việc nên tránh - Không dùng emoji)

@@ -104,6 +104,14 @@ export function TenGodsProfileMap({ React, chart }) {
   const curGodMeaning = TEN_GODS_BEGINNER_MEANINGS[curGod.name] || TEN_GODS_BEGINNER_MEANINGS['Chính tài'];
   const godTheme = ELEMENT_THEME[curGod.element] || ELEMENT_THEME['Thổ'];
 
+  const curPattern = yongShen.pattern || (yongShen.isStrong ? 'Thân Vượng · Thực Thương Tiết Tú' : 'Thân Nhược · Ấn Thụ Sinh Thân');
+  const yongName = yongShen.yongShen?.name || (yongShen.isStrong ? 'Thực Thương (Tiết Tú)' : 'Ấn Tinh (Sinh Thân)');
+  const yongEl = yongShen.yongShen?.element || 'Thủy';
+  const yongDesc = yongShen.yongShen?.desc || yongShen.yongShen?.reason || 'Chìa khóa đưa sự nghiệp lên tầm cao mới.';
+  const xiName = yongShen.xiShen?.name || (yongShen.isStrong ? 'Tài Tinh (Khai Lộc)' : 'Tỷ Kiếp (Trợ Thân)');
+  const xiEl = yongShen.xiShen?.element || 'Kim';
+  const xiDesc = yongShen.xiShen?.desc || yongShen.xiShen?.reason || 'Cộng sự, người đồng hành đắc lực.';
+
   return h(
     'section',
     {
@@ -184,22 +192,22 @@ export function TenGodsProfileMap({ React, chart }) {
               'div',
               { className: 'decree-card yong-card' },
               h('span', { className: 'decree-type-tag' }, 'DỤNG THẦN (DÙNG ĐẦU TIÊN)'),
-              h('strong', null, `Hành ${yongShen.yongShen.element}`),
-              h('p', null, yongShen.yongShen.desc || 'Hóa giải xung đột nguyên cục.')
+              h('strong', null, `${yongName} · Hành ${yongEl}`),
+              h('p', null, yongDesc)
             ),
             h(
               'div',
               { className: 'decree-card xi-card' },
               h('span', { className: 'decree-type-tag' }, 'HỶ THẦN (TRỢ LỰC)'),
-              h('strong', null, `Hành ${yongShen.xiShen.element}`),
-              h('p', null, yongShen.xiShen.desc || 'Nâng đỡ sức mạnh Dụng Thần.')
+              h('strong', null, `${xiName} · Hành ${xiEl}`),
+              h('p', null, xiDesc)
             ),
             h(
               'div',
               { className: 'decree-card ji-card' },
               h('span', { className: 'decree-type-tag' }, 'KỴ THẦN (CẦN TIẾT CHẾ)'),
-              h('strong', null, `Hành ${yongShen.jiShen.element}`),
-              h('p', null, yongShen.jiShen.desc || 'Tránh bồi đắp thêm vào lối sống.')
+              h('strong', null, `${yongShen.jiShen?.name || 'Kỵ Khí'} · Hành ${yongShen.jiShen?.element || 'Hỏa'}`),
+              h('p', null, yongShen.jiShen?.desc || yongShen.jiShen?.reason || 'Tránh bồi đắp thêm vào lối sống.')
             )
           )
         )
@@ -313,8 +321,8 @@ export function TenGodsProfileMap({ React, chart }) {
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, `Chiếu Chỉ Dụng Thần Định Mệnh: ${yongShen.pattern}`),
-          h('p', { className: 'card-sec-desc' }, `Lá số của bạn lấy ${yongShen.yongShen.name} (Hành ${yongShen.yongShen.element}) làm Dụng Thần cốt lõi để cân bằng cục diện, hóa giải điểm nghẽn năng lượng.`),
+          h('h4', { className: 'card-sec-title' }, `Chiếu Chỉ Dụng Thần Định Mệnh: ${curPattern}`),
+          h('p', { className: 'card-sec-desc' }, `Lá số của bạn lấy ${yongName} (Hành ${yongEl}) làm Dụng Thần cốt lõi để cân bằng cục diện, hóa giải điểm nghẽn năng lượng.`),
           h(
             'div',
             { className: 'guide-traits-grid' },
@@ -322,15 +330,15 @@ export function TenGodsProfileMap({ React, chart }) {
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Dụng Thần Khai Mở'),
-              h('strong', { style: { color: 'var(--gold)' } }, `${yongShen.yongShen.name} (${yongShen.yongShen.element})`),
-              h('p', null, yongShen.yongShen.desc || 'Chìa khóa đưa sự nghiệp lên tầm cao mới.')
+              h('strong', { style: { color: 'var(--gold)' } }, `${yongName} (Hành ${yongEl})`),
+              h('p', null, yongDesc)
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Hỷ Thần Tương Trợ'),
-              h('strong', null, `${yongShen.xiShen?.name || 'Hỷ Khí'} (${yongShen.xiShen?.element || 'Mộc'})`),
-              h('p', null, yongShen.xiShen?.desc || 'Cộng sự, người đồng hành đắc lực.')
+              h('strong', null, `${xiName} (Hành ${xiEl})`),
+              h('p', null, xiDesc)
             )
           )
         ),
