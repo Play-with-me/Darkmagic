@@ -14,7 +14,7 @@ import {
   CheckCircleIcon,
   AlertCircleIcon,
 } from './icons.mjs';
-import { ELEMENT_THEME, PILLAR_ROLES_BEGINNER } from './bazi-engine-ext.mjs';
+import { ELEMENT_THEME, PILLAR_ROLES_BEGINNER, STEM_META } from './bazi-engine-ext.mjs';
 
 export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
   const h = React.createElement;
@@ -208,9 +208,29 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                       ? h(
                           'div',
                           { className: 'hidden-stems-flex' },
-                          p.hiddenStems.map((hs, hIdx) =>
-                            h('span', { key: hIdx, className: 'hidden-stem-pill' }, hs)
-                          )
+                          p.hiddenStems.map((hs, hIdx) => {
+                            const meta = STEM_META[hs];
+                            const elTheme = meta ? (ELEMENT_THEME[meta.element] || {}) : {};
+                            return h(
+                              'span',
+                              {
+                                key: hIdx,
+                                className: 'hidden-stem-pill',
+                                title: meta ? `${meta.title} (${meta.element} ${meta.polarity})` : hs,
+                              },
+                              meta?.han
+                                ? h(
+                                    'span',
+                                    {
+                                      className: 'hidden-stem-han',
+                                      style: { color: elTheme.color || 'var(--copper-gold)' },
+                                    },
+                                    meta.han
+                                  )
+                                : null,
+                              h('span', { className: 'hidden-stem-name' }, hs)
+                            );
+                          })
                         )
                       : '—'
                   )

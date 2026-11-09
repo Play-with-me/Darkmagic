@@ -234,7 +234,13 @@ export function LuckTimeline({ React, chart }) {
                   onClick: () => setSelectedYear(yr.year),
                 },
                 h('span', { className: 'annual-year-num' }, yr.year),
-                h('strong', { className: 'annual-han-name' }, `${yr.han} · ${yr.name}`),
+                h(
+                  'strong',
+                  { className: 'annual-han-name' },
+                  h('span', { className: 'annual-han-char' }, yr.han),
+                  h('span', { className: 'annual-sep' }, ' · '),
+                  h('span', { className: 'annual-viet-name' }, yr.name)
+                ),
                 h('small', { className: 'annual-god' }, yr.tenGod)
               );
             })
