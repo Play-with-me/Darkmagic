@@ -1,12 +1,26 @@
-// src/atlas/AtlasChartResult.mjs
-// Bộ Điều Phối Đại Bản Đồ Bát Tự 5 Maps (Map-First Occult Divination Architecture)
+/**
+ * src/atlas/AtlasChartResult.mjs
+ * BỘ ĐIỀU PHỐI ĐẠI MỆNH BÀN & 5 ĐỒ BẢN BÁT TỰ
+ * Khung điều phối chuẩn mực cho trải nghiệm kết hợp:
+ * - Đầu trang: Đại Mệnh Bàn Tổng Hợp (Grand Master Atlas)
+ * - Tiếp theo: 5 Chương Bản Đồ Đôi (Trái: Chuyên sâu / Phải: Đời thường)
+ * - Cuối cùng: Tổng Kết Mệnh Cục & Ghi Chép Sổ Chiêm Nghiệm
+ */
 
 import { enrichBaziChart } from './bazi-engine-ext.mjs';
+import { GrandMasterMap } from './GrandMasterMap.mjs';
 import { BaziMatrixMap } from './BaziMatrixMap.mjs';
 import { CelestialWheel } from './CelestialWheel.mjs';
 import { FiveElementsRadar } from './FiveElementsRadar.mjs';
 import { TenGodsProfileMap } from './TenGodsProfileMap.mjs';
 import { LuckTimeline } from './LuckTimeline.mjs';
+import {
+  ScrollTextIcon,
+  BookOpenIcon,
+  SparklesIcon,
+  CheckCircleIcon,
+  ArrowUpRightIcon,
+} from './icons.mjs';
 
 export function AtlasChartResult({
   React,
@@ -25,27 +39,27 @@ export function AtlasChartResult({
   const [editingNote, setEditingNote] = React.useState(false);
   const [draftNote, setDraftNote] = React.useState(undefined);
   const [selectedNoteIds, setSelectedNoteIds] = React.useState([]);
-  const [quickReflection, setQuickReflection] = React.useState('');
 
-  const currentCycle = (enriched.timeline?.cycles || []).find(c => c.isCurrent) || enriched.timeline?.cycles?.[2];
+  const currentCycle =
+    (enriched.timeline?.cycles || []).find((c) => c.isCurrent) || enriched.timeline?.cycles?.[2];
 
-  // Lời phán tổng kết mệnh cục (1 tiêu đề + 1 đoạn văn cô đọng theo đúng quy ước)
+  // Lời phán tổng kết mệnh cục (cô đọng, ấm áp)
   const conclusionParagraph = React.useMemo(() => {
     const dm = `${enriched.dayStem} (${enriched.dayElement} — ${enriched.dayMasterMeta?.title || ''})`;
     const ys = enriched.yongShen?.yongShen?.element || 'Thủy';
     const xs = enriched.yongShen?.xiShen?.element || 'Kim';
     const strength = enriched.yongShen?.strengthLabel || 'Trung Hòa';
     const cycText = currentCycle
-      ? `Hiện tại mệnh chủ đang hành vận ${currentCycle.name} (${currentCycle.startYear}–${currentCycle.endYear}, chủ tinh ${currentCycle.tenGod}, vòng ${currentCycle.stage?.name}), thời thế khuyên nên ${currentCycle.guidance?.action?.toLowerCase() || 'giữ tâm chính định'}`
+      ? `Hiện tại mệnh chủ đang bước vào giai đoạn ${currentCycle.name} (${currentCycle.startYear}–${currentCycle.endYear}, chủ khí ${currentCycle.tenGod}), thời cơ khuyên nên ${currentCycle.guidance?.action?.toLowerCase() || 'giữ tâm chính định'}`
       : 'Vận trình khuyên lấy sự tĩnh tại làm gốc';
-    return `Mệnh cục lấy Nhật chủ ${dm} làm tâm điểm, thế cục thuộc diện ${strength}; chân mệnh lấy hành ${ys} làm Dụng Thần cứu cánh và hành ${xs} làm Hỷ Thần tương trợ. ${cycText}, kết hợp thuận theo dòng khí tương sinh của bản mệnh để chuyển hóa thử thách thành cơ duyên bền vững.`;
+    return `Mệnh cục lấy Nhật chủ ${dm} làm tâm điểm, chân khí thuộc diện ${strength}; lấy hành ${ys} làm Dụng Thần trợ lực và hành ${xs} làm Hỷ Thần đồng hành. ${cycText}. Khi hiểu rõ nhịp điệu tự nhiên của chính mình, bạn sẽ biết lúc nào nên bứt phá tiến thủ, lúc nào nên tĩnh lặng bồi dưỡng nguyên khí.`;
   }, [enriched, currentCycle]);
 
-  // Xuất file TXT đầy đủ 5 bản đồ + lời kết
+  // Xuất file TXT đầy đủ 5 bản đồ + Đại Mệnh Bàn
   function handleDownloadTxt() {
     const pillarLines = enriched.pillars
       .map(
-        p =>
+        (p) =>
           `• Trụ ${p.label} (${p.palaceTitle}): ${p.name} (${p.stemHan}${p.branchHan})\n` +
           `  - Thiên can: ${p.stem || '—'} (${p.stemElement}) · Thập thần: ${p.stemRelation}\n` +
           `  - Địa chi: ${p.branch || '—'} (${p.branchElement}) · Linh thú: ${p.animal}\n` +
@@ -56,12 +70,12 @@ export function AtlasChartResult({
       .join('\n\n');
 
     const starLines = (enriched.shenSha || [])
-      .map(s => `• ${s.name} (${s.han}): ${s.present ? 'Nhập mệnh' : `Chiếu cung ${s.primaryBranch}`} — ${s.desc}`)
+      .map((s) => `• ${s.name} (${s.han}): ${s.present ? 'Nhập mệnh' : `Chiếu cung ${s.primaryBranch}`} — ${s.desc}`)
       .join('\n');
 
     const cycleLines = (enriched.timeline?.cycles || [])
       .map(
-        c =>
+        (c) =>
           `• Đại vận ${c.index} (${c.startYear}–${c.endYear}): ${c.name} (${c.tenGod} · ${c.stage?.name})${c.isCurrent ? ' [ĐƯƠNG VẬN]' : ''}\n` +
           `  - Quan sát: ${c.guidance?.observe}\n` +
           `  - Thận trọng: ${c.guidance?.caution}\n` +
@@ -71,69 +85,69 @@ export function AtlasChartResult({
 
     const txtContent = [
       '====================================================================',
-      '        MỆNH QUÁN — ĐẠI BẢN ĐỒ BÁT TỰ CHIÊM NGHIỆM (5 MAPS)',
+      '      MỆNH QUÁN — ĐẠI BẢN ĐỒ BÁT TỰ CHIÊM NGHIỆM (5 MAPS ATLAS)',
       '====================================================================',
       '',
-      '[01] BÀN THỜ TỨ TRỤ 7 TẦNG',
+      `[BẢN MỆNH NHẬT CHỦ]: ${enriched.dayStem} (${enriched.dayElement}) — ${enriched.beginnerGuide?.archetype?.archetype || ''}`,
+      `[Ý NGHĨA]: ${enriched.beginnerGuide?.archetype?.personality || ''}`,
+      '',
+      '[01] TỨ TRỤ NGUYÊN CỤC 7 TẦNG',
       pillarLines,
       '',
-      '[02] LA KINH THIÊN BÀN & CỬU DIỆU THẦN SÁT',
+      '[02] LA KINH TINH BÀN 24 SƠN & THẦN SÁT',
       starLines,
       '',
-      '[03] TRẬN ĐỒ NGŨ HÀNH & PHÁP QUYẾT DỤNG THẦN',
-      `• Trạng thái Nhật Chủ: ${enriched.yongShen?.strengthLabel}`,
-      `• Dụng Thần: Hành ${enriched.yongShen?.yongShen?.element} — ${enriched.yongShen?.yongShen?.reason}`,
-      `• Hỷ Thần: Hành ${enriched.yongShen?.xiShen?.element} — ${enriched.yongShen?.xiShen?.reason}`,
-      `• Kỵ Thần: Hành ${enriched.yongShen?.jiShen?.element} — ${enriched.yongShen?.jiShen?.reason}`,
+      '[03] NGŨ HÀNH SINH KHẮC & NGUYÊN KHÍ',
+      `• Thể trạng: ${enriched.yongShen?.isStrong ? 'Thân Vượng' : 'Thân Nhược'}`,
+      `• Dụng thần cứu cánh: Hành ${enriched.yongShen?.yongShen?.element}`,
+      `• Phân bố ngũ khí: Mộc: ${enriched.weightedCounts?.Mộc?.toFixed(1)} | Hỏa: ${enriched.weightedCounts?.Hỏa?.toFixed(1)} | Thổ: ${enriched.weightedCounts?.Thổ?.toFixed(1)} | Kim: ${enriched.weightedCounts?.Kim?.toFixed(1)} | Thủy: ${enriched.weightedCounts?.Thủy?.toFixed(1)}`,
       '',
-      '[04] VẬN TRÌNH 8 ĐẠI VẬN & HƯỚNG DẪN HÀNH SỰ',
+      '[04] THẬP THẦN CÁCH CỤC',
+      (enriched.tenGodList || [])
+        .map((g) => `• ${g.name} (${g.group}): ${g.desc} [${g.count > 0 ? `Xuất hiện ${g.count.toFixed(1)} lần` : 'Khuyết'}]`)
+        .join('\n'),
+      '',
+      '[05] ĐẠI VẬN 80 NĂM & LƯU NIÊN',
       cycleLines,
       '',
-      '[05] LỜI PHÁN TỔNG KẾT MỆNH CỤC',
+      '====================================================================',
+      '[TỔNG KẾT MỆNH CỤC]:',
       conclusionParagraph,
-      '',
-      '[06] CƠ SỞ LỊCH PHÁP & GIỚI HẠN',
-      ...(enriched.limits || []),
+      '====================================================================',
     ].join('\n');
 
-    const url = URL.createObjectURL(new Blob([txtContent], { type: 'text/plain;charset=utf-8' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'menh-quan-dai-ban-do-bat-tu.txt';
-    a.click();
+    const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `menh-quan-dai-ban-do-${enriched.dayStem}-${new Date().toISOString().slice(0, 10)}.txt`;
+    link.click();
     URL.revokeObjectURL(url);
   }
 
-  function handleOpenEditorWithNote(customText) {
-    if (customText) setQuickReflection(customText);
-    setEditingNote(true);
-  }
-
+  // Chế độ chỉnh sửa ghi chú trong Sổ
   if (editingNote && SummaryEditor && summarySchema) {
-    const reflectionText =
-      quickReflection ||
-      baseNotes
-        .filter(n => selectedNoteIds.includes(n.id))
-        .map(n => `${n.title}: ${n.text}`)
-        .join('\n\n') ||
-      conclusionParagraph;
+    const selectedTexts = baseNotes
+      .filter((n) => selectedNoteIds.includes(n.id))
+      .map((n) => `${n.title}: ${n.text}`)
+      .join('\n\n');
 
     return h(SummaryEditor, {
       signedIn,
       onSaved,
       onDraftChange: setDraftNote,
-      exitLabel: 'Trở lại Đại Bản Đồ Bát Tự',
+      exitLabel: 'Quay lại Bản Đồ Bát Tự',
       onExit: () => setEditingNote(false),
       initial:
         draftNote ||
         summarySchema.parse({
           kind: 'bazi_note',
           topic: 'self',
-          title: `Chiêm nghiệm Bát Tự · Nhật chủ ${enriched.dayStem} ${enriched.dayElement}`,
-          reflection: reflectionText,
-          takeaway: '',
+          title: `Chiêm nghiệm Lá Số ${enriched.dayStem} ${enriched.dayElement}`,
+          reflection: selectedTexts || conclusionParagraph,
+          takeaway: enriched.beginnerGuide?.archetype?.tagline || '',
           actionId: 'notice',
-          action: '',
+          action: currentCycle?.guidance?.action || 'Lắng đọng tâm trí, điều hòa nguyên khí.',
           days: 7,
           status: 'not_tried',
           usefulness: 'unrated',
@@ -142,36 +156,21 @@ export function AtlasChartResult({
     });
   }
 
-  const jumpLinks = [
-    { href: '#map-bazi-matrix', label: '01 · Ma Trận 7 Tầng' },
-    { href: '#map-celestial-wheel', label: '02 · La Kinh Thiên Bàn' },
-    { href: '#map-five-elements-radar', label: '03 · Trận Đồ Ngũ Hành' },
-    { href: '#map-ten-gods-profile', label: '04 · Thập Thần & Dụng Thần' },
-    { href: '#map-luck-timeline', label: '05 · Sóng Đại Vận & Lưu Niên' },
-    { href: '#map-conclusion-decree', label: '06 · Lời Phán Tổng Kết' },
-  ];
-
   return h(
     'div',
-    { className: 'chart-result atlas-master-container' },
-    // Thanh điều hướng nhanh 5 Đại Bản Đồ (Sticky Navigation)
-    h(
-      'nav',
-      { className: 'atlas-sticky-jumpbar', 'aria-label': 'Điều hướng nhanh 5 Đại Bản Đồ' },
-      jumpLinks.map(link =>
-        h(
-          'a',
-          {
-            key: link.href,
-            href: link.href,
-            className: 'atlas-jump-pill',
-          },
-          link.label
-        )
-      )
-    ),
+    { className: 'atlas-chart-result-container' },
 
-    // BẢN ĐỒ 1: MA TRẬN BÁT TỰ 7 TẦNG
+    // 1. ĐẠI MỆNH BÀN TỔNG HỢP Ở ĐẦU TRANG
+    h(GrandMasterMap, {
+      React,
+      chart: enriched,
+      onNavigateChapter: (targetId) => {
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
+    }),
+
+    // 2. CHƯƠNG I: TỨ TRỤ HUYỀN BÀN (SPLIT-VIEW)
     h(BaziMatrixMap, {
       React,
       chart: enriched,
@@ -179,89 +178,65 @@ export function AtlasChartResult({
       onSelectPillar: setActivePillar,
     }),
 
-    // BẢN ĐỒ 2 & 3: LA KINH THIÊN BÀN & TRẬN ĐỒ NGŨ HÀNH (Song hành trên màn hình lớn >= 1100px)
-    h(
-      'div',
-      { className: 'atlas-dual-map-grid' },
-      h(CelestialWheel, { React, chart: enriched }),
-      h(FiveElementsRadar, { React, chart: enriched })
-    ),
+    // 3. CHƯƠNG II: LA KINH 24 SƠN & THẦN SÁT (SPLIT-VIEW)
+    h(CelestialWheel, {
+      React,
+      chart: enriched,
+    }),
 
-    // BẢN ĐỒ 4: HỒ SƠ THẬP THẦN & PHÁP QUYẾT DỤNG THẦN
-    h(TenGodsProfileMap, { React, chart: enriched }),
+    // 4. CHƯƠNG III: NGŨ HÀNH SINH KHẮC TRẬN (SPLIT-VIEW)
+    h(FiveElementsRadar, {
+      React,
+      chart: enriched,
+    }),
 
-    // BẢN ĐỒ 5: SÓNG SINH KHÍ ĐẠI VẬN & BẢNG LƯU NIÊN 10 NĂM
+    // 5. CHƯƠNG IV: THẬP THẦN & DỤNG THẦN (SPLIT-VIEW)
+    h(TenGodsProfileMap, {
+      React,
+      chart: enriched,
+    }),
+
+    // 6. CHƯƠNG V: ĐẠI VẬN 80 NĂM & LƯU NIÊN (SPLIT-VIEW)
     h(LuckTimeline, {
       React,
       chart: enriched,
-      onQuickNote: handleOpenEditorWithNote,
     }),
 
-    // PHẦN 6: LỜI PHÁN TỔNG KẾT MỆNH CỤC & HÀNH ĐỘNG
+    // 7. TỔNG KẾT LÁ SỐ & HÀNH ĐỘNG
     h(
-      'section',
-      {
-        id: 'map-conclusion-decree',
-        className: 'atlas-card atlas-conclusion-card',
-        'aria-label': 'Lời phán tổng kết mệnh cục',
-      },
-      h('span', { className: 'atlas-map-kicker' }, 'ẤN CHỨNG MỆNH BÀN · TỔNG KẾT CHIÊM NGHIỆM'),
-      h('h2', { className: 'atlas-card-title' }, 'Lời Phán Tổng Kết Mệnh Cục'),
-      h('p', { className: 'conclusion-single-paragraph' }, conclusionParagraph),
-
-      // Căn cứ lịch pháp & giới hạn (Thu gọn tinh tế)
-      h(
-        'details',
-        { className: 'atlas-basis-details' },
-        h('summary', null, '📜 Xem Cơ Sở Lịch Pháp, Múi Giờ IANA & Giới Hạn Luận Giải'),
-        h(
-          'div',
-          { className: 'basis-details-body' },
-          h(
-            'p',
-            null,
-            `Dữ liệu múi giờ: IANA ${enriched.timezoneVersion || '2026a'} · Quy ước: ${enriched.convention || 'civil-midnight-sect2'} · Nguồn: ${enriched.sourceId || 'CAL-01'}.`
-          ),
-          h(
-            'ul',
-            null,
-            (enriched.limits || []).map((lim, i) => h('li', { key: i }, lim))
-          )
-        )
-      ),
-
-      // Thanh nút hành động cuối bản đồ
+      'footer',
+      { className: 'atlas-conclusion-box ritual-mist-card' },
       h(
         'div',
-        { className: 'atlas-action-bar' },
+        { className: 'conclusion-header-row' },
+        h(ScrollTextIcon, { React, size: 18, color: 'var(--gold)' }),
+        h('h3', null, 'Lời Kết Mệnh Cục & Chiêm Nghiệm'),
+        h('span', { className: 'conclusion-tag' }, 'TỔNG QUAN ĐỜI NGƯỜI')
+      ),
+      h('p', { className: 'conclusion-text' }, conclusionParagraph),
+      h(
+        'div',
+        { className: 'conclusion-actions-bar' },
         h(
           'button',
           {
             type: 'button',
-            className: 'atlas-btn-primary',
-            onClick: () => handleOpenEditorWithNote(''),
-          },
-          '✍️ Ghi Chú Vào Sổ Chiêm Nghiệm'
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            className: 'atlas-btn-secondary',
+            className: 'button gold',
             onClick: handleDownloadTxt,
           },
-          '⬇ Tải Trọn Bộ Đại Bản Đồ (.TXT)'
+          h(ScrollTextIcon, { React, size: 16 }),
+          h('span', null, 'Tải Trọn Bộ 5 Đại Bản Đồ (.TXT)')
         ),
-        onExit &&
-          h(
-            'button',
-            {
-              type: 'button',
-              className: 'atlas-btn-ghost',
-              onClick: onExit,
-            },
-            '↺ Khởi Lập Lá Số Khác'
-          )
+        h(
+          'button',
+          {
+            type: 'button',
+            className: 'button outline',
+            onClick: () => setEditingNote(true),
+          },
+          h(BookOpenIcon, { React, size: 16 }),
+          h('span', null, 'Ghi Nhận Vào Sổ Chiêm Nghiệm')
+        )
       )
     )
   );
