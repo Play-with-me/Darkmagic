@@ -73,3 +73,9 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - Root cause: page-LMxhegNg.js imports { env as r } from 'cloudflare:workers' and computes acceptNewReadings: (r.ACCEPT_NEW_READINGS === 'true'). The previous loader mock returned empty env {}, making it false.
 - Fix: Updated loader.mjs to export env with ACCEPT_NEW_READINGS = 'true'.
 - Verified: Rendered SSR payload now passes acceptNewReadings: true, allowing users to enter birth info and view Bazi matrix.
+
+## 2026-11-09 — Reconstructed Full 5-Map Occult Bazi Atlas (Option B) with Atomic Commits
+- Created DESIGN.md defining the Huyen Vu Chu Sa (Dark Occult Eastern Divination) brand system.
+- Built src/atlas/bazi-engine-ext.mjs (60 Hoa Giap Nap Am, 12 Truong Sinh, Tuan Khong Vong, Cuu Dieu Than Sat, Hinh-Xung-Hoi-Hop, Dung Than/Hy Than/Ky Than, 8 Dai Van & 10 Luu Nien).
+- Built all 5 Interactive Atlas Maps in src/atlas/: BaziMatrixMap, CelestialWheel, FiveElementsRadar, TenGodsProfileMap, LuckTimeline.
+- Wired AtlasChartResult.mjs and src/styles/ritual-atlas.css into server.mjs with automatic cache-busting (?v=atlas5 + Clear-Site-Data).
