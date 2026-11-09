@@ -83,7 +83,12 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - **Atomic Commits**: `1b822c2` (CSS zero-card), `8d3afd8` (ambient engine), `d6d2d47` (CJK seals), `9cd11fd` (runtime fixes), `81a6cf2` (obsidian plates & high-contrast palette). Dev server `?v=atlas9` HTTP 200 OK.
 
 ## 2026-11-09 — Vietnamese Typography Elevation & Hidden Stems Seal Upgrade
-- **Khắc phục triệt để lỗi bể font tiếng Việt tại hàng Tàng Can và Lưu Niên**: Gỡ bỏ triệt để `var(--font-han-serif)` khỏi các thẻ chứa văn bản Quốc ngữ. Trước đó, các font CJK (`Noto Serif SC`, `Noto Serif TC`, `SimSun`) không chứa ký tự Latin có dấu tiếng Việt (`á`, `ậ`, `í`, `ỷ`), khiến Windows/trình duyệt fallback sang font chữ đánh máy đơn cách méo mó (`Gi á p`, `M ậ u`, `B í nh`).
-- **Nâng cấp Thẻ Tàng Can phong cách Ấn Triện Cổ Phong**: Kết hợp song hành đại tự Hán Triện của Thiên Can (`STEM_META[hs]?.han` màu Ngũ Hành) và tên Quốc ngữ (`hs`) bằng font `Noto Serif` trang nhã, sắc nét, đúng chuẩn kerning.
-- **Bổ sung Google Fonts chuẩn tiếng Việt**: Nạp đầy đủ bộ font `Noto Serif` và `Noto Sans` (bản subset tiếng Việt đầy đủ trọng số) vào `server.mjs` và CSS; nâng cache-buster lên `?v=atlas10`.
-- **Atomic Commit**: `fd6cc4b`. Toàn bộ module SSR và HTTP 200 xác minh đạt 100%.
+- **Khắc phục triệt để lỗi bể font tiếng Việt tại hàng Tàng Can và Lưu Niên**: Gỡ bỏ triệt để `var(--font-han-serif)` khỏi các thẻ chứa văn bản Quốc ngữ; nạp `Noto Serif` và `Noto Sans` chuẩn tiếng Việt vào `server.mjs`. Commit `fd6cc4b`.
+
+## 2026-11-09 — Everyday User UX Polish & 6 Critical Display Bug Fixes
+- **Xóa bỏ 100% lỗi `undefined` và `null` trên toàn hệ thống**: Chuẩn hóa `computeShenSha` (bổ sung `branch`, `nature`, `palace`), `analyzeYongShen` (bổ sung `pattern`, `name`, `desc`), `tenGodStats` (tính ngũ hành động theo Nhật chủ, đếm đúng Tàng can có ký tự `·`), và xử lý an toàn trụ giờ khuyết (`unknownTime`).
+- **Khắc phục lỗi chữ xoay ngược đầu 180 độ**: Tách chuyển động `celestial-orbit-cw` chỉ áp dụng cho vạch la bàn, vòng kim tuyến và đốm hào quang; giữ chữ Địa Chi (`子 Tý`, `丑 Sửu`...) và Bát Quái đứng thẳng ngay ngắn, 100% dễ đọc.
+- **Loại bỏ +2.0 điểm Thủy ảo khi khuyết giờ**: Trụ giờ chưa rõ không gán nhầm hành Thủy hay nhãn `[ Thủy ]` giả.
+- **Sửa lỗi lệch nút chọn Đại Vận**: Đồng bộ chỉ số 0-based `cIdx`, bấm chọn tuổi nào nhảy đúng chu kỳ đó.
+- **Biểu đồ sóng 80 năm**: Bổ sung đĩa ngọc đen nhẹ, nhãn `★ NAY` tại chu kỳ hiện tại và song ngữ Hán - Việt.
+- **Atomic Commits**: `e25247a`. Dev server `?v=atlas11` HTTP 200 OK.
