@@ -39,23 +39,29 @@
 }
 
 /* ==========================================================================
-   0. Nền Khung Kính Mờ Huyền Ảo (Misty Glassmorphism)
+   0. NỀN KINH THƯ KHẮC NỔI 100% TRONG SUỐT (ZERO-CARD OPEN EDITORIAL)
+   Xóa sạch mọi khung hộp, lớp blur che khuất Bát Quái và cổ thi phía dưới
    ========================================================================== */
 .ritual-mist-card {
-  background: var(--mist-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--mist-border);
-  border-radius: 8px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(214, 154, 136, 0.12);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
   position: relative;
-  overflow: hidden;
   min-width: 0;
 }
 
-.ritual-mist-card:hover {
-  border-color: rgba(214, 154, 136, 0.45);
+.atlas-chart-result-container h1,
+.atlas-chart-result-container h2,
+.atlas-chart-result-container h3,
+.atlas-chart-result-container h4,
+.atlas-chart-result-container p,
+.atlas-chart-result-container span,
+.atlas-chart-result-container strong,
+.atlas-chart-result-container td,
+.atlas-chart-result-container th {
+  text-shadow: 0 1px 8px rgba(8, 12, 10, 0.95), 0 2px 14px rgba(0, 0, 0, 0.85);
 }
 
 /* ==========================================================================
@@ -222,18 +228,42 @@ body:has(.atlas-chart-result-container) .workspace,
   font-size: 46px;
 }
 
-/* 3 Thẻ Đọc Nhanh 30 Giây Cho Người Mới */
-.master-takeaways-container {
-  border-top: 1px solid var(--mist-border);
-  padding-top: 26px;
-  margin-top: 10px;
+/* Đại Mệnh Bàn Split View (Trái: La Kinh 24 Sơn / Phải: 3 Đúc Kết 30 Giây Kinh Thư) */
+.grand-master-split-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: 36px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+@media (min-width: 1400px) {
+  .grand-master-split-body {
+    grid-template-columns: minmax(0, 52%) minmax(0, 48%);
+    gap: 44px;
+  }
+}
+
+@media (max-width: 960px) {
+  .grand-master-split-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+.master-takeaways-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .takeaways-header-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--mist-border-subtle);
 }
 
 .takeaways-header-row h3 {
@@ -247,32 +277,22 @@ body:has(.atlas-chart-result-container) .workspace,
   font-size: 10px;
   letter-spacing: 1px;
   color: var(--copper-gold);
-  background: rgba(214, 154, 136, 0.15);
-  border: 1px solid rgba(214, 154, 136, 0.35);
-  padding: 3px 8px;
-  border-radius: 4px;
+  background: rgba(214, 154, 136, 0.08);
+  border: 1px solid rgba(214, 154, 136, 0.25);
+  padding: 2px 8px;
+  border-radius: 2px;
 }
 
-.master-takeaways-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.takeaway-card {
-  background: var(--mist-card-deep);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 6px;
-  padding: 20px 22px;
+.takeaway-editorial-row {
+  border-bottom: 1px solid rgba(152, 123, 112, 0.2);
+  padding: 14px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  gap: 6px;
 }
 
-.takeaway-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--copper-gold);
+.takeaway-editorial-row:last-child {
+  border-bottom: none;
 }
 
 .takeaway-label-row {
@@ -283,29 +303,31 @@ body:has(.atlas-chart-result-container) .workspace,
 
 .takeaway-tag {
   font-size: 11px;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: var(--copper-gold);
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .takeaway-title {
   font-family: var(--serif);
-  font-size: 17px;
+  font-size: 17.5px;
   color: var(--ink-primary);
-  margin: 2px 0 0;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .takeaway-sub {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--cinnabar-rose);
   line-height: 1.5;
 }
 
 .takeaway-body {
-  font-size: 13px;
-  color: var(--ink-muted);
-  line-height: 1.7;
-  margin: 6px 0 0;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin: 2px 0 0;
 }
 
 /* Thanh Nhảy Nhanh 5 Chương */
@@ -347,17 +369,19 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 /* ==========================================================================
-   2. BỐ CỤC CHIA ĐÔI CHUẨN MỰC (DUAL-COLUMN SPLIT VIEW)
+   2. BỐ CỤC CHIA ĐÔI KINH THƯ KHẮC NỔI (DUAL-COLUMN OPEN EDITORIAL)
    ========================================================================== */
 .atlas-chapter-section {
-  padding: 30px 34px;
+  padding: 24px 8px 48px;
   scroll-margin-top: 30px;
+  border-bottom: 1px solid rgba(152, 123, 112, 0.22);
+  background: transparent !important;
 }
 
 .chapter-header {
-  margin-bottom: 24px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--mist-border);
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(152, 123, 112, 0.2);
 }
 
 .chapter-badge {
@@ -388,105 +412,60 @@ body:has(.atlas-chart-result-container) .workspace,
 .chapter-split-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  gap: 32px;
+  gap: 36px;
   align-items: start;
 }
 
 @media (min-width: 1400px) {
   .chapter-split-layout {
     grid-template-columns: minmax(0, 52%) minmax(0, 48%);
-    gap: 40px;
+    gap: 44px;
   }
 }
 
+/* Thanh nút chọn nhanh phong cách triện khắc cổ điển */
 .quick-switch-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 2px;
+  margin-bottom: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(152, 123, 112, 0.16);
 }
 
 .switch-tab-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 12px;
-  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid rgba(152, 123, 112, 0.25);
+  border-radius: 2px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  color: var(--ink-muted);
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: var(--sans);
 }
 
 .switch-tab-btn:hover {
-  background: rgba(214, 154, 136, 0.12);
+  background: rgba(214, 154, 136, 0.08);
   border-color: var(--copper-gold);
   color: var(--ink-primary);
 }
 
 .switch-tab-btn.is-active {
-  background: var(--cinnabar-deep);
+  background: rgba(119, 43, 50, 0.45);
   border-color: var(--cinnabar-glow);
   color: #fff;
   font-weight: 600;
   box-shadow: 0 0 10px rgba(191, 75, 69, 0.35);
 }
 
-.guide-domains-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.domain-card {
-  background: rgba(11, 16, 14, 0.65);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 6px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.domain-card:hover {
-  border-color: var(--copper-gold);
-  transform: translateY(-1px);
-}
-
-.domain-card-head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: var(--copper-gold);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.domain-card-title {
-  font-family: var(--serif);
-  font-size: 13.5px;
-  color: var(--ink-primary);
-  margin: 0;
-  line-height: 1.4;
-}
-
-.domain-card-desc {
-  font-size: 12px;
-  color: var(--ink-muted);
-  line-height: 1.6;
-  margin: 0;
-}
-
 .split-column {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -502,20 +481,20 @@ body:has(.atlas-chart-result-container) .workspace,
   font-size: 10px;
   letter-spacing: 1.5px;
   padding: 3px 8px;
-  border-radius: 3px;
+  border-radius: 2px;
   font-weight: 600;
 }
 
 .pro-tag {
   color: var(--copper-gold);
-  background: rgba(214, 154, 136, 0.12);
-  border: 1px solid rgba(214, 154, 136, 0.3);
+  background: rgba(214, 154, 136, 0.08);
+  border: 1px solid rgba(214, 154, 136, 0.25);
 }
 
 .beginner-tag {
   color: var(--cinnabar-rose);
-  background: rgba(191, 75, 69, 0.15);
-  border: 1px solid rgba(191, 75, 69, 0.35);
+  background: rgba(191, 75, 69, 0.1);
+  border: 1px solid rgba(191, 75, 69, 0.25);
 }
 
 .col-hint {
@@ -524,16 +503,25 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 /* ==========================================================================
-   3. CỘT PHẢI: LỜI GIẢI ĐỜI THƯỜNG DÀNH CHO NGƯỜI MỚI (GUIDE CARDS)
+   3. CỘT PHẢI: KINH THƯ MỞ TOÀN BỘ (ZERO-CARD OPEN EDITORIAL ROWS)
+   Không ô hộp, không background đục, chỉ đường kẻ ngang thanh nhã
    ========================================================================== */
-.guide-card-primary {
-  background: var(--mist-card-deep);
-  border: 1px solid var(--mist-border);
-  border-radius: 6px;
-  padding: 22px 24px;
+.guide-card-primary,
+.guide-card-secondary,
+.guide-card-action,
+.domain-card,
+.trait-box,
+.takeaway-card,
+.decree-card {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(152, 123, 112, 0.2) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 16px 0 !important;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .guide-card-head {
@@ -546,17 +534,19 @@ body:has(.atlas-chart-result-container) .workspace,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11.5px;
+  letter-spacing: 1.5px;
   color: var(--copper-gold);
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .guide-period-pill {
   font-size: 11px;
   color: var(--ink-muted);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(152, 123, 112, 0.25);
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: 2px;
 }
 
 .guide-headline {
@@ -564,13 +554,13 @@ body:has(.atlas-chart-result-container) .workspace,
   font-size: 19px;
   color: var(--ink-primary);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .guide-meaning-body {
-  font-size: 14px;
+  font-size: 14.5px;
   color: var(--ink-soft);
-  line-height: 1.8;
+  line-height: 1.85;
   margin: 0;
 }
 
@@ -578,51 +568,73 @@ body:has(.atlas-chart-result-container) .workspace,
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: rgba(214, 154, 136, 0.08);
+  background: rgba(214, 154, 136, 0.05);
   border-left: 2px solid var(--copper-gold);
   padding: 10px 14px;
-  border-radius: 0 4px 4px 0;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--copper-gold);
   font-style: italic;
-  line-height: 1.6;
+  line-height: 1.65;
+  margin-top: 4px;
 }
 
-.guide-card-secondary {
-  background: rgba(21, 26, 24, 0.6);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 6px;
-  padding: 18px 20px;
+.guide-domains-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 8px;
+}
+
+.domain-card {
+  padding: 14px 0 !important;
+}
+
+.domain-card:last-child {
+  border-bottom: none !important;
+}
+
+.domain-card-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--copper-gold);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.domain-card-desc {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin: 0;
 }
 
 .card-sec-title {
   font-family: var(--serif);
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink-primary);
-  margin: 0 0 8px;
+  margin: 0;
 }
 
 .card-sec-desc {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink-muted);
-  line-height: 1.6;
-  margin: 0 0 14px;
+  line-height: 1.7;
+  margin: 0;
 }
 
 .guide-traits-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px;
+  margin-top: 8px;
 }
 
 .trait-box {
-  background: rgba(11, 16, 14, 0.6);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 4px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  padding: 10px 0 !important;
+  border-bottom: 1px dashed rgba(152, 123, 112, 0.2) !important;
 }
 
 .trait-label {
@@ -639,20 +651,10 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .trait-box p {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--ink-muted);
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
-}
-
-.guide-card-action {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: rgba(119, 43, 50, 0.18);
-  border: 1px solid rgba(191, 75, 69, 0.35);
-  border-radius: 6px;
-  padding: 16px 18px;
 }
 
 .guide-action-text strong {
@@ -660,24 +662,119 @@ body:has(.atlas-chart-result-container) .workspace,
   font-size: 13px;
   color: var(--cinnabar-rose);
   margin-bottom: 4px;
+  letter-spacing: 0.5px;
 }
 
 .guide-action-text p {
-  font-size: 12.5px;
+  font-size: 13.5px;
   color: var(--ink-soft);
-  line-height: 1.6;
+  line-height: 1.75;
   margin: 0;
 }
 
 /* ==========================================================================
-   4. BẢNG MA TRẬN TỨ TRỤ 7 TẦNG (BAZI MATRIX TABLE)
+   AMBIENT OCCULT RITUAL ANIMATION ENGINE (60fps Physics & Cosmic Rotation)
+   ========================================================================== */
+@keyframes celestial-orbit-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes celestial-orbit-ccw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes qi-stream-flow {
+  to { stroke-dashoffset: -32; }
+}
+
+@keyframes aura-breathe {
+  0%, 100% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 6px rgba(201, 101, 91, 0.45));
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(214, 154, 136, 0.85));
+    transform: scale(1.02);
+  }
+}
+
+@keyframes ember-float-up {
+  0% {
+    transform: translateY(105vh) translateX(0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--ember-opacity, 0.65);
+  }
+  85% {
+    opacity: var(--ember-opacity, 0.65);
+  }
+  100% {
+    transform: translateY(-5vh) translateX(var(--ember-drift-x, 40px)) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.celestial-orbit-cw {
+  transform-origin: center;
+  animation: celestial-orbit-cw var(--orbit-duration, 140s) linear infinite;
+}
+
+.celestial-orbit-ccw {
+  transform-origin: center;
+  animation: celestial-orbit-ccw var(--orbit-duration, 95s) linear infinite;
+}
+
+.qi-stream-line {
+  stroke-dasharray: 6 6;
+  animation: qi-stream-flow 2.8s linear infinite;
+}
+
+.aura-breathe {
+  transform-origin: center;
+  animation: aura-breathe 4s ease-in-out infinite;
+}
+
+/* Lớp hạt tàn hương bay lơ lửng huyền ảo */
+.ambient-ritual-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-ember {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ember-float-up var(--ember-duration, 16s) var(--ember-delay, 0s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celestial-orbit-cw,
+  .celestial-orbit-ccw,
+  .qi-stream-line,
+  .aura-breathe,
+  .ambient-ember {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================================
+   4. BẢNG MA TRẬN TỨ TRỤ 7 TẦNG (BAZI MATRIX TABLE - TRONG SUỐT KHẮC NỔI)
    ========================================================================== */
 .matrix-table-wrap {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid var(--mist-border);
-  border-radius: 6px;
-  background: rgba(11, 16, 14, 0.7);
+  border: 1px solid rgba(152, 123, 112, 0.25);
+  border-radius: 2px;
+  background: transparent !important;
 }
 
 .bazi-matrix-table {
@@ -685,16 +782,18 @@ body:has(.atlas-chart-result-container) .workspace,
   border-collapse: collapse;
   text-align: center;
   font-size: 12px;
+  background: transparent !important;
 }
 
 .bazi-matrix-table th,
 .bazi-matrix-table td {
-  border: 1px solid var(--mist-border-subtle);
+  border: 1px solid rgba(152, 123, 112, 0.18);
   padding: 10px 8px;
+  background: transparent;
 }
 
 .col-header-sticky {
-  background: rgba(21, 26, 24, 0.95);
+  background: rgba(11, 16, 14, 0.35) !important;
   color: var(--ink-dim);
   font-size: 10px;
   letter-spacing: 1px;
@@ -702,7 +801,7 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .row-title {
-  background: rgba(21, 26, 24, 0.8);
+  background: rgba(11, 16, 14, 0.35) !important;
   color: var(--ink-muted);
   font-size: 11px;
   text-align: left;
@@ -711,14 +810,14 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .pillar-col-header {
-  background: rgba(21, 26, 24, 0.6);
+  background: rgba(11, 16, 14, 0.2);
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .pillar-col-header:hover,
 .pillar-col-header.is-selected-col {
-  background: rgba(119, 43, 50, 0.3);
+  background: rgba(119, 43, 50, 0.35) !important;
 }
 
 .header-label-viet {
@@ -818,12 +917,12 @@ body:has(.atlas-chart-result-container) .workspace,
   background: rgba(119, 43, 50, 0.15);
 }
 
-/* Mạch Khí Tương Tác Địa Chi */
+/* Mạch Khí Tương Tác Địa Chi (Zero-Card Open Editorial) */
 .interaction-beam-panel {
-  background: rgba(11, 16, 14, 0.6);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 6px;
-  padding: 14px 16px;
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid rgba(152, 123, 112, 0.2);
+  padding: 14px 0 0;
 }
 
 .beam-title {
@@ -843,14 +942,14 @@ body:has(.atlas-chart-result-container) .workspace,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(21, 26, 24, 0.8);
-  border: 1px solid var(--mist-border);
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 12px;
+  background: transparent;
+  border: 1px solid rgba(152, 123, 112, 0.25);
+  border-radius: 2px;
+  padding: 5px 10px;
+  font-size: 11.5px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--ink-primary);
+  color: var(--ink-soft);
 }
 
 .chip-conflict {
@@ -976,10 +1075,10 @@ body:has(.atlas-chart-result-container) .workspace,
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(11, 16, 14, 0.6);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 6px;
-  padding: 14px 18px;
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid rgba(152, 123, 112, 0.2);
+  padding: 14px 0 0;
 }
 
 .el-score-row {
@@ -988,7 +1087,7 @@ body:has(.atlas-chart-result-container) .workspace,
   gap: 12px;
   font-size: 12px;
   padding: 4px 6px;
-  border-radius: 4px;
+  border-radius: 2px;
   transition: background 0.2s ease;
 }
 
@@ -1025,20 +1124,20 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 /* ==========================================================================
-   7. THẬP THẦN & DỤNG THẦN (TEN GODS & YONG SHEN)
+   7. THẬP THẦN & DỤNG THẦN (TEN GODS & YONG SHEN - ZERO-CARD)
    ========================================================================== */
 .tengods-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .tengod-card {
   text-align: left;
-  background: rgba(11, 16, 14, 0.65);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 5px;
-  padding: 12px 14px;
+  background: transparent !important;
+  border: 1px solid rgba(152, 123, 112, 0.22) !important;
+  border-radius: 2px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1048,8 +1147,8 @@ body:has(.atlas-chart-result-container) .workspace,
 
 .tengod-card:hover,
 .tengod-card.is-selected-god {
-  background: rgba(119, 43, 50, 0.25);
-  border-color: var(--copper-gold);
+  background: rgba(119, 43, 50, 0.3) !important;
+  border-color: var(--copper-gold) !important;
 }
 
 .tengod-card-top {
@@ -1067,9 +1166,9 @@ body:has(.atlas-chart-result-container) .workspace,
 .tengod-count-badge {
   font-size: 10px;
   color: var(--copper-gold);
-  background: rgba(214, 154, 136, 0.15);
+  background: rgba(214, 154, 136, 0.12);
   padding: 1px 6px;
-  border-radius: 10px;
+  border-radius: 2px;
 }
 
 .tengod-name {
@@ -1085,10 +1184,10 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .yongshen-decree-box {
-  background: rgba(21, 26, 24, 0.8);
-  border: 1px solid var(--mist-border);
-  border-radius: 6px;
-  padding: 16px 18px;
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid rgba(152, 123, 112, 0.2);
+  padding: 14px 0 0;
 }
 
 .decree-title {
@@ -1105,10 +1204,10 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .decree-card {
-  background: rgba(11, 16, 14, 0.6);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 4px;
-  padding: 10px 12px;
+  background: transparent !important;
+  border: 1px solid rgba(152, 123, 112, 0.2) !important;
+  border-radius: 2px;
+  padding: 10px 12px !important;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1127,15 +1226,15 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .decree-card p {
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--ink-muted);
-  line-height: 1.4;
+  line-height: 1.5;
   margin: 0;
 }
 
 .yong-card {
-  border-color: rgba(214, 154, 136, 0.5);
-  background: rgba(119, 43, 50, 0.15);
+  border-color: rgba(214, 154, 136, 0.45) !important;
+  background: rgba(119, 43, 50, 0.15) !important;
 }
 
 .yong-card strong {
@@ -1143,14 +1242,14 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 /* ==========================================================================
-   8. ĐẠI VẬN 80 NĂM & LƯU NIÊN (LUCK TIMELINE)
+   8. ĐẠI VẬN 80 NĂM & LƯU NIÊN (LUCK TIMELINE - ZERO-CARD)
    ========================================================================== */
 .timeline-svg-container {
   width: 100%;
   overflow-x: auto;
-  background: rgba(11, 16, 14, 0.6);
-  border: 1px solid var(--mist-border);
-  border-radius: 6px;
+  background: transparent !important;
+  border: 1px solid rgba(152, 123, 112, 0.22);
+  border-radius: 2px;
   padding: 10px 6px;
 }
 
@@ -1166,7 +1265,7 @@ body:has(.atlas-chart-result-container) .workspace,
 }
 
 .annuals-timeline-panel {
-  border-top: 1px solid var(--mist-border-subtle);
+  border-top: 1px solid rgba(152, 123, 112, 0.2);
   padding-top: 14px;
 }
 
@@ -1184,9 +1283,9 @@ body:has(.atlas-chart-result-container) .workspace,
 
 .annual-chip {
   text-align: center;
-  background: rgba(11, 16, 14, 0.7);
-  border: 1px solid var(--mist-border-subtle);
-  border-radius: 4px;
+  background: transparent;
+  border: 1px solid rgba(152, 123, 112, 0.22);
+  border-radius: 2px;
   padding: 8px 6px;
   cursor: pointer;
   display: flex;
@@ -1225,15 +1324,17 @@ body:has(.atlas-chart-result-container) .workspace,
 
 /* Chu Sa Ấn Card */
 .cinnabar-seal-card {
-  border-color: var(--cinnabar-glow);
-  background: radial-gradient(circle at top right, rgba(191, 75, 69, 0.25), rgba(11, 16, 14, 0.8));
+  border-left: 2px solid var(--cinnabar-glow) !important;
+  background: rgba(191, 75, 69, 0.08) !important;
 }
 
 /* ==========================================================================
-   9. TỔNG KẾT MỆNH CỤC (CONCLUSION & ACTIONS BAR)
+   9. TỔNG KẾT MỆNH CỤC (CONCLUSION & ACTIONS BAR - ZERO-CARD)
    ========================================================================== */
 .atlas-conclusion-box {
-  padding: 30px 36px;
+  padding: 30px 10px;
+  border-top: 1px solid rgba(152, 123, 112, 0.22);
+  background: transparent !important;
 }
 
 .conclusion-header-row {
