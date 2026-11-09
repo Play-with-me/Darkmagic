@@ -74,8 +74,21 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - Fix: Updated loader.mjs to export env with ACCEPT_NEW_READINGS = 'true'.
 - Verified: Rendered SSR payload now passes acceptNewReadings: true, allowing users to enter birth info and view Bazi matrix.
 
-## 2026-11-09 — Reconstructed Full 5-Map Occult Bazi Atlas (Option B) with Atomic Commits
-- Created DESIGN.md defining the Huyen Vu Chu Sa (Dark Occult Eastern Divination) brand system.
-- Built src/atlas/bazi-engine-ext.mjs (60 Hoa Giap Nap Am, 12 Truong Sinh, Tuan Khong Vong, Cuu Dieu Than Sat, Hinh-Xung-Hoi-Hop, Dung Than/Hy Than/Ky Than, 8 Dai Van & 10 Luu Nien).
-- Built all 5 Interactive Atlas Maps in src/atlas/: BaziMatrixMap, CelestialWheel, FiveElementsRadar, TenGodsProfileMap, LuckTimeline.
-- Wired AtlasChartResult.mjs and src/styles/ritual-atlas.css into server.mjs with automatic cache-busting (?v=atlas5 + Clear-Site-Data).
+## 2026-11-09 — Complete Grand Master Atlas & Split-View Dual Experience (Pro vs. Beginner)
+- **Kiến trúc Tổng thể**:
+  - Đỉnh trang: **Đại Đồ Bản Tổng Hợp (GrandMasterMap)** kết hợp La Kinh 24 Sơn Hướng, 4 Trụ tỏa tia, ấn triện thư pháp Bát Tự và 3 Thẻ Đúc Kết Cốt Lõi cho người mới đọc hiểu trong 30 giây.
+  - Phía dưới: **5 Phân Trưng Chia Đôi (Dual-Column Split-View)**:
+    - **Cột Trái (Dành Cho Dân Chuyên)**: Đồ bản thuật số cổ pháp 7 tầng, La Kinh Thần Sát, Đồ hình Ngũ Hành Tương Sinh Tương Khắc, Mạn-đà-la Thập Thần Dụng Thần, Sóng Đại Vận 80 năm & 10 năm Lưu Niên có ấn triện Chu Sa.
+    - **Cột Phải (Dành Cho Người Mới)**: Lời giải nghĩa đời thường, phân tích hình tượng Nhật Chủ, lời khuyên công việc/sức khỏe/tình duyên bình dân dễ hiểu, không thuật ngữ khó hiểu.
+- **Thị giác & Kiểu chữ**:
+  - Khôi phục 100% không gian Ma mị - Huyền bí - Đậm chất bói toán Mệnh Quán: nền Huyền Vũ than rêu (`#0b100e`) xuyên thấu qua các phiến thẻ sương khói mờ (`rgba(21, 26, 24, 0.76)` + `backdrop-filter: blur(12px)`), để lộ trọn vẹn Bát Quái trận đồ xoay chậm (`.reading-sigil`) và thi ca huyền mặc trôi bồng bềnh (`.reading-verse`).
+  - Font chữ Thư Pháp Bút Lông Cổ Bản (`Ma Shan Zheng`, `Zhi Mang Xing`) và Tống Thể Khang Hy (`Noto Serif TC/SC`) cho toàn bộ Hán tự Can Chi, Thần Sát, Phương vị.
+  - Hệ thống icon vector SVG Lucide nét thanh kim khí sắc sảo (thay thế hoàn toàn emoji thô sơ).
+- **Quy trình Atomic Commits (Không push)**:
+  - `b6b3538`: antique muted tokens & Lucide SVG icons.
+  - `ed6adb4`: beginner narrative guide, Day Master archetypes & muted theme.
+  - `25fc1cb`: GrandMasterMap master compass & 30-second takeaways.
+  - `f66a2ac`: 5 split-view maps dual-column architecture.
+  - `9aac1ce`: orchestrator integration, server v=atlas6 & CJK typography injection.
+  - `3a86ec4`: defensive fallback handling for raw pillars & matrix selection.
+- **Kiểm thử**: Tất cả 7 thành phần React SSR render thành công 100% (74,940 bytes HTML), HTTP 200 OK trên mọi endpoint. Máy chủ đang phục vụ tại `http://127.0.0.1:5173/`.
