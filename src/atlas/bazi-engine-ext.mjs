@@ -786,18 +786,45 @@ export function buildLuckTimeline(dayStem, pillars, birthYear = 1995) {
 
 // Hàm tổng hợp: Làm giàu toàn diện dữ liệu Lá Số cho 5 Đại Bản Đồ
 export function enrichBaziChart(chart) {
-  const rawPillars = chart?.pillars || [];
+  let rawPillars = chart?.pillars;
+  if (!Array.isArray(rawPillars) || rawPillars.length === 0) {
+    if (chart?.bazi) {
+      const bz = chart.bazi;
+      rawPillars = [
+        { label: 'Năm', name: `${bz.year?.stem || ''} ${bz.year?.branch || ''}`.trim(), ...(bz.year || {}) },
+        { label: 'Tháng', name: `${bz.month?.stem || ''} ${bz.month?.branch || ''}`.trim(), ...(bz.month || {}) },
+        { label: 'Ngày', name: `${bz.day?.stem || ''} ${bz.day?.branch || ''}`.trim(), ...(bz.day || {}) },
+        { label: 'Giờ', name: `${bz.hour?.stem || ''} ${bz.hour?.branch || ''}`.trim(), ...(bz.hour || {}) },
+      ];
+    } else {
+      rawPillars = [
+        { label: 'Năm', name: 'Giáp Tý' },
+        { label: 'Tháng', name: 'Bính Dần' },
+        { label: 'Ngày', name: 'Mậu Thìn' },
+        { label: 'Giờ', name: 'Canh Thân' },
+      ];
+    }
+  }
+
   // Xác định Nhật Can
   const dayPillarRaw = rawPillars[2] || {};
-  const dayNameParts = (dayPillarRaw.name || 'Nhâm Tý').split(' ');
-  const dayStem = STEMS.includes(dayNameParts[0]) ? dayNameParts[0] : 'Nhâm';
-  const dayBranch = BRANCHES.includes(dayNameParts[1]) ? dayNameParts[1] : 'Tý';
+  let dayStem = dayPillarRaw.stem || chart?.dayMaster;
+  let dayBranch = dayPillarRaw.branch;
+  if (!dayStem || !STEMS.includes(dayStem)) {
+    const parts = (dayPillarRaw.name || 'Nhâm Tý').split(' ');
+    dayStem = STEMS.includes(parts[0]) ? parts[0] : 'Nhâm';
+    dayBranch = BRANCHES.includes(parts[1]) ? parts[1] : 'Tý';
+  }
+  if (!dayBranch || !BRANCHES.includes(dayBranch)) {
+    const parts = (dayPillarRaw.name || 'Nhâm Tý').split(' ');
+    dayBranch = BRANCHES.includes(parts[1]) ? parts[1] : 'Tý';
+  }
   const dayElement = chart?.dayElement || STEM_META[dayStem]?.element || 'Thủy';
 
   const enrichedPillars = rawPillars.map((p, idx) => {
     const parts = (p.name || '').split(' ');
-    const stem = STEMS.includes(parts[0]) ? parts[0] : null;
-    const branch = BRANCHES.includes(parts[1]) ? parts[1] : null;
+    const stem = (p.stem && STEMS.includes(p.stem)) ? p.stem : (STEMS.includes(parts[0]) ? parts[0] : null);
+    const branch = (p.branch && BRANCHES.includes(p.branch)) ? p.branch : (BRANCHES.includes(parts[1]) ? parts[1] : null);
     const sMeta = stem ? STEM_META[stem] : null;
     const bMeta = branch ? BRANCH_META[branch] : null;
     const lifeStage = (stem && branch) ? getLifeStage(dayStem, branch) : null;

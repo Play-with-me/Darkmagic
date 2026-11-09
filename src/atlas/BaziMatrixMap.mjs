@@ -22,11 +22,27 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
   const [hoveredInteraction, setHoveredInteraction] = React.useState(null);
 
   const pillars = chart.pillars || [];
-  const curPillar = pillars[selectedPillarIdx] || pillars[2] || pillars[0];
+  const curPillar = pillars[selectedPillarIdx] || pillars[2] || pillars[0] || {
+    label: 'Ngày',
+    name: 'Bản Mệnh',
+    stem: 'Nhâm',
+    branch: 'Tý',
+    stemHan: '壬',
+    branchHan: '子',
+    stemElement: 'Thủy',
+    branchElement: 'Thủy',
+  };
   const activeInteraction = hoveredInteraction || chart.interactions?.[0] || null;
   const highlightedCols = activeInteraction ? activeInteraction.pillars : [];
 
-  const beginnerPillarInfo = PILLAR_ROLES_BEGINNER[selectedPillarIdx] || PILLAR_ROLES_BEGINNER[2];
+  const beginnerPillarInfo = PILLAR_ROLES_BEGINNER[selectedPillarIdx] || PILLAR_ROLES_BEGINNER[2] || {
+    label: 'Trụ Ngày',
+    theme: 'Bản Thể & Hôn Nhân',
+    period: 'Tuổi 33 – 48 (Trung Niên)',
+    meaning: 'Căn nguyên sinh mệnh, ý thức tự chủ và thế giới nội tâm sâu kín nhất.',
+    realLifeImpact: 'Quyết định cách bạn tương tác với bạn đời, tri kỷ và nội lực vượt qua biến cố.',
+    watchOut: 'Dành không gian riêng cho bản thân, học cách cân bằng giữa việc yêu thương người khác và trân trọng giá trị chính mình.',
+  };
   const stemTheme = ELEMENT_THEME[curPillar?.stemElement] || ELEMENT_THEME['Thủy'];
   const branchTheme = ELEMENT_THEME[curPillar?.branchElement] || ELEMENT_THEME['Thủy'];
 
