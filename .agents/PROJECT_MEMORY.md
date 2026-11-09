@@ -74,21 +74,8 @@ Scoped frontend update in release checkout: Reading.tsx removes the “Một kho
 - Fix: Updated loader.mjs to export env with ACCEPT_NEW_READINGS = 'true'.
 - Verified: Rendered SSR payload now passes acceptNewReadings: true, allowing users to enter birth info and view Bazi matrix.
 
-## 2026-11-09 — Complete Grand Master Atlas & Split-View Dual Experience (Pro vs. Beginner)
-- **Kiến trúc Tổng thể**:
-  - Đỉnh trang: **Đại Đồ Bản Tổng Hợp (GrandMasterMap)** kết hợp La Kinh 24 Sơn Hướng, 4 Trụ tỏa tia, ấn triện thư pháp Bát Tự và 3 Thẻ Đúc Kết Cốt Lõi cho người mới đọc hiểu trong 30 giây.
-  - Phía dưới: **5 Phân Trưng Chia Đôi (Dual-Column Split-View)**:
-    - **Cột Trái (Dành Cho Dân Chuyên)**: Đồ bản thuật số cổ pháp 7 tầng, La Kinh Thần Sát, Đồ hình Ngũ Hành Tương Sinh Tương Khắc, Mạn-đà-la Thập Thần Dụng Thần, Sóng Đại Vận 80 năm & 10 năm Lưu Niên có ấn triện Chu Sa.
-    - **Cột Phải (Dành Cho Người Mới)**: Lời giải nghĩa đời thường, phân tích hình tượng Nhật Chủ, lời khuyên công việc/sức khỏe/tình duyên bình dân dễ hiểu, không thuật ngữ khó hiểu.
-- **Thị giác & Kiểu chữ**:
-  - Khôi phục 100% không gian Ma mị - Huyền bí - Đậm chất bói toán Mệnh Quán: nền Huyền Vũ than rêu (`#0b100e`) xuyên thấu qua các phiến thẻ sương khói mờ (`rgba(21, 26, 24, 0.76)` + `backdrop-filter: blur(12px)`), để lộ trọn vẹn Bát Quái trận đồ xoay chậm (`.reading-sigil`) và thi ca huyền mặc trôi bồng bềnh (`.reading-verse`).
-  - Font chữ Thư Pháp Bút Lông Cổ Bản (`Ma Shan Zheng`, `Zhi Mang Xing`) và Tống Thể Khang Hy (`Noto Serif TC/SC`) cho toàn bộ Hán tự Can Chi, Thần Sát, Phương vị.
-  - Hệ thống icon vector SVG Lucide nét thanh kim khí sắc sảo (thay thế hoàn toàn emoji thô sơ).
-- **Quy trình Atomic Commits (Không push)**:
-  - `b6b3538`: antique muted tokens & Lucide SVG icons.
-  - `ed6adb4`: beginner narrative guide, Day Master archetypes & muted theme.
-  - `25fc1cb`: GrandMasterMap master compass & 30-second takeaways.
-  - `f66a2ac`: 5 split-view maps dual-column architecture.
-  - `9aac1ce`: orchestrator integration, server v=atlas6 & CJK typography injection.
-  - `3a86ec4`: defensive fallback handling for raw pillars & matrix selection.
-- **Kiểm thử**: Tất cả 7 thành phần React SSR render thành công 100% (74,940 bytes HTML), HTTP 200 OK trên mọi endpoint. Máy chủ đang phục vụ tại `http://127.0.0.1:5173/`.
+## 2026-11-09 — Full-Width (98vw) Viewport & 4-Layer Plain-Language Explanations
+- **Mở rộng toàn màn hình**: Phá bỏ giới hạn hẹp 860px của `.reading-content` cũ; `.workspace.reading-result-view` và `.atlas-chart-result-container` mở rộng đạt 98vw (~1800px trên desktop), chia đôi cân đối 52% Trái (đồ bản chuyên sâu) / 48% Phải (lời giải đời thường).
+- **Thanh chọn nhanh (Quick-Switch Tabs)**: Bổ sung thanh tab nút bấm chọn nhanh trực tiếp trên đỉnh cột giải thích ở cả 5 đồ bản (4 Trụ, Thần Sát, 5 Hành, 10 Thần, 8 Đại Vận & 10 Lưu Niên).
+- **Cột Phải 4 Chiều Đời Thường**: Mở rộng lời giải dễ hiểu không mê tín gồm Sự Nghiệp & Tiền Tài, Tình Cảm & Người Thân, Thế Mạnh Bẩm Sinh, Điểm Mù Cần Tránh, Dưỡng Sinh Thể Chất, và Kim Chỉ Nam Ứng Dụng Hàng Ngày.
+- **Atomic Commits**: `fc3a97e` (full-width CSS), `6890dd0` (engine dictionary), `df75bad` (map 1 & 2), `547771a` (map 3, 4, 5). Đã kiểm thử 100% không lỗi SSR và HTTP 200 OK.
