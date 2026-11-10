@@ -70,6 +70,14 @@ const server = http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, `http://${hostHeader}`);
     const pathname = decodeURIComponent(parsedUrl.pathname);
 
+    // Public ownership proof for Google Search Console.
+    if (pathname === '/googlec87d467e5035ff7c.html' &&
+        (req.method === 'GET' || req.method === 'HEAD')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end('google-site-verification: googlec87d467e5035ff7c.html');
+      return;
+    }
+
     // 1. Serve /atlas/ritual-atlas.css from src/styles/ritual-atlas.css
     if (pathname === '/atlas/ritual-atlas.css') {
       const cssFile = path.join(STYLES_DIR, 'ritual-atlas.css');
