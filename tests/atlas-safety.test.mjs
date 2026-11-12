@@ -39,6 +39,7 @@ test('editorial pages và monetization config tuân thủ nội dung an toàn v�
   const configSource = await readFile('src/atlas/monetization-config.mjs', 'utf8');
   const bannerSource = await readFile('src/atlas/AdSlotBanner.mjs', 'utf8');
   const editorialSource = await readFile('src/atlas/editorial-pages.mjs', 'utf8');
+  const articlesSource = await readFile('src/atlas/library-articles.mjs', 'utf8');
 
   assert.doesNotMatch(configSource, /from\s+['"]node:|import\s+['"]node:/);
   assert.doesNotMatch(bannerSource, /from\s+['"]node:|import\s+['"]node:/);
@@ -46,12 +47,12 @@ test('editorial pages và monetization config tuân thủ nội dung an toàn v�
   const forbiddenMedical = /bồi dưỡng thận|gan đào thải|dưỡng tim mạch|dưỡng phổi/i;
   const forbiddenDeterministic = /Chìa Khóa Cải Mệnh|Chiếu Chỉ Dụng Thần Định Mệnh|Dụng Thần cốt lõi/i;
 
-  for (const raw of [configSource, bannerSource, editorialSource]) {
+  for (const raw of [configSource, bannerSource, editorialSource, articlesSource]) {
     assert.doesNotMatch(raw, forbiddenMedical);
     assert.doesNotMatch(raw, forbiddenDeterministic);
   }
 
-  for (const route of ['/quyen-rieng-tu', '/dieu-khoan', '/thu-vien']) {
+  for (const route of ['/quyen-rieng-tu', '/dieu-khoan', '/lien-he', '/thu-vien']) {
     const html = renderEditorialPage(route, 'https://darkmagic.onrender.com');
     assert.doesNotMatch(html, forbiddenMedical);
     assert.doesNotMatch(html, forbiddenDeterministic);

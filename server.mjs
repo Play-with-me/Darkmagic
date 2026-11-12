@@ -93,6 +93,18 @@ const server = http.createServer(async (req, res) => {
       const proto = forwardedProto || (hostHeader.includes('onrender.com') ? 'https' : 'http');
       const requestBaseUrl = `${proto}://${hostHeader}`;
 
+      if (pathname === '/healthz') {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(
+          req.method === 'HEAD'
+            ? undefined
+            : JSON.stringify({ status: 'ok', service: 'menh-quan', timestamp: new Date().toISOString() })
+        );
+        return;
+      }
+
       if (pathname === '/robots.txt') {
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.end(req.method === 'HEAD' ? undefined : buildRobotsTxt(requestBaseUrl));
@@ -148,7 +160,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 3. Intercept Reading-CEebwCfN.js, ClientApp-COG-eH4S.js & SiteHeader-DoVcnI5L.js
-    const assetVer = 'atlas14';
+    const assetVer = 'atlas15';
 
     if (pathname.endsWith('/Reading-CEebwCfN.js')) {
       const readingPath = path.join(CLIENT_DIR, '_next/static/chunks/Reading-CEebwCfN.js');
@@ -191,7 +203,7 @@ const server = http.createServer(async (req, res) => {
           .replaceAll('SiteHeader-DoVcnI5L.js', `SiteHeader-DoVcnI5L.js?v=${assetVer}`)
           .replace(
             '(0,g.jsx)(`a`,{href:`/co-so-luan-giai`,children:`Nguồn tham khảo`})',
-            '(0,g.jsx)(`a`,{href:`/co-so-luan-giai`,children:`Nguồn tham khảo`}),(0,g.jsx)(`a`,{href:`/thu-vien`,children:`Thư viện`}),(0,g.jsx)(`a`,{href:`/quyen-rieng-tu`,children:`Chính sách bảo mật`}),(0,g.jsx)(`a`,{href:`/dieu-khoan`,children:`Điều khoản`})'
+            '(0,g.jsx)(`a`,{href:`/co-so-luan-giai`,children:`Nguồn tham khảo`}),(0,g.jsx)(`a`,{href:`/thu-vien`,children:`Thư viện`}),(0,g.jsx)(`a`,{href:`/quyen-rieng-tu`,children:`Chính sách bảo mật`}),(0,g.jsx)(`a`,{href:`/dieu-khoan`,children:`Điều khoản`}),(0,g.jsx)(`a`,{href:`/lien-he`,children:`Liên hệ`})'
           );
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
@@ -295,7 +307,7 @@ const server = http.createServer(async (req, res) => {
         )
         .replace(
           '<button>Quyền riêng tư</button><a href="/co-so-luan-giai">Nguồn tham khảo</a>',
-          '<button>Quyền riêng tư</button><a href="/co-so-luan-giai">Nguồn tham khảo</a><a href="/thu-vien">Thư viện</a><a href="/quyen-rieng-tu">Chính sách bảo mật</a><a href="/dieu-khoan">Điều khoản</a>'
+          '<button>Quyền riêng tư</button><a href="/co-so-luan-giai">Nguồn tham khảo</a><a href="/thu-vien">Thư viện</a><a href="/quyen-rieng-tu">Chính sách bảo mật</a><a href="/dieu-khoan">Điều khoản</a><a href="/lien-he">Liên hệ</a>'
         )
         .replace(
           '</head>',

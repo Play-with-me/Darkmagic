@@ -778,7 +778,8 @@ export function AtlasChartResult({
         },
         h('a', { href: '/thu-vien', className: 'atlas-legal-links__item' }, 'Thư viện Bát Tự'),
         h('a', { href: '/quyen-rieng-tu', className: 'atlas-legal-links__item' }, 'Quyền riêng tư'),
-        h('a', { href: '/dieu-khoan', className: 'atlas-legal-links__item' }, 'Điều khoản sử dụng')
+        h('a', { href: '/dieu-khoan', className: 'atlas-legal-links__item' }, 'Điều khoản sử dụng'),
+        h('a', { href: '/lien-he', className: 'atlas-legal-links__item' }, 'Liên hệ')
       )
     )
   );

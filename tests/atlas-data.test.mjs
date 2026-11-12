@@ -226,6 +226,7 @@ test('Master Bazi Engine v2.0 phân tích chính xác Điều Hầu khí hậu, 
 
 import { MONETIZATION_CONFIG } from '../src/atlas/monetization-config.mjs';
 import {
+  CONTACT_EMAIL,
   LIBRARY_ARTICLES,
   renderEditorialPage,
   buildRobotsTxt,
@@ -245,7 +246,9 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
   const sitemap = buildSitemapXml('https://darkmagic.onrender.com');
   assert.match(sitemap, /xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/);
   assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/quyen-rieng-tu<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/lien-he<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/thu-vien\/ngu-hanh-trong-bat-tu<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/thu-vien\/ghi-chep-so-chiem-nghiem-hieu-qua<\/loc>/);
 
   const disabledAds = buildAdsTxt({ adsense: { enabled: false, publisherId: '' } });
   assert.match(disabledAds, /^#/);
@@ -259,20 +262,27 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
   assert.equal(enabledCaAds.trim(), 'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0');
 });
 
-test('editorial pages trả HTML hợp lệ cho legal pages và đủ 6 bài thư viện', () => {
-  assert.equal(LIBRARY_ARTICLES.length, 6);
+test('editorial pages trả HTML hợp lệ cho legal pages, /lien-he và đủ 14 bài thư viện', () => {
+  assert.equal(LIBRARY_ARTICLES.length, 14);
 
-  for (const route of ['/quyen-rieng-tu', '/dieu-khoan', '/thu-vien']) {
+  for (const route of ['/quyen-rieng-tu', '/dieu-khoan', '/lien-he', '/thu-vien']) {
     const html = renderEditorialPage(route, 'https://darkmagic.onrender.com');
     assert.ok(html && html.includes('<!DOCTYPE html>'), `Missing HTML for ${route}`);
     assert.ok(html.includes('viewport-fit=cover'), `Missing viewport-fit=cover on ${route}`);
     assert.ok(html.includes('ca-pub-1866418681419466'), `Missing AdSense script on ${route}`);
   }
 
+  for (const legalRoute of ['/quyen-rieng-tu', '/dieu-khoan', '/lien-he']) {
+    const html = renderEditorialPage(legalRoute, 'https://darkmagic.onrender.com');
+    assert.ok(html.includes(CONTACT_EMAIL), `Missing contact email on ${legalRoute}`);
+  }
+
   for (const article of LIBRARY_ARTICLES) {
     const html = renderEditorialPage(`/thu-vien/${article.slug}`, 'https://darkmagic.onrender.com');
     const escapedTitle = article.title.replaceAll('"', '&quot;');
     assert.ok(html && html.includes(escapedTitle), `Missing title for ${article.slug}`);
+    assert.ok(html.includes('application/ld+json'), `Missing JSON-LD on ${article.slug}`);
+    assert.ok(article.sections.length >= 3, `Expected >= 3 sections on ${article.slug}`);
   }
 
   assert.equal(renderEditorialPage('/thu-vien/khong-ton-tai', 'https://darkmagic.onrender.com'), null);

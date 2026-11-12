@@ -3,6 +3,10 @@
  * Uses Huyền Vũ Chu Sa design tokens and responsive mobile-first layout (320px+).
  */
 import { MONETIZATION_CONFIG } from './monetization-config.mjs';
+import { LIBRARY_ARTICLES } from './library-articles.mjs';
+
+export { LIBRARY_ARTICLES };
+export const CONTACT_EMAIL = 'kyuu449977@gmail.com';
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -18,226 +22,23 @@ function normalizeBaseUrl(baseUrl) {
   return clean.endsWith('/') ? clean.slice(0, -1) : clean;
 }
 
-export const LIBRARY_ARTICLES = [
-  {
-    slug: 'ngu-hanh-trong-bat-tu',
-    title: 'Ngũ Hành trong Bát Tự: Hiểu về sự cân bằng thay vì đi tìm "thiếu hay dư"',
-    category: 'Nền tảng Bát Tự',
-    readingTime: '5 phút đọc',
-    publishedAt: '2026-11-10',
-    description:
-      'Giải mã vai trò của Kim, Mộc, Thủy, Hỏa, Thổ trong lá số Bát Tự dưới góc nhìn điều tiết khí chất và thói quen sống.',
-    sections: [
-      {
-        heading: '1. Ngũ Hành không phải là điểm số để so sánh hơn thua',
-        paragraphs: [
-          'Nhiều người khi mới tiếp cận Bát Tự thường lo lắng khi thấy biểu đồ của mình có một hành nào đó chiếm tỷ lệ thấp hoặc xuất hiện nhiều hơn mức trung bình. Thực chất, trong học thuật cổ điển phương Đông, năm yếu tố Kim, Mộc, Thủy, Hỏa, Thổ không đại diện cho sự giàu nghèo hay may rủi cố định, mà mô tả cách năng lượng và khí chất vận hành theo mùa sinh.',
-          'Một người sinh vào giữa mùa hạ thường mang sắc thái Hỏa khí vượng, giống như khu vườn dưới nắng trưa cần dòng nước mát điều hòa. Ngược lại, lá số sinh vào cuối thu hoặc đầu đông lại mang nhịp Thủy - Kim sâu lắng, cần chút ấm áp để khơi mở sự linh hoạt trong giao tiếp và hành động.',
-        ],
-      },
-      {
-        heading: '2. Sinh - Khắc là cơ chế giữ nhịp tự nhiên',
-        paragraphs: [
-          'Tương sinh (Mộc sinh Hỏa, Hỏa sinh Thổ, Thổ sinh Kim, Kim sinh Thủy, Thủy sinh Mộc) biểu thị dòng chảy hỗ trợ, nuôi dưỡng và chuyển hóa liên tục. Tuy nhiên, nếu chỉ có sinh mà thiếu khắc, hệ thống rất dễ rơi vào trạng thái quá tải hoặc lan man thiếu điểm dừng.',
-          'Tương khắc trong Bát Tự vì thế đóng vai trò như đường biên và khuôn khổ. Giống như kim loại giúp tỉa tót cành cây mọc đúng hướng, hay bờ đê giúp dòng sông chảy đúng luồng, cơ chế khắc chế giúp cá nhân nhận diện giới hạn cần thiết để tập trung nguồn lực vào việc thực sự có giá trị.',
-        ],
-      },
-      {
-        heading: '3. Đọc sự thiên lệch để tự quan sát nhịp sống hằng ngày',
-        paragraphs: [
-          'Khi quan sát biểu đồ Ngũ Hành trên Mệnh Quán, câu hỏi hữu ích nhất không phải là "mình thiếu hành nào để mua vật phẩm bổ sung", mà là "xu hướng hành vi nào đang lặp lại quá mạnh trong cách mình làm việc và phản ứng với áp lực".',
-          'Chẳng hạn, sắc thái Hỏa mạnh thường đi kèm tốc độ, nhiệt huyết nhưng dễ vội vàng; sắc thái Thổ dày tạo độ tin cậy và bền bỉ nhưng đôi khi ngại thay đổi đột ngột; sắc thái Thủy nổi bật mang lại chiều sâu quan sát nhưng dễ suy nghĩ nhiều. Khi nhận diện rõ điểm mạnh và điểm quá đà của từng khí chất, bạn có thể chủ động sắp xếp môi trường làm việc, lịch nghỉ ngơi và cách phối hợp với người xung quanh một cách hài hòa hơn.',
-        ],
-      },
-      {
-        heading: '4. Thực hành chiêm nghiệm cùng lá số cá nhân',
-        paragraphs: [
-          'Thay vì xem Ngũ Hành như một bản án tĩnh, hãy dùng biểu đồ năm hành như một chiếc gương phản chiếu theo thời gian. Khi bước sang từng năm mới hoặc giai đoạn mới, sự tương tác giữa khí hậu thời vận và cấu trúc nguyên thủy sẽ làm nổi bật những khía cạnh khác nhau để bạn rèn luyện sự điềm tĩnh và cân bằng nội tại.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'dai-van-luu-nien',
-    title: 'Đại Vận 10 năm và Lưu Niên: Đọc chu kỳ thời gian như bản đồ thời tiết',
-    category: 'Chu kỳ thời gian',
-    readingTime: '6 phút đọc',
-    publishedAt: '2026-11-10',
-    description:
-      'Tìm hiểu cách phân biệt Nguyên Cục, Đại Vận và Lưu Niên trong Bát Tự để lập kế hoạch dài hạn một cách chủ động.',
-    sections: [
-      {
-        heading: '1. Ba tầng quan sát: Nguyên Cục, Đại Vận và Lưu Niên',
-        paragraphs: [
-          'Nếu coi lá số Bát Tự (Nguyên Cục) là chiếc thuyền và kết cấu thân vỏ vốn có của mỗi người, thì Đại Vận kéo dài mười năm giống như vùng biển hoặc dòng hải lưu bạn đang đi qua trong một thập kỷ, còn Lưu Niên từng năm là thời tiết nắng mưa cụ thể của mùa đó.',
-          'Sự phân tầng này giúp người đọc tránh cái bẫy quy chụp mọi biến động về một nguyên nhân duy nhất. Có những giai đoạn nền tảng cá nhân vững vàng nhưng bối cảnh bên ngoài biến động nhanh, đòi hỏi sự kiên nhẫn tích lũy thay vì mở rộng nóng vội.',
-        ],
-      },
-      {
-        heading: '2. Ý nghĩa thực tiễn của chu kỳ Đại Vận 10 năm',
-        paragraphs: [
-          'Mỗi chu kỳ Đại Vận không tự động mang lại thành công hay trở ngại một cách máy móc. Thay vào đó, cặp Thiên Can và Địa Chi của Đại Vận làm thay đổi trọng tâm ưu tiên trong mười năm: có giai đoạn thuận lợi cho việc học hỏi chuyên môn và xây dựng uy tín, có giai đoạn lại đặt trọng tâm vào quản trị nguồn lực, kết nối đội ngũ hoặc điều chỉnh nhịp sống gia đình.',
-          'Hiểu được chủ đề chính của Đại Vận giúp bạn giảm bớt áp lực so sánh bản thân với nhịp độ của người khác. Mỗi người đều có những mùa gieo hạt, mùa chăm bón và mùa thu hoạch diễn ra ở những khung thời gian khác nhau.',
-        ],
-      },
-      {
-        heading: '3. Lưu Niên: Nhịp điều chỉnh theo từng năm dương lịch và tiết khí',
-        paragraphs: [
-          'Trong lịch pháp cổ điển, một năm Lưu Niên mới chuyển giao quanh tiết Lập Xuân (thường vào đầu tháng 2 dương lịch). Khi Lưu Niên đi vào tương tác với Nhật Chủ hoặc các trụ trong lá số, nó thường gợi mở những cơ hội học kỹ năng mới hoặc những bài kiểm tra về tính kỷ luật.',
-          'Việc ghi chép lại cảm nhận của bản thân sau mỗi năm vào sổ tay chiêm nghiệm là cách đối chiếu thực tế đáng tin cậy nhất. Qua ba đến năm năm quan sát, bạn sẽ nhận ra quy luật phản ứng của chính mình trước các chu kỳ bận rộn hoặc trầm lắng.',
-        ],
-      },
-      {
-        heading: '4. Giữ tâm thế chủ động trước mọi chu kỳ',
-        paragraphs: [
-          'Bản đồ thời tiết không thay thế tay lái của người cầm vô lăng. Khi thấy dự báo gió lớn, người thủy thủ kinh nghiệm không bỏ cuộc hành trình mà điều chỉnh cánh buồm, kiểm tra lại dây neo và chọn tốc độ an toàn. Đó chính là tinh thần lành mạnh nhất khi tham khảo Đại Vận và Lưu Niên trên Mệnh Quán.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'tu-tru-bat-tu-la-gi',
-    title: 'Tứ Trụ Bát Tự là gì? Giải mã cấu trúc Năm - Tháng - Ngày - Giờ sinh',
-    category: 'Kiến thức nhập môn',
-    readingTime: '5 phút đọc',
-    publishedAt: '2026-11-11',
-    description:
-      'Giới thiệu cấu trúc 4 trụ 8 chữ trong hệ thống lịch pháp Can Chi và ý nghĩa biểu tượng của từng trụ cột cuộc đời.',
-    sections: [
-      {
-        heading: '1. Nguồn gốc từ lịch pháp Thiên Can và Địa Chi',
-        paragraphs: [
-          'Bát Tự (nghĩa đen là tám chữ), còn gọi là Tứ Trụ, là hệ thống biểu diễn thời điểm một cá nhân cất tiếng khóc chào đời bằng bốn cột mốc: Năm, Tháng, Ngày và Giờ theo lịch Can Chi gắn với 24 tiết khí thiên văn. Mỗi trụ gồm một Thiên Can ở trên và một Địa Chi ở dưới, ghép lại thành tám chữ cơ bản.',
-          'Điểm đặc biệt của Bát Tự là ranh giới tháng và năm không dựa vào ngày mùng 1 âm lịch thuần túy, mà tính chính xác theo vị trí của Trái Đất trên quỹ đạo quanh Mặt Trời thông qua các tiết khí như Lập Xuân, Kinh Trập hay Thanh Minh.',
-        ],
-      },
-      {
-        heading: '2. Vai trò biểu tượng của bốn trụ cột',
-        paragraphs: [
-          'Trụ Năm thường đại diện cho nền tảng gia đình, môi trường văn hóa thời thơ ấu và ấn tượng xã hội ban đầu. Trụ Tháng giữ vai trò điều phối khí hậu của toàn bộ lá số, phản ánh môi trường trưởng thành, định hướng nghề nghiệp và cách cá nhân tương tác với tập thể.',
-          'Trụ Ngày là trung tâm của bản đồ, nơi Thiên Can của Trụ Ngày được gọi là Nhật Chủ (đại diện cho ý thức bản thân), còn Địa Chi bên dưới phản ánh không gian đời sống thân mật và sự đồng hành lâu dài. Trụ Giờ hướng về thế giới nội tâm sâu kín, khát vọng sáng tạo và định hướng ở chặng hậu vận.',
-        ],
-      },
-      {
-        heading: '3. Khác biệt giữa xem cho biết và đọc để hiểu mình',
-        paragraphs: [
-          'Nếu chỉ dừng lại ở việc gán nhãn "mệnh tốt" hay "mệnh xấu", người đọc rất dễ bỏ lỡ giá trị nhân văn của hệ thống Tứ Trụ. Trên thực tế, cùng một bộ Tứ Trụ có thể biểu hiện rất khác nhau tùy thuộc vào nền tảng giáo dục, sự rèn luyện tính cách và lựa chọn môi trường sống của mỗi người.',
-          'Khi kết hợp Tứ Trụ với tư duy hiện đại, bạn có thể xem tám chữ ấy như ngôn ngữ biểu tượng giúp gọi tên rõ ràng hơn những nét tính cách tưởng chừng mâu thuẫn bên trong mình.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'thap-than-va-dong-luc-hanh-vi',
-    title: 'Thập Thần trong Bát Tự: Bản đồ 5 nhóm động lực tâm lý và giao tiếp',
-    category: 'Chuyên sâu cấu trúc',
-    readingTime: '6 phút đọc',
-    publishedAt: '2026-11-11',
-    description:
-      'Tìm hiểu Tỷ Kiên, Thực Thương, Tài Tinh, Quan Sát và Ấn Tinh như năm trục động lực hành vi trong đời sống hiện đại.',
-    sections: [
-      {
-        heading: '1. Thập Thần ra đời từ mối quan hệ với Nhật Chủ',
-        paragraphs: [
-          'Trong lá số Bát Tự, toàn bộ các Thiên Can và Tàng Can khác đều được đặt tên theo mối quan hệ Âm Dương và Ngũ Hành với Nhật Chủ. Từ năm cặp sinh khắc và đồng hành chia theo cùng dấu hoặc khác dấu Âm Dương, hệ thống hình thành mười khái niệm gọi chung là Thập Thần.',
-          'Thay vì hiểu chữ "Thần" theo nghĩa huyền bí, học thuật cổ điển dùng thuật ngữ này để chỉ các sắc thái động lực tâm lý, cách xử lý thông tin và mô hình tương tác xã hội của con người.',
-        ],
-      },
-      {
-        heading: '2. Năm nhóm động lực cốt lõi',
-        paragraphs: [
-          'Nhóm Tỷ Kiếp (Tỷ Kiên, Kiếp Tài) đại diện cho cái tôi độc lập, tinh thần tự chủ, sức bền cá nhân và cách hợp tác ngang hàng với đồng nghiệp, bạn bè. Nhóm Thực Thương (Thực Thần, Thương Quan) phản ánh nhu cầu biểu đạt, óc thẩm mỹ, khả năng sáng tạo ý tưởng và chia sẻ tri thức ra bên ngoài.',
-          'Nhóm Tài Tinh (Chính Tài, Thiên Tài) gắn liền với tư duy thực tế, khả năng tổ chức nguồn lực, đặt mục tiêu cụ thể và đo lường hiệu quả. Nhóm Quan Sát (Chính Quan, Thất Sát) đại diện cho tinh thần trách nhiệm, ý thức kỷ luật, khả năng chịu áp lực và dẫn dắt trong khuôn khổ. Cuối cùng, nhóm Ấn Tinh (Chính Ấn, Thiên Ấn) nuôi dưỡng nhu cầu học hỏi, chiêm nghiệm, tìm kiếm ý nghĩa và phục hồi năng lượng nội tâm.',
-        ],
-      },
-      {
-        heading: '3. Ứng dụng vào lựa chọn phong cách làm việc',
-        paragraphs: [
-          'Một người có xu hướng Thực Thương và Ấn Tinh nổi bật thường cảm thấy tràn đầy sinh lực trong các công việc nghiên cứu, thiết kế, giảng dạy hoặc sáng tạo nội dung độc lập. Trong khi đó, cấu trúc thiên về Quan Sát và Tài Tinh lại thường phát huy tốt ở môi trường đòi hỏi tính hệ thống, quản trị vận hành và ra quyết định dựa trên kết quả rõ ràng.',
-          'Không có tổ hợp Thập Thần nào là ưu việt tuyệt đối; giá trị nằm ở việc đặt đúng năng lực tự nhiên vào đúng vai trò và biết rèn luyện các kỹ năng còn lại để giữ sự linh hoạt.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'nhat-chu-va-cach-cuc',
-    title: 'Nhật Chủ và Cách Cục: Vì sao không thể nhìn một chữ để kết luận cả cuộc đời',
-    category: 'Phương pháp luận',
-    readingTime: '5 phút đọc',
-    publishedAt: '2026-11-12',
-    description:
-      'Giải thích lý do trong Bát Tự học chính thống, Nhật Chủ luôn phải được đặt trong tổng thể Lệnh Tháng, Cách Cục và hoàn cảnh sống.',
-    sections: [
-      {
-        heading: '1. Nhật Chủ chỉ là điểm xuất phát của câu chuyện',
-        paragraphs: [
-          'Rất nhiều bài viết đại chúng thường tóm tắt tính cách một người chỉ qua một chữ của Nhật Chủ, chẳng hạn "người Giáp Mộc thẳng thắn" hay "người Quý Thủy nhạy bén". Mô tả đó có phần đúng ở tầng hình tượng sơ khởi, nhưng lại quá đơn giản nếu tách rời khỏi bối cảnh bốn trụ xung quanh.',
-          'Giống như một hạt giống cùng loài nhưng được trồng ở vùng đất phù sa ôn hòa sẽ phát triển khác hẳn với hạt giống mọc trên triền núi đá nhiều gió. Trong Bát Tự, Lệnh Tháng (Địa Chi của trụ tháng) chính là khí hậu quyết định điều kiện sinh trưởng của Nhật Chủ.',
-        ],
-      },
-      {
-        heading: '2. Cách Cục là bức tranh phối hợp tổng thể',
-        paragraphs: [
-          'Khi xét Cách Cục, người nghiên cứu quan sát xem khí lực nổi trội nhất trong tháng sinh là gì, nó có thấu lộ lên Thiên Can để tạo thành thế đứng rõ ràng hay không, và các trụ còn lại hỗ trợ hay kiềm chế lẫn nhau ra sao.',
-          'Một lá số có cấu trúc cân bằng hài hòa mang lại cảm giác ổn định, dễ thích nghi; trong khi một lá số có cá tính sắc nét hoặc tương tác mạnh mẽ giữa các trụ lại thường thúc đẩy chủ nhân đi tìm con đường chuyên sâu độc đáo qua nhiều trải nghiệm thực tế.',
-        ],
-      },
-      {
-        heading: '3. Thái độ đọc bản đồ mang tính xây dựng',
-        paragraphs: [
-          'Khi đọc phần phân tích Nhật Chủ và Cách Cục trên Mệnh Quán, hãy lưu giữ những gợi ý giúp bạn hiểu rõ hơn nhịp điệu tự nhiên của bản thân, đồng thời giữ khoảng lùi tỉnh táo trước mọi lời khẳng định tuyệt đối hóa. Cuộc sống luôn rộng lớn hơn bất kỳ mô hình biểu tượng nào.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'tiet-khi-va-gio-sinh-trong-lich-phap',
-    title: 'Tiết khí và Giờ sinh: Vì sao sai lệch vài mươi phút có thể đổi cả lá số?',
-    category: 'Lịch pháp & Thiên văn',
-    readingTime: '5 phút đọc',
-    publishedAt: '2026-11-12',
-    description:
-      'Tìm hiểu vai trò của 24 tiết khí, ranh giới giờ Tý và kinh độ địa phương trong việc lập lá số Bát Tự chính xác.',
-    sections: [
-      {
-        heading: '1. 24 Tiết khí là trục tọa độ của lá số',
-        paragraphs: [
-          'Khác với lịch âm thông thường chỉ phản ánh chu kỳ trăng tròn trăng khuyết, hệ thống Bát Tự bám sát 24 tiết khí dựa trên chuyển động biểu kiến của Mặt Trời trên hoàng đạo. Mỗi 15 độ kinh độ mặt trời đánh dấu một tiết khí hoặc trung khí mới.',
-          'Chính vì thế, hai em bé sinh cùng ngày âm lịch nhưng cách nhau một thời khắc giao tiết Lập Xuân sẽ có Trụ Năm và Trụ Tháng khác biệt hoàn toàn. Điều này giải thích vì sao các công cụ lập lá số chuẩn mực luôn cần ngày tháng năm sinh dương lịch chính xác đến từng phút.',
-        ],
-      },
-      {
-        heading: '2. Giờ sinh và sự chuyển đổi theo canh giờ cổ truyền',
-        paragraphs: [
-          'Một ngày 24 giờ được chia thành 12 canh giờ địa chi, mỗi canh kéo dài hai tiếng đồng hồ: từ giờ Tý (23h-01h) đến giờ Hợi (21h-23h). Nếu một người sinh sát ranh giới chuyển giờ hoặc quanh thời điểm nửa đêm 23h-00h, việc xác định đúng giờ ghi nhận giúp kết quả Trụ Giờ nhất quán và đáng tin cậy hơn.',
-          'Ngoài ra, khi sinh ở những khu vực địa lý có múi giờ hành chính chênh lệch đáng kể so với kinh độ chuẩn của múi giờ đó, người nghiên cứu lịch pháp thường cân nhắc hiệu chỉnh theo giờ Mặt Trời địa phương để giữ đúng nhịp sáng trưa chiều tối tự nhiên.',
-        ],
-      },
-      {
-        heading: '3. Khi không nhớ rõ giờ sinh thì nên đọc phần nào?',
-        paragraphs: [
-          'Nếu bạn chưa có thông tin giờ sinh chính xác, ba trụ Năm - Tháng - Ngày vẫn cung cấp tới ba phần tư bức tranh về khí chất Ngũ Hành, xu hướng Thập Thần và nhịp Đại Vận cơ bản. Bạn hoàn toàn có thể bắt đầu chiêm nghiệm từ ba trụ này trước khi tìm lại tư liệu gia đình nếu có điều kiện.',
-        ],
-      },
-    ],
-  },
-];
-
 const SITE_NAV_LINKS = [
   { href: '/', label: 'Lập lá số' },
   { href: '/thu-vien', label: 'Thư viện Bát Tự' },
   { href: '/co-so-luan-giai', label: 'Cơ sở luận giải' },
   { href: '/ve-menh-quan', label: 'Về Mệnh Quán' },
+  { href: '/lien-he', label: 'Liên hệ' },
 ];
 
 const LEGAL_NAV_LINKS = [
   { href: '/quyen-rieng-tu', label: 'Quyền riêng tư' },
   { href: '/dieu-khoan', label: 'Điều khoản sử dụng' },
+  { href: '/lien-he', label: 'Liên hệ' },
   { href: '/thu-vien', label: 'Thư viện' },
   { href: '/co-so-luan-giai', label: 'Nguồn tham khảo' },
 ];
 
-function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, activePath }) {
+function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, activePath, jsonLdHtml = '' }) {
   const safeTitle = escapeHtml(title);
   const safeDesc = escapeHtml(description);
   const safeCanonical = escapeHtml(canonicalUrl);
@@ -564,7 +365,7 @@ function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, acti
       .mq-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <meta name="x-site-base" content="${safeBase}" />${adsenseHeadTag}
+  <meta name="x-site-base" content="${safeBase}" />${adsenseHeadTag}${jsonLdHtml}
 </head>
 <body>
   <div class="mq-shell">
@@ -622,7 +423,7 @@ function renderPrivacyPage(baseUrl) {
       <section>
         <h2>3. Bảo mật và liên hệ</h2>
         <p>Mệnh Quán không bán dữ liệu cá nhân cho bên thứ ba, không yêu cầu cung cấp số căn cước, thông tin ngân hàng hay mật khẩu nhạy cảm để sử dụng chức năng tra cứu.</p>
-        <p>Mọi thắc mắc liên quan đến chính sách quyền riêng tư hoặc yêu cầu gỡ bỏ dữ liệu hiển thị, vui lòng gửi phản hồi qua trang <a href="/ve-menh-quan">Về Mệnh Quán</a>.</p>
+        <p>Mọi thắc mắc liên quan đến chính sách quyền riêng tư hoặc yêu cầu gỡ bỏ dữ liệu hiển thị, vui lòng gửi email trực tiếp tới <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> hoặc xem thêm tại trang <a href="/lien-he">Liên hệ Mệnh Quán</a>.</p>
       </section>
     </article>
   `;
@@ -664,8 +465,9 @@ function renderTermsPage(baseUrl) {
         </ul>
       </section>
       <section>
-        <h2>4. Cập nhật điều khoản</h2>
+        <h2>4. Cập nhật điều khoản &amp; Liên hệ</h2>
         <p>Mệnh Quán có thể cập nhật điều khoản này định kỳ để phù hợp với tính năng mới và tiêu chuẩn vận hành minh bạch. Tiếp tục sử dụng trang web đồng nghĩa với việc bạn đồng ý với phiên bản mới nhất được đăng tải tại đây.</p>
+        <p>Mọi góp ý về nội dung hoặc bản quyền, vui lòng liên hệ qua email <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> hoặc trang <a href="/lien-he">Liên hệ</a>.</p>
       </section>
     </article>
   `;
@@ -677,6 +479,47 @@ function renderTermsPage(baseUrl) {
     baseUrl,
     bodyHtml,
     activePath: '/dieu-khoan',
+  });
+}
+
+function renderContactPage(baseUrl) {
+  const canonicalUrl = `${baseUrl}/lien-he`;
+  const bodyHtml = `
+    <div class="mq-breadcrumb"><a href="/">Trang chủ</a> <span>/</span> <span>Liên hệ</span></div>
+    <section class="mq-hero">
+      <span class="mq-badge">Kênh phản hồi chính thức</span>
+      <h1>Liên Hệ Ban Biên Tập — Mệnh Quán</h1>
+      <p class="mq-lead">Mệnh Quán luôn trân trọng mọi góp ý về thuật toán lịch pháp, nội dung Thư viện Bát Tự, trải nghiệm hiển thị trên thiết bị di động hoặc các vấn đề liên quan đến quyền riêng tư.</p>
+    </section>
+    <article class="mq-article">
+      <section>
+        <h2>1. Hộp thư tiếp nhận trực tiếp</h2>
+        <p>Bạn có thể gửi email trao đổi trực tiếp cho quản trị viên Mệnh Quán tại địa chỉ:</p>
+        <p><strong>Email hỗ trợ &amp; bản quyền:</strong> <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a></p>
+        <p>Thời gian phản hồi thông thường từ 24 đến 48 giờ làm việc (giờ Việt Nam, UTC+7).</p>
+      </section>
+      <section>
+        <h2>2. Nội dung tiếp nhận</h2>
+        <ul>
+          <li>Báo lỗi hiển thị, sai lệch múi giờ lịch sử hoặc đề xuất cải thiện biểu đồ 5 Bản Đồ.</li>
+          <li>Đề xuất chủ đề biên tập mới cho chuyên mục <a href="/thu-vien">Thư viện Bát Tự</a>.</li>
+          <li>Yêu cầu giải đáp về cookie, chính sách <a href="/quyen-rieng-tu">Quyền riêng tư</a> hoặc <a href="/dieu-khoan">Điều khoản sử dụng</a>.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>3. Phạm vi hỗ trợ</h2>
+        <p>Mệnh Quán là nền tảng công cụ tra cứu và thư viện tự chiêm nghiệm văn hóa phương Đông hoạt động hoàn toàn trực tuyến. Chúng tôi không nhận xem bói toán cá nhân thu phí, không bán vật phẩm phong thủy và không tư vấn các quyết định y tế hay tài chính.</p>
+      </section>
+    </article>
+  `;
+  return renderShell({
+    title: 'Liên Hệ & Hỗ Trợ | Mệnh Quán',
+    description:
+      'Thông tin liên hệ chính thức qua email của ban biên tập và quản trị viên hệ thống tra cứu Bát Tự Mệnh Quán.',
+    canonicalUrl,
+    baseUrl,
+    bodyHtml,
+    activePath: '/lien-he',
   });
 }
 
@@ -698,9 +541,9 @@ function renderLibraryIndex(baseUrl) {
   const bodyHtml = `
     <div class="mq-breadcrumb"><a href="/">Trang chủ</a> <span>/</span> <span>Thư viện Bát Tự</span></div>
     <section class="mq-hero">
-      <span class="mq-badge">Kho tri thức gốc</span>
+      <span class="mq-badge">Kho tri thức gốc · ${LIBRARY_ARTICLES.length} chuyên đề</span>
       <h1>Thư Viện Chiêm Nghiệm &amp; Học Thuật Bát Tự</h1>
-      <p class="mq-lead">Hệ thống bài viết nền tảng giúp bạn hiểu rõ Ngũ Hành, Thập Thần, Cách Cục và chu kỳ thời gian bằng ngôn ngữ mạch lạc, điềm tĩnh và thực tế.</p>
+      <p class="mq-lead">Tuyển tập ${LIBRARY_ARTICLES.length} bài viết nền tảng giúp bạn hiểu rõ Ngũ Hành, Thập Thần, Cách Cục, Tiết Khí và chu kỳ thời gian bằng ngôn ngữ mạch lạc, điềm tĩnh và thực tế.</p>
     </section>
     <div class="mq-grid">
       ${cardsHtml}
@@ -785,6 +628,18 @@ function renderLibraryArticle(article, baseUrl) {
     </section>
   `;
 
+  const articleSchema = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.description,
+    datePublished: article.publishedAt,
+    dateModified: article.publishedAt,
+    author: { '@type': 'Organization', name: 'Mệnh Quán', url: baseUrl },
+    publisher: { '@type': 'Organization', name: 'Mệnh Quán', url: baseUrl },
+    mainEntityOfPage: canonicalUrl,
+  });
+
   return renderShell({
     title: `${article.title} | Thư viện Mệnh Quán`,
     description: article.description,
@@ -792,6 +647,7 @@ function renderLibraryArticle(article, baseUrl) {
     baseUrl,
     bodyHtml,
     activePath: `/thu-vien/${article.slug}`,
+    jsonLdHtml: `\n  <script type="application/ld+json">${articleSchema}</script>`,
   });
 }
 
@@ -802,6 +658,9 @@ export function renderEditorialPage(pathname, baseUrl = 'https://darkmagic.onren
   }
   if (pathname === '/dieu-khoan') {
     return renderTermsPage(cleanBase);
+  }
+  if (pathname === '/lien-he') {
+    return renderContactPage(cleanBase);
   }
   if (pathname === '/thu-vien') {
     return renderLibraryIndex(cleanBase);
@@ -837,6 +696,7 @@ export function buildSitemapXml(baseUrl = 'https://darkmagic.onrender.com') {
     { loc: `${cleanBase}/co-so-luan-giai`, changefreq: 'monthly', priority: '0.7' },
     { loc: `${cleanBase}/quyen-rieng-tu`, changefreq: 'monthly', priority: '0.5' },
     { loc: `${cleanBase}/dieu-khoan`, changefreq: 'monthly', priority: '0.5' },
+    { loc: `${cleanBase}/lien-he`, changefreq: 'monthly', priority: '0.6' },
   ];
   const articleUrls = LIBRARY_ARTICLES.map((article) => ({
     loc: `${cleanBase}/thu-vien/${article.slug}`,
