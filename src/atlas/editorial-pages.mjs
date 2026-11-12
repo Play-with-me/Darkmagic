@@ -2,7 +2,7 @@
  * Server-rendered AdSense-compliant legal & SEO editorial pages for Mệnh Quán.
  * Uses Huyền Vũ Chu Sa design tokens and responsive mobile-first layout (320px+).
  */
-import { MONETIZATION_CONFIG } from './monetization-config.mjs';
+import { MONETIZATION_CONFIG, buildHeadMonetizationTags } from './monetization-config.mjs';
 import { LIBRARY_ARTICLES } from './library-articles.mjs';
 
 export { LIBRARY_ARTICLES };
@@ -53,10 +53,7 @@ function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, acti
     (item) => `<a href="${escapeHtml(item.href)}" class="mq-footer-link">${escapeHtml(item.label)}</a>`
   ).join('');
 
-  const adsenseHeadTag =
-    MONETIZATION_CONFIG.adsense?.enabled && MONETIZATION_CONFIG.adsense?.publisherId
-      ? `\n  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(MONETIZATION_CONFIG.adsense.publisherId)}" crossorigin="anonymous"></script>`
-      : '';
+  const { combinedHeadHtml } = buildHeadMonetizationTags(MONETIZATION_CONFIG);
 
   return `<!DOCTYPE html>
 <html lang="vi">
@@ -324,6 +321,34 @@ function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, acti
       justify-content: space-between;
       gap: 1rem;
     }
+    .mq-banner-card {
+      margin-top: 1.5rem;
+      background: linear-gradient(155deg, rgba(24, 32, 29, 0.96), rgba(14, 19, 17, 0.96));
+      border: 1px solid rgba(214, 154, 136, 0.28);
+      border-radius: 12px;
+      padding: 1.15rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-width: 0;
+    }
+    .mq-banner-card__body {
+      flex: 1 1 260px;
+      min-width: 0;
+    }
+    .mq-banner-card__title {
+      margin: 0 0 0.35rem;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+    .mq-banner-card__desc {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      overflow-wrap: anywhere;
+    }
     .mq-footer {
       border-top: 1px solid var(--border-soft);
       background: rgba(10, 14, 12, 0.96);
@@ -365,7 +390,7 @@ function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, acti
       .mq-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <meta name="x-site-base" content="${safeBase}" />${adsenseHeadTag}${jsonLdHtml}
+  <meta name="x-site-base" content="${safeBase}" />${combinedHeadHtml}${jsonLdHtml}
 </head>
 <body>
   <div class="mq-shell">
@@ -523,6 +548,30 @@ function renderContactPage(baseUrl) {
   });
 }
 
+function renderEditorialBannerHtml() {
+  if (MONETIZATION_CONFIG.mode === 'off') return '';
+  const offer =
+    MONETIZATION_CONFIG.mode === 'affiliate'
+      ? MONETIZATION_CONFIG.affiliateOffers?.editorialBanner
+      : MONETIZATION_CONFIG.librarySuggestions?.betweenReadingAndMaps;
+  if (!offer) return '';
+
+  const isExternal = /^https?:\/\//i.test(offer.href);
+  const relAttr = offer.rel ? ` rel="${escapeHtml(offer.rel)}"` : '';
+  const targetAttr = isExternal ? ' target="_blank"' : '';
+
+  return `
+    <aside class="mq-banner-card" aria-label="${escapeHtml(offer.badge || 'Gợi ý đồng hành')}">
+      <div class="mq-banner-card__body">
+        <span class="mq-badge">${escapeHtml(offer.badge)}</span>
+        <h2 class="mq-banner-card__title">${escapeHtml(offer.title)}</h2>
+        <p class="mq-banner-card__desc">${escapeHtml(offer.description)}</p>
+      </div>
+      <a href="${escapeHtml(offer.href)}" class="mq-btn"${relAttr}${targetAttr}>${escapeHtml(offer.ctaLabel)}</a>
+    </aside>
+  `;
+}
+
 function renderLibraryIndex(baseUrl) {
   const canonicalUrl = `${baseUrl}/thu-vien`;
   const cardsHtml = LIBRARY_ARTICLES.map(
@@ -548,6 +597,7 @@ function renderLibraryIndex(baseUrl) {
     <div class="mq-grid">
       ${cardsHtml}
     </div>
+    ${renderEditorialBannerHtml()}
     <div class="mq-cta-box">
       <div>
         <h2>Sẵn sàng đối chiếu với lá số của chính bạn?</h2>
@@ -615,6 +665,7 @@ function renderLibraryArticle(article, baseUrl) {
     <article class="mq-article">
       ${sectionsHtml}
     </article>
+    ${renderEditorialBannerHtml()}
     <div class="mq-cta-box">
       <div>
         <h2>Đối chiếu trực tiếp trên lá số cá nhân</h2>

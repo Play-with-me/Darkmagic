@@ -4,7 +4,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
-import { MONETIZATION_CONFIG } from './src/atlas/monetization-config.mjs';
+import { MONETIZATION_CONFIG, buildHeadMonetizationTags } from './src/atlas/monetization-config.mjs';
 import {
   renderEditorialPage,
   buildRobotsTxt,
@@ -123,6 +123,13 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
+      if (pathname === '/sw.js' && MONETIZATION_CONFIG.monetag?.swFileContent) {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.end(req.method === 'HEAD' ? undefined : MONETIZATION_CONFIG.monetag.swFileContent);
+        return;
+      }
+
       const editorialHtml = renderEditorialPage(pathname, requestBaseUrl);
       if (editorialHtml) {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -160,7 +167,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 3. Intercept Reading-CEebwCfN.js, ClientApp-COG-eH4S.js & SiteHeader-DoVcnI5L.js
-    const assetVer = 'atlas15';
+    const assetVer = 'atlas16';
 
     if (pathname.endsWith('/Reading-CEebwCfN.js')) {
       const readingPath = path.join(CLIENT_DIR, '_next/static/chunks/Reading-CEebwCfN.js');
@@ -263,8 +270,20 @@ const server = http.createServer(async (req, res) => {
     const adsenseEnabled = Boolean(
       MONETIZATION_CONFIG.adsense?.enabled && MONETIZATION_CONFIG.adsense?.publisherId
     );
-    const adsenseHosts =
-      'https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google https://www.googletagservices.com https://*.gstatic.com https://*.google.com';
+    const monetagScriptsActive = Boolean(
+      MONETIZATION_CONFIG.monetag?.enabled &&
+        Array.isArray(MONETIZATION_CONFIG.monetag?.headScripts) &&
+        MONETIZATION_CONFIG.monetag.headScripts.length > 0
+    );
+    const externalAdHosts = [
+      adsenseEnabled
+        ? 'https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google https://www.googletagservices.com https://*.gstatic.com https://*.google.com'
+        : '',
+      monetagScriptsActive ? MONETIZATION_CONFIG.monetag.cspHosts || '' : '',
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
 
     for (const [k, v] of webRes.headers.entries()) {
       if (k.toLowerCase() === 'content-length') continue;
@@ -272,12 +291,12 @@ const server = http.createServer(async (req, res) => {
         let updatedCsp = v
           .replace("style-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
           .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com data:");
-        if (adsenseEnabled) {
+        if (externalAdHosts) {
           for (const directive of ['script-src', 'frame-src', 'img-src', 'connect-src']) {
             if (updatedCsp.includes(directive)) {
-              updatedCsp = updatedCsp.replace(directive, `${directive} ${adsenseHosts}`);
+              updatedCsp = updatedCsp.replace(directive, `${directive} ${externalAdHosts}`);
             } else {
-              updatedCsp = `${updatedCsp}; ${directive} 'self' ${adsenseHosts}`;
+              updatedCsp = `${updatedCsp}; ${directive} 'self' ${externalAdHosts}`;
             }
           }
         }
@@ -289,9 +308,7 @@ const server = http.createServer(async (req, res) => {
 
     const contentType = webRes.headers.get('content-type') || '';
     if (contentType.includes('text/html')) {
-      const adsenseTag = adsenseEnabled
-        ? `\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(MONETIZATION_CONFIG.adsense.publisherId)}" crossorigin="anonymous"></script>`
-        : '';
+      const { combinedHeadHtml } = buildHeadMonetizationTags(MONETIZATION_CONFIG);
       let html = await webRes.text();
       html = html
         .replace(
@@ -311,7 +328,7 @@ const server = http.createServer(async (req, res) => {
         )
         .replace(
           '</head>',
-          `<meta name="theme-color" content="#0b100e"/>\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/atlas/ritual-atlas.css?v=${assetVer}"/>${adsenseTag}</head>`
+          `<meta name="theme-color" content="#0b100e"/>\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/atlas/ritual-atlas.css?v=${assetVer}"/>${combinedHeadHtml}</head>`
         );
       res.setHeader('Cache-Control', 'no-store');
       res.setHeader('Clear-Site-Data', '"cache"');

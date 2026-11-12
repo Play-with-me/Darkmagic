@@ -47,11 +47,11 @@
    - **`AtlasChartResult.mjs`**: Đồng bộ `data-nav-id` và tự căn giữa nút điều hướng đang chọn (`scrollIntoView({ inline: 'center' })`) trên thanh cuộn di động.
    - **`ritual-atlas.css`**: Chống tự zoom ô nhập liệu iOS (`font-size: 16px`, `min-height: 44px`), hỗ trợ `env(safe-area-inset-*)` & `100dvh`, tách `:hover` vào `@media (hover: hover)` kèm `:active` cảm ứng, biến thanh 5 nút điều hướng dưới `640px` thành dải `scroll-snap` 1 hàng (`flex-wrap: nowrap`), khóa chống tràn ngang toàn chuỗi phần tử chứa SVG và bảng Tứ trụ 7 tầng.
 
-6. **Hạ Tầng Kiếm Tiền Sạch & Thư Viện SEO Chuẩn AdSense**:
-   - **`src/atlas/monetization-config.mjs` & `src/atlas/AdSlotBanner.mjs`**: Cấu hình tập trung (`mode: 'library' | 'affiliate' | 'adsense' | 'off'`, `adsense.enabled: true`, `publisherId: 'ca-pub-1866418681419466'`, `adsTxtSellerId: 'f08c47fec0942fa0'`) và component tái sử dụng gắn ở Vị trí 1 (`betweenReadingAndMaps`) & Vị trí 3 (`beforeConclusion`) trong `AtlasChartResult.mjs`. Đang chạy xác minh AdSense (`Getting ready`) và giữ nguyên `mode: 'library'` trong lúc duyệt.
-   - **`src/atlas/library-articles.mjs`, `src/atlas/editorial-pages.mjs` & `server.mjs`**: Phục vụ SSR `/quyen-rieng-tu`, `/dieu-khoan`, `/lien-he` (kèm email công khai `kyuu449977@gmail.com`), `/thu-vien` + 14 bài viết Bát Tự chiêm nghiệm gốc (có JSON-LD `Article`), `/healthz` JSON `200`, cùng `/robots.txt`, `/sitemap.xml`, `/ads.txt`, nâng cache-bust `?v=atlas15` và mở CSP cho AdSense.
+6. **Hạ Tầng Kiếm Tiền Sạch, Banner Đơn Giản & Monetag**:
+   - **`src/atlas/monetization-config.mjs` & `src/atlas/AdSlotBanner.mjs`**: Đặt `mode: 'affiliate'` hiển thị banner đơn giản ở Vị trí 1 (`betweenReadingAndMaps`), Vị trí 3 (`beforeConclusion`) trong `AtlasChartResult.mjs` và `.mq-banner-card` trên `/thu-vien*`. Giữ `adsense` (`ca-pub-1866418681419466`, `/ads.txt`) và bổ sung `monetag` (`siteId: '3574571'`, `<meta name="monetag" content="17f2098708859e12049841afd66178ac" />`, khung `headScripts` + `/sw.js`).
+   - **`src/atlas/library-articles.mjs`, `src/atlas/editorial-pages.mjs` & `server.mjs`**: Phục vụ SSR `/quyen-rieng-tu`, `/dieu-khoan`, `/lien-he` (`kyuu449977@gmail.com`), `/thu-vien` + 14 bài viết (JSON-LD `Article`), `/healthz`, nâng cache-bust `?v=atlas16`, nhúng `buildHeadMonetizationTags()` dùng chung và mở CSP động cho AdSense/Monetag.
    - **`tests/atlas-data.test.mjs` & `tests/atlas-safety.test.mjs`**: Kiểm tra đồng bộ `14/14` tests pass.
 
 ## 4. Next Priorities
-- Chờ Google AdSense xét duyệt `darkmagic.onrender.com` (`Getting ready`) và theo dõi Google Search Console index các URL trong `sitemap.xml`; thiết lập ping `/healthz` tùy chọn để giữ Render Free khỏi ngủ đông khi cần.
-- Việc gắn tên miền riêng (custom TLD domain) tạm hoãn xử lý sau khi hoàn tất ổn định trên Render.
+- Đẩy commit lên `origin/main` và xác minh live trên `darkmagic.onrender.com` (bấm Verify site `3574571` trên Monetag khi `<meta name="monetag">` đã live, sau đó tạo/gắn Zone script của `darkmagic.onrender.com` vào `monetag.headScripts`).
+- Việc gắn tên miền riêng tạm hoãn xử lý sau khi hoàn tất ổn định trên Render.

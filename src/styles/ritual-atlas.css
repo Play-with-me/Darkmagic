@@ -3011,6 +3011,15 @@ body:has(.atlas-chart-result-container) .reading-sigil {
   gap: 16px;
 }
 
+.atlas-companion-card__thumb {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(214, 154, 136, 0.24);
+}
+
 .atlas-companion-card__body {
   flex: 1 1 auto;
   min-width: 0;

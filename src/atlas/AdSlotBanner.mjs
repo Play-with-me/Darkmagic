@@ -79,6 +79,14 @@ export function AdSlotBanner({
       'data-slot-mode': mode,
       'aria-label': item.badge || 'Gợi ý đọc thêm',
     },
+    item.imageUrl
+      ? h('img', {
+          className: 'atlas-companion-card__thumb',
+          src: item.imageUrl,
+          alt: item.title || 'Ảnh minh họa gợi ý đồng hành',
+          loading: 'lazy',
+        })
+      : null,
     h(
       'div',
       { className: 'atlas-companion-card__body' },
