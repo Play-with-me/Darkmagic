@@ -2,6 +2,7 @@
  * Server-rendered AdSense-compliant legal & SEO editorial pages for Mệnh Quán.
  * Uses Huyền Vũ Chu Sa design tokens and responsive mobile-first layout (320px+).
  */
+import { MONETIZATION_CONFIG } from './monetization-config.mjs';
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -250,6 +251,11 @@ function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, acti
   const footerLinks = LEGAL_NAV_LINKS.map(
     (item) => `<a href="${escapeHtml(item.href)}" class="mq-footer-link">${escapeHtml(item.label)}</a>`
   ).join('');
+
+  const adsenseHeadTag =
+    MONETIZATION_CONFIG.adsense?.enabled && MONETIZATION_CONFIG.adsense?.publisherId
+      ? `\n  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(MONETIZATION_CONFIG.adsense.publisherId)}" crossorigin="anonymous"></script>`
+      : '';
 
   return `<!DOCTYPE html>
 <html lang="vi">
@@ -558,7 +564,7 @@ function renderShell({ title, description, canonicalUrl, baseUrl, bodyHtml, acti
       .mq-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <meta name="x-site-base" content="${safeBase}" />
+  <meta name="x-site-base" content="${safeBase}" />${adsenseHeadTag}
 </head>
 <body>
   <div class="mq-shell">
@@ -850,7 +856,7 @@ export function buildSitemapXml(baseUrl = 'https://darkmagic.onrender.com') {
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/xmlns/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${entries}
 </urlset>
 `;
@@ -858,7 +864,7 @@ ${entries}
 
 export function buildAdsTxt(config) {
   const adsense = config?.adsense || {};
-  const publisherId = String(adsense.publisherId || '').trim();
+  const publisherId = String(adsense.publisherId || '').trim().replace(/^ca-/i, '');
   const sellerId = String(adsense.adsTxtSellerId || 'f08c47fec0942fa0').trim();
   if (!adsense.enabled || !publisherId) {
     return '# Google AdSense publisherId is not configured yet.\n';

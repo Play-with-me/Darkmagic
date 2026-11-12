@@ -243,16 +243,20 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
   assert.match(robots, /Sitemap:\s*https:\/\/darkmagic\.onrender\.com\/sitemap\.xml/);
 
   const sitemap = buildSitemapXml('https://darkmagic.onrender.com');
+  assert.match(sitemap, /xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/);
   assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/quyen-rieng-tu<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/thu-vien\/ngu-hanh-trong-bat-tu<\/loc>/);
 
-  const disabledAds = buildAdsTxt(MONETIZATION_CONFIG);
+  const disabledAds = buildAdsTxt({ adsense: { enabled: false, publisherId: '' } });
   assert.match(disabledAds, /^#/);
 
-  const enabledAds = buildAdsTxt({
-    adsense: { enabled: true, publisherId: 'pub-1234567890123456', adsTxtSellerId: 'f08c47fec0942fa0' },
+  const liveAds = buildAdsTxt(MONETIZATION_CONFIG);
+  assert.equal(liveAds.trim(), 'google.com, pub-1866418681419466, DIRECT, f08c47fec0942fa0');
+
+  const enabledCaAds = buildAdsTxt({
+    adsense: { enabled: true, publisherId: 'ca-pub-1234567890123456', adsTxtSellerId: 'f08c47fec0942fa0' },
   });
-  assert.equal(enabledAds.trim(), 'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0');
+  assert.equal(enabledCaAds.trim(), 'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0');
 });
 
 test('editorial pages trả HTML hợp lệ cho legal pages và đủ 6 bài thư viện', () => {
@@ -262,6 +266,7 @@ test('editorial pages trả HTML hợp lệ cho legal pages và đủ 6 bài th�
     const html = renderEditorialPage(route, 'https://darkmagic.onrender.com');
     assert.ok(html && html.includes('<!DOCTYPE html>'), `Missing HTML for ${route}`);
     assert.ok(html.includes('viewport-fit=cover'), `Missing viewport-fit=cover on ${route}`);
+    assert.ok(html.includes('ca-pub-1866418681419466'), `Missing AdSense script on ${route}`);
   }
 
   for (const article of LIBRARY_ARTICLES) {

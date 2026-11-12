@@ -11,8 +11,8 @@
 export const MONETIZATION_CONFIG = {
   mode: 'library',
   adsense: {
-    enabled: false,
-    publisherId: '',
+    enabled: true,
+    publisherId: 'ca-pub-1866418681419466',
     adsTxtSellerId: 'f08c47fec0942fa0',
     slots: {
       betweenReadingAndMaps: '',

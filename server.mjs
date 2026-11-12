@@ -252,7 +252,7 @@ const server = http.createServer(async (req, res) => {
       MONETIZATION_CONFIG.adsense?.enabled && MONETIZATION_CONFIG.adsense?.publisherId
     );
     const adsenseHosts =
-      'https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google';
+      'https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google https://www.googletagservices.com https://*.gstatic.com https://*.google.com';
 
     for (const [k, v] of webRes.headers.entries()) {
       if (k.toLowerCase() === 'content-length') continue;
