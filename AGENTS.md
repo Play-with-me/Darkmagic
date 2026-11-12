@@ -1,5 +1,7 @@
 # Always-On Engineering, Graphify & UI/UX Autopilot Rules
 
+For work on the public Mệnh Quán site at `https://darkmagic.onrender.com/`, read [QUY-TRINH-CODEX.md](./QUY-TRINH-CODEX.md) before editing. Confirm the Render runtime path and verify user-facing changes in Google Chrome.
+
 These rules are **permanently active on every turn**. Do NOT wait for the user to mention skill names in their prompt. Follow this workflow automatically across the entire project:
 
 ## 1. Automatic Skill & State Machine Activation

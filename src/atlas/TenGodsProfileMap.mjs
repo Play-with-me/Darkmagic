@@ -1,9 +1,9 @@
 /**
  * src/atlas/TenGodsProfileMap.mjs
- * ĐỒ BẢN IV: THẬP THẦN CÁCH CỤC & DỤNG THẦN PHÁP QUYẾT
+ * ĐỒ BẢN IV: THẬP THẦN CÁCH CỤC
  * Bố cục Split-View:
- * - Cột Trái: Mạn-đà-la 10 Cung Thập Thần + Ấn Chương Dụng Thần Pháp Quyết
- * - Cột Phải: Lời giải đời thường giải mã Thiên Hướng Sự Nghiệp & Bản Đồ Tâm Lý cho người mới
+ * - Cột Trái: Mạn-đà-la 10 Cung Thập Thần
+ * - Cột Phải: giải thích truyền thống để người đọc tự đối chiếu
  */
 
 import {
@@ -21,14 +21,6 @@ export function TenGodsProfileMap({ React, chart }) {
   const [selectedGodName, setSelectedGodName] = React.useState('Chính tài');
 
   const tenGodList = chart.tenGodList || [];
-  const yongShen = chart.yongShen || {
-    isStrong: true,
-    pattern: 'Chính Tài Cách',
-    yongShen: { element: 'Thổ', name: 'Tài Tinh' },
-    xiShen: { element: 'Hỏa', name: 'Thực Thương' },
-    jiShen: { element: 'Thủy', name: 'Tỷ Kiếp' },
-  };
-
   const curGod = tenGodList.find((g) => g.name === selectedGodName) || tenGodList[0] || {
     name: 'Chính tài',
     group: 'Tài Tinh',
@@ -42,75 +34,68 @@ export function TenGodsProfileMap({ React, chart }) {
     'Tỷ kiên': {
       archetype: 'Người Bạn Đồng Hành Cùng Chí Hướng',
       modernRole: 'Khả năng tự chủ, làm việc độc lập, tự lực cánh sinh.',
-      career: 'Hợp với công việc chuyên môn cao, tự doanh hoặc làm chủ dự án riêng.',
+      career: 'Gợi ý đối chiếu: công việc chuyên môn, tự chủ hoặc chịu trách nhiệm một dự án.',
       shadow: 'Hơi bướng bỉnh, khó nhún nhường, dễ bị bạn bè cạnh tranh.',
     },
     'Kiếp tài': {
       archetype: 'Chiến Binh Cạnh Tranh & Táo Bạo',
       modernRole: 'Sức bật dấn thân, hành động quyết đoán, dám chấp nhận rủi ro.',
-      career: 'Hợp với kinh doanh khởi nghiệp, thương thuyết gay cấn, môi trường cạnh tranh cao.',
+      career: 'Gợi ý đối chiếu: môi trường cần dấn thân, thương lượng và làm rõ ranh giới hợp tác.',
       shadow: 'Dễ vung tay quá trán, cả nể cho vay mượn tiền bạc rồi mất lòng.',
     },
     'Thực thần': {
       archetype: 'Nghệ Sĩ Yêu Đời & Hưởng Thụ Phúc Lộc',
       modernRole: 'Tâm hồn rộng mở, tư duy sáng tạo nghệ thuật, sành ăn nói và ẩm thực.',
-      career: 'Hợp với nghệ thuật, thiết kế, ẩm thực, giáo dục, sáng tạo nội dung.',
+      career: 'Gợi ý đối chiếu: hoạt động tạo ra sản phẩm hữu hình, giảng giải hoặc sáng tạo.',
       shadow: 'Đôi khi hơi lười biếng, dễ thỏa mãn với sự an nhàn, thiếu kỷ luật thép.',
     },
     'Thương quan': {
       archetype: 'Kẻ Phá Cách & Tài Năng Hùng Biện',
       modernRole: 'Trí thông minh sắc sảo, thích đổi mới cái cũ, hùng biện xuất sắc.',
-      career: 'Hợp với luật sư, nhà báo, đạo diễn, diễn giả, kiến trúc sư giải pháp mới.',
+      career: 'Gợi ý đối chiếu: hoạt động đặt câu hỏi, trình bày quan điểm hoặc cải tiến cách làm.',
       shadow: 'Lời nói sắc như dao dễ làm mất lòng cấp trên; tính tình kiêu ngạo.',
     },
     'Chính tài': {
       archetype: 'Nhà Quản Lý Tài Chính Chu Đáo',
       modernRole: 'Thực tế, coi trọng chữ tín, cần cù tích lũy dòng tiền ổn định.',
-      career: 'Hợp với ngân hàng, kế toán, bất động sản dài hạn, quản lý chuỗi cung ứng.',
+      career: 'Gợi ý đối chiếu: công việc cần giữ nhịp, quản lý nguồn lực và theo dõi kết quả.',
       shadow: 'Đôi khi quá thực dụng hoặc quá tính toán chi li khiến người khác ngột ngạt.',
     },
     'Thiên tài': {
       archetype: 'Nhà Đầu Tư Cơ Hội Hào Sảng',
       modernRole: 'Nhạy bén với cơ hội mới, kiếm tiền nhanh từ nhiều nguồn, giao thiệp rộng.',
-      career: 'Hợp với đầu tư tài chính, chứng khoán, thương mại quốc tế, tổ chức sự kiện.',
+      career: 'Gợi ý đối chiếu: thử nghiệm cơ hội mới ở quy mô nhỏ và đánh giá bằng kết quả.',
       shadow: 'Kiếm nhanh nhưng tiêu cũng nhanh; tiền vào như nước, ra như thác.',
     },
     'Chính quan': {
       archetype: 'Nhà Lãnh Đạo Kỷ Luật & Trách Nhiệm',
       modernRole: 'Tác phong chuẩn mực, tôn trọng pháp luật và quy chuẩn, trọng danh dự.',
-      career: 'Hợp với cơ quan công quyền, quản lý doanh nghiệp lớn, cố vấn pháp lý.',
+      career: 'Gợi ý đối chiếu: vai trò có tiêu chuẩn rõ, trách nhiệm và cơ chế phản hồi.',
       shadow: 'Đôi lúc quá bảo thủ theo quy trình, sợ sai sót nên chậm đổi mới.',
     },
     'Thất sát': {
       archetype: 'Tướng Lĩnh Xung Trận Trong Nghịch Cảnh',
       modernRole: 'Ý chí sắt đá, uy quyền quyết đoán, có khả năng lội ngược dòng thần kỳ.',
-      career: 'Hợp với quản lý khủng hoảng, lực lượng vũ trang, chỉ huy dự án gai góc.',
+      career: 'Gợi ý đối chiếu: tình huống cần ưu tiên, kỷ luật và xử lý áp lực theo từng bước.',
       shadow: 'Áp lực nội tâm lớn, hay nghi ngờ; phong cách quản lý dễ độc đoán.',
     },
     'Chính ấn': {
       archetype: 'Bậc Thầy Trí Thức & Chỗ Dựa Ấm Áp',
       modernRole: 'Lòng nhân từ, học vấn chính thống uyên bác, được người bề trên yêu mến.',
-      career: 'Hợp với giảng viên, nhà nghiên cứu, bác sĩ, hoạt động thiện nguyện.',
+      career: 'Gợi ý đối chiếu: học có hệ thống, hướng dẫn người khác hoặc làm việc theo nguồn tin cậy.',
       shadow: 'Dễ ỷ lại vào sự bảo bọc, thiếu tính dứt khoát khi đối mặt với thương trường khốc liệt.',
     },
     'Thiên ấn': {
       archetype: 'Nhà Triết Học Độc Bản & Trực Giác Ẩn Vi',
       modernRole: 'Tư duy dị biệt, thấu suốt tâm lý con người, hứng thú với huyền học và triết lý.',
-      career: 'Hợp với tâm lý học, cố vấn chiến lược, chiêm tinh học, lập trình viên thuật toán.',
+      career: 'Gợi ý đối chiếu: nghiên cứu một câu hỏi sâu, so sánh nguồn và kiểm tra qua thực tế.',
       shadow: 'Thích cô độc, khó mở lòng, dễ chìm vào suy nghĩ xa rời thực tế.',
     },
   };
 
   const curGodMeaning = TEN_GODS_BEGINNER_MEANINGS[curGod.name] || TEN_GODS_BEGINNER_MEANINGS['Chính tài'];
   const godTheme = ELEMENT_THEME[curGod.element] || ELEMENT_THEME['Thổ'];
-
-  const curPattern = yongShen.pattern || (yongShen.isStrong ? 'Thân Vượng · Thực Thương Tiết Tú' : 'Thân Nhược · Ấn Thụ Sinh Thân');
-  const yongName = yongShen.yongShen?.name || (yongShen.isStrong ? 'Thực Thương (Tiết Tú)' : 'Ấn Tinh (Sinh Thân)');
-  const yongEl = yongShen.yongShen?.element || 'Thủy';
-  const yongDesc = yongShen.yongShen?.desc || yongShen.yongShen?.reason || 'Chìa khóa đưa sự nghiệp lên tầm cao mới.';
-  const xiName = yongShen.xiShen?.name || (yongShen.isStrong ? 'Tài Tinh (Khai Lộc)' : 'Tỷ Kiếp (Trợ Thân)');
-  const xiEl = yongShen.xiShen?.element || 'Kim';
-  const xiDesc = yongShen.xiShen?.desc || yongShen.xiShen?.reason || 'Cộng sự, người đồng hành đắc lực.';
+  const dynamicGod = chart.dynamicTenGodInsights?.[curGod.name] || null;
 
   return h(
     'section',
@@ -129,11 +114,11 @@ export function TenGodsProfileMap({ React, chart }) {
         h(AwardIcon, { React, size: 14, color: 'var(--gold)' }),
         h('span', null, 'ĐỒ BẢN IV · THẬP THẦN PHÁP QUYẾT (十神格局)')
       ),
-      h('h2', { className: 'chapter-title' }, 'Thập Thần Cách Cục & Dụng Thần Định Hướng'),
+      h('h2', { className: 'chapter-title' }, 'Thập Thần trong cấu trúc Bát tự'),
       h(
         'p',
         { className: 'chapter-desc' },
-        'Mười luồng tâm lý Thập Thần biểu diễn tài năng, tham vọng và thiên hướng nghề nghiệp. Bấm chọn từng Thập Thần bên trái để mở chìa khóa phát triển bản thân bên phải.'
+        'Thập Thần là tên gọi truyền thống cho quan hệ giữa các Can với Nhật chủ. Bấm từng mục để xem dữ kiện xuất hiện ở đâu và một cách hiểu dễ đối chiếu; mục này không xác định tính cách, nghề nghiệp hay tài chính của bạn.'
       )
     ),
 
@@ -179,38 +164,7 @@ export function TenGodsProfileMap({ React, chart }) {
             );
           })
         ),
-
-        // Thẻ Dụng Thần — Hỷ Thần — Kỵ Thần
-        h(
-          'div',
-          { className: 'yongshen-decree-box aura-breathe' },
-          h('h4', { className: 'decree-title' }, 'Dụng Thần Pháp Quyết (Chìa Khóa Cải Mệnh)'),
-          h(
-            'div',
-            { className: 'decree-cards-grid' },
-            h(
-              'div',
-              { className: 'decree-card yong-card' },
-              h('span', { className: 'decree-type-tag' }, 'DỤNG THẦN (DÙNG ĐẦU TIÊN)'),
-              h('strong', null, `${yongName} · Hành ${yongEl}`),
-              h('p', null, yongDesc)
-            ),
-            h(
-              'div',
-              { className: 'decree-card xi-card' },
-              h('span', { className: 'decree-type-tag' }, 'HỶ THẦN (TRỢ LỰC)'),
-              h('strong', null, `${xiName} · Hành ${xiEl}`),
-              h('p', null, xiDesc)
-            ),
-            h(
-              'div',
-              { className: 'decree-card ji-card' },
-              h('span', { className: 'decree-type-tag' }, 'KỴ THẦN (CẦN TIẾT CHẾ)'),
-              h('strong', null, `${yongShen.jiShen?.name || 'Kỵ Khí'} · Hành ${yongShen.jiShen?.element || 'Hỏa'}`),
-              h('p', null, yongShen.jiShen?.desc || yongShen.jiShen?.reason || 'Tránh bồi đắp thêm vào lối sống.')
-            )
-          )
-        )
+        h('p', { className: 'atlas-data-limit' }, 'Vượng suy, Dụng thần và Hỷ thần chưa được phát hành trong bản thử nghiệm vì quy tắc nội dung đang chờ duyệt độc lập.')
       ),
 
       // ================= CỘT PHẢI: LỜI GIẢI ĐỜI THƯỜNG =================
@@ -220,7 +174,7 @@ export function TenGodsProfileMap({ React, chart }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · BẢN ĐỒ TÂM LÝ & NĂNG LỰC TÀI CHÍNH'),
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · GIẢI NGHĨA TRUYỀN THỐNG'),
           h('span', { className: 'col-hint' }, `Đang soi: ${curGod.name} (${(curGod.count || 0).toFixed(1)} điểm)`)
         ),
 
@@ -253,17 +207,17 @@ export function TenGodsProfileMap({ React, chart }) {
               'div',
               { className: 'guide-card-badge' },
               h(AwardIcon, { React, size: 14, color: 'var(--gold)' }),
-              h('span', null, curGodMeaning.archetype)
+              h('span', null, `Quan hệ ${curGod.name}`)
             ),
-            h('span', { className: 'guide-period-pill' }, curGod.group)
+            h('span', { className: 'guide-period-pill' }, dynamicGod?.presenceText || curGod.group)
           ),
-          h('h3', { className: 'guide-headline' }, `Thiên Hướng Năng Lực Của ${curGod.name}`),
-          h('p', { className: 'guide-meaning-body' }, curGodMeaning.modernRole),
+          h('h3', { className: 'guide-headline' }, `Hình tượng ${curGod.name} (${curGod.group})`),
+          h('p', { className: 'guide-meaning-body' }, dynamicGod ? dynamicGod.strategicAdvice : `Theo cách diễn giải truyền thống: ${curGodMeaning.modernRole} Đây là khung tham khảo để tự đối chiếu, không phải nhãn cố định về con người bạn.`),
           h(
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Môi trường phát huy rực rỡ nhất: ${curGodMeaning.career}`)
+            h('span', null, dynamicGod?.locations?.length ? `Vị trí: ${dynamicGod.locations.join(', ')}. ${curGodMeaning.career}` : curGodMeaning.career)
           ),
 
           // Lưới 4 Chiều Năng Lực (Môi trường, Kiếm tiền, Sức mạnh, Cạm bẫy)
@@ -277,7 +231,7 @@ export function TenGodsProfileMap({ React, chart }) {
                 'div',
                 { className: 'domain-card-head' },
                 h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '事業'),
-                'Nghề Nghiệp Đắc Dụng'
+                'Bối Cảnh Để Đối Chiếu'
               ),
               h('p', { className: 'domain-card-desc' }, curGodMeaning.career)
             ),
@@ -288,9 +242,9 @@ export function TenGodsProfileMap({ React, chart }) {
                 'div',
                 { className: 'domain-card-head' },
                 h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '財帛'),
-                'Tư Duy Kiếm & Giữ Tiền'
+                'Cách Quản Lý Nguồn Lực'
               ),
-              h('p', { className: 'domain-card-desc' }, curGod.group.includes('Tài') ? 'Nhạy bén với các luồng tiền thực tế, tích lũy hoặc nhân vốn hiệu quả.' : 'Tài chính đến như hệ quả tất yếu từ chuyên môn vững vàng và giá trị tạo ra.')
+              h('p', { className: 'domain-card-desc' }, 'Quan sát cách bạn phân bổ thời gian, công sức và tiền bạc trong hoàn cảnh thật; không dùng Bát tự thay cho tư vấn tài chính.')
             ),
             h(
               'div',
@@ -299,7 +253,7 @@ export function TenGodsProfileMap({ React, chart }) {
                 'div',
                 { className: 'domain-card-head' },
                 h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '天賦'),
-                'Ưu Thế Bẩm Sinh'
+                'Hình Tượng Truyền Thống'
               ),
               h('p', { className: 'domain-card-desc' }, curGod.desc)
             ),
@@ -310,37 +264,19 @@ export function TenGodsProfileMap({ React, chart }) {
                 'div',
                 { className: 'domain-card-head' },
                 h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '慎行'),
-                'Cạm Bẫy Cần Đề Phòng'
+                'Mặt Cần Tự Đối Chiếu'
               ),
               h('p', { className: 'domain-card-desc' }, curGodMeaning.shadow)
             )
           )
         ),
 
-        // Điểm Mạnh & Điểm Mù Cần Lưu Ý
+        // Giới hạn diễn giải chưa được duyệt
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, `Chiếu Chỉ Dụng Thần Định Mệnh: ${curPattern}`),
-          h('p', { className: 'card-sec-desc' }, `Lá số của bạn lấy ${yongName} (Hành ${yongEl}) làm Dụng Thần cốt lõi để cân bằng cục diện, hóa giải điểm nghẽn năng lượng.`),
-          h(
-            'div',
-            { className: 'guide-traits-grid' },
-            h(
-              'div',
-              { className: 'trait-box' },
-              h('span', { className: 'trait-label' }, 'Dụng Thần Khai Mở'),
-              h('strong', { style: { color: 'var(--gold)' } }, `${yongName} (Hành ${yongEl})`),
-              h('p', null, yongDesc)
-            ),
-            h(
-              'div',
-              { className: 'trait-box' },
-              h('span', { className: 'trait-label' }, 'Hỷ Thần Tương Trợ'),
-              h('strong', null, `${xiName} (Hành ${xiEl})`),
-              h('p', null, xiDesc)
-            )
-          )
+          h('h4', { className: 'card-sec-title' }, 'Giới hạn của phần giải nghĩa'),
+          h('p', { className: 'card-sec-desc' }, 'Số lần xuất hiện cho biết vị trí trong cấu trúc đang hiển thị, không phải điểm năng lực hay mức độ tốt xấu. Mệnh Quán không phát hành kết luận Dụng thần khi quy tắc chưa được duyệt.')
         ),
 
         // Lời khuyên định hướng công việc
@@ -351,8 +287,8 @@ export function TenGodsProfileMap({ React, chart }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, 'Ứng dụng vào công việc hôm nay:'),
-            h('p', null, `Hãy chọn những dự án cho phép bạn vận dụng ${curGodMeaning.modernRole.toLowerCase()} và tránh các tình huống ${curGodMeaning.shadow.toLowerCase()}`)
+            h('strong', null, 'Một câu hỏi tự đối chiếu:'),
+            h('p', null, `${curGodMeaning.career} Nếu không phù hợp với trải nghiệm của bạn, hãy ghi nhận sự khác biệt thay vì cố gán kết quả.`)
           )
         )
       )

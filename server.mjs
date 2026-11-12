@@ -8,7 +8,9 @@ import { Readable } from 'node:stream';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const RELEASE_DIR = path.resolve(__dirname, 'menh-quan-ritual-release');
+// Explicit release directory allows a newly built source bundle to be verified
+// without overwriting the archived release used by production.
+const RELEASE_DIR = path.resolve(__dirname, process.env.MENH_QUAN_RELEASE_DIR || 'menh-quan-ritual-release');
 const SERVER_ENTRY = path.resolve(RELEASE_DIR, 'dist/server/index.js');
 if (!fs.existsSync(SERVER_ENTRY)) {
   const archivePath = path.resolve(RELEASE_DIR, 'ritual-release.tar.gz');
@@ -18,11 +20,11 @@ if (!fs.existsSync(SERVER_ENTRY)) {
   }
 }
 
-const { default: app } = await import('./menh-quan-ritual-release/dist/server/index.js');
+const { default: app } = await import(new URL(`file:///${SERVER_ENTRY.replaceAll('\\', '/')}`).href);
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5173;
-const HOST = process.env.HOST || '127.0.0.1';
-const CLIENT_DIR = path.resolve(__dirname, 'menh-quan-ritual-release/dist/client');
+const HOST = process.env.HOST || (process.env.RENDER === 'true' ? '0.0.0.0' : '127.0.0.1');
+const CLIENT_DIR = path.resolve(RELEASE_DIR, 'dist/client');
 const ATLAS_DIR = path.resolve(__dirname, 'src/atlas');
 const STYLES_DIR = path.resolve(__dirname, 'src/styles');
 
@@ -181,6 +183,13 @@ const server = http.createServer(async (req, res) => {
     res.statusCode = webRes.status;
     for (const [k, v] of webRes.headers.entries()) {
       if (k.toLowerCase() === 'content-length') continue;
+      if (k.toLowerCase() === 'content-security-policy') {
+        const updatedCsp = v
+          .replace("style-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
+          .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com data:");
+        res.setHeader(k, updatedCsp);
+        continue;
+      }
       res.setHeader(k, v);
     }
 

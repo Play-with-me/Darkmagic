@@ -72,3 +72,43 @@
   - Cột Trái (45-50%): Đồ bản chuyên sâu kỹ thuật số liệu (Tứ Trụ, La Kinh, Ngũ Hành, Thập Thần, Đại Vận).
   - Cột Phải (50-55%): Lời giải đời thường, ấm áp, thực tế cho người mới.
   - Tương tác đồng bộ: Bấm vào đâu bên trái, giải nghĩa lập tức đổi bên phải.
+
+## 5. Quy chuẩn phát hành nội dung Atlas (2026-11-10)
+
+- Bản đồ và dữ kiện tính đứng trước kết luận; không đặt “cẩm nang tính cách” trước năm đồ bản.
+- Đại vận và Lưu niên chỉ hiển thị khi bộ tính chính cung cấp `daYun`. Không dùng tuổi khởi vận, năm sinh, năm hiện tại hoặc danh sách năm cố định làm dữ liệu thay thế.
+- Vượng suy, Dụng thần và Hỷ thần chưa được phát hành khi quy tắc chưa có duyệt độc lập. Ngũ hành chỉ trình bày phép đếm Can, Chi và tàng can.
+- Thần Sát, Nạp Âm, Trường Sinh và Thập Thần phải được ghi là hệ thống tên gọi/diễn giải truyền thống; không gắn nhãn khoa học và không dùng để khẳng định sức khỏe, tài chính, nghề nghiệp hoặc sự kiện tương lai.
+- Ở điện thoại, trang không được tràn ngang. Bảng có vùng cuộn ngang riêng, cột tên hàng được giữ ở mép trái và điều khiển chạm có chiều cao tối thiểu 44 px.
+
+## 6. Quy chuẩn giao diện Figma: Mệnh Quán · Tinh chỉnh thủ công (2026-11-11)
+
+- **Màu sắc & Tương phản:**
+  - Nền hư không / Xanh mực: `#0b100e`, thẻ bề mặt `rgba(18, 24, 22, 0.85)`.
+  - Chu sa trầm: `#772b32` (nền chọn), viền sáng `#bf4b45`.
+  - Vàng cũ / Cổ thư: `#c4a365`, `#d69a88`, chữ ngà `#eee3d8`, chữ mờ `#beb0a7`.
+  - Trạng thái chọn: Nền chu sa trầm + chữ ngà + viền sáng rõ ràng, độ tương phản WCAG AA >= 4.5:1.
+- **Bố cục & Khoảng cách (Layout & Spacing):**
+  - Khung desktop tối đa 1200px căn giữa; biểu mẫu nhập tối đa 760px.
+  - Mobile 390px: lề 20px; Mobile 320px: lề 16px.
+  - Thang khoảng cách chuẩn: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 px.
+  - Loại bỏ hoàn toàn thẻ lồng nhau (nested cards) và padding cộng dồn gây tràn ngang.
+- **Luồng 4 giai đoạn chuẩn (4-Phase Architecture):**
+  - Thanh điều hướng sticky: `[Bản đồ] [Tổng quan] [Chi tiết] [Kết luận]`.
+  - `01 · Bản đồ`: Đủ 5 bản đồ (Tứ trụ toàn rộng -> Thiên bàn & Ngũ hành 2 cột trên desktop / xếp dọc trên mobile -> Thập thần toàn rộng -> Đại vận toàn rộng). Bảng Tứ trụ mobile cuộn ngang cục bộ với cột tên hàng cố định mép trái nền đặc `#0b100e`.
+  - `02 · Tổng quan`: Tóm tắt nhanh số lượng trụ, sao thần sát, tỷ trọng ngũ hành, thập thần, đại vận và giới hạn tính toán.
+  - `03 · Chi tiết`: Giải thích chi tiết từng cấu trúc; thuật ngữ [?] hỗ trợ chuột, bàn phím (Tab/Enter/Escape) và chạm (desktop overlay, mobile bottom sheet); nguồn dữ liệu và thuật toán thu gọn `<details>`.
+  - `04 · Kết luận`: Một đoạn văn bản tóm tắt duy nhất, không phán bừa tính cách/y khoa/tài chính; thanh tác vụ tải trọn bộ (.TXT) và lưu Sổ chiêm nghiệm với chiều cao hit target >= 44px.
+- **Động học & Chuyển động (Motion Law):**
+  - Vòng Bát quái nền: Vòng ngoài thuận 137s, vòng giữa ngược 89s, vòng tâm thuận 113s.
+  - 6 dòng cổ thi trôi lơ lửng: 24–46s lệch pha.
+  - Điểm sáng tinh tú: Tối đa 8 điểm trên desktop, 4 điểm trên mobile; chuyển động êm dịu, không chớp nháy.
+  - Opacity nền: 6–10% ở màn nhập sinh, 8–14% ở màn kết quả và giảm mờ sau lớp chữ để bảo vệ độ đọc.
+  - Chuyển màn: `opacity + translateY(8px)` trong 200ms ease-out.
+  - Chọn trụ / chặng: 180ms ease-out.
+  - Giải nghĩa [?]: 200ms ease-out.
+  - `prefers-reduced-motion: reduce`: Tĩnh hoàn toàn (static), loại bỏ mọi chuyển động xoay/trượt.
+  - Cơ chế tự dừng: Tạm dừng chuyển động khi tab ẩn (`document.hidden`) hoặc khi phần tử cuộn khỏi tầm nhìn (`IntersectionObserver`).
+- **Typography & Hit Target:**
+  - Kích thước font nội dung đọc >= 16px.
+  - Vùng chạm tương tác (hit target) >= 44px.

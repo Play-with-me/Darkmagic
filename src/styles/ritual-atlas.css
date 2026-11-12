@@ -73,11 +73,13 @@
 .workspace.reading-result-view,
 body:has(.atlas-chart-result-container) .workspace,
 .reading-result-view {
-  max-width: 98vw !important;
-  width: 98vw !important;
+  box-sizing: border-box;
+  max-width: 1560px !important;
+  width: min(94vw, 1560px) !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding: 16px 20px 48px !important;
+  padding: 16px clamp(12px, 3vw, 32px) 48px !important;
+  overflow-x: clip;
 }
 
 .workspace.reading-result-view .reading-content,
@@ -109,6 +111,7 @@ body:has(.atlas-chart-result-container) .workspace,
   margin: 0 auto;
   padding: 10px 0 60px;
   min-width: 0;
+  overflow-x: clip;
 }
 
 /* ==========================================================================
@@ -248,16 +251,16 @@ body:has(.atlas-chart-result-container) .workspace,
 /* Đại Mệnh Bàn Split View (Trái: La Kinh 24 Sơn / Phải: 3 Đúc Kết 30 Giây Kinh Thư) */
 .grand-master-split-body {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  gap: 36px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
   align-items: center;
   margin-top: 16px;
 }
 
 @media (min-width: 1400px) {
   .grand-master-split-body {
-    grid-template-columns: minmax(0, 52%) minmax(0, 48%);
-    gap: 44px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
   }
 }
 
@@ -378,6 +381,14 @@ body:has(.atlas-chart-result-container) .workspace,
   transform: translateY(-1px);
 }
 
+.master-jump-pill:focus-visible,
+.switch-tab-btn:focus-visible,
+.annual-chip:focus-visible,
+.tengod-card:focus-visible {
+  outline: 2px solid #f0d495;
+  outline-offset: 3px;
+}
+
 .jump-num {
   font-family: var(--serif);
   color: var(--copper-gold);
@@ -490,8 +501,11 @@ body:has(.atlas-chart-result-container) .workspace,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   padding-bottom: 10px;
   border-bottom: 1px dashed var(--mist-border-subtle);
+  min-height: 32px;
 }
 
 .col-tag {
@@ -792,38 +806,63 @@ body:has(.atlas-chart-result-container) .workspace,
   border: 1px solid rgba(152, 123, 112, 0.25);
   border-radius: 2px;
   background: transparent !important;
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .bazi-matrix-table {
   width: 100%;
+  min-width: 540px;
   border-collapse: collapse;
   text-align: center;
   font-size: 12px;
   background: transparent !important;
 }
 
+@media (min-width: 1280px) {
+  .bazi-matrix-table {
+    min-width: 100%;
+    table-layout: fixed;
+  }
+}
+
 .bazi-matrix-table th,
 .bazi-matrix-table td {
   border: 1px solid rgba(152, 123, 112, 0.18);
-  padding: 10px 8px;
+  padding: 10px 6px;
   background: transparent;
+  word-break: break-word;
 }
 
 .col-header-sticky {
-  background: rgba(11, 16, 14, 0.35) !important;
+  background: var(--void-black, #0b100e) !important;
   color: var(--ink-dim);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
-  width: 120px;
+  width: 108px;
+  min-width: 108px;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  border-right: 1px solid var(--mist-border, rgba(73, 53, 50, 0.75));
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.35);
 }
 
 .row-title {
-  background: rgba(11, 16, 14, 0.35) !important;
+  background: var(--void-black, #0b100e) !important;
   color: var(--ink-muted);
-  font-size: 11px;
+  font-size: 12px;
   text-align: left;
-  padding-left: 12px;
+  padding-left: 10px;
   font-weight: 500;
+  width: 108px;
+  min-width: 108px;
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  border-right: 1px solid var(--mist-border, rgba(73, 53, 50, 0.75));
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.35);
 }
 
 .pillar-col-header {
@@ -1378,6 +1417,17 @@ body:has(.atlas-chart-result-container) .workspace,
   box-shadow: 0 0 8px rgba(191, 75, 69, 0.35);
 }
 
+.atlas-data-limit {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  color: var(--ink-soft);
+  background: rgba(21, 26, 24, 0.84);
+  border: 1px solid rgba(214, 154, 136, 0.3);
+  border-left: 3px solid var(--copper-gold);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 .annual-year-num {
   font-size: 11px;
   color: var(--ink-dim);
@@ -1496,24 +1546,1030 @@ body:has(.atlas-chart-result-container) .workspace,
   }
 }
 
-@media (max-width: 600px) {
-  .guide-traits-grid {
-    grid-template-columns: minmax(0, 1fr);
+/* ==========================================================================
+   10. CHUẨN THIẾT KẾ FIGMA: MỆNH QUÁN · TINH CHỈNH THỦ CÔNG
+   Layout Desktop (max 1200px), Form (max 760px), Mobile 390 (lề 20px), Mobile 320 (lề 16px)
+   Thang đo khoảng cách: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 px
+   ========================================================================== */
+
+/* Khung màn hình và căn chỉnh tối đa */
+.atlas-chart-result-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-bottom: 64px;
+  animation: screen-fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.birth-form,
+.reading-content form {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+/* 1. THANH ĐIỀU HƯỚNG 4 GIAI ĐOẠN STICKY */
+.atlas-reading-order {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: sticky;
+  top: 12px;
+  z-index: 50;
+  padding: 6px;
+  background: rgba(11, 16, 14, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(196, 163, 101, 0.35);
+  border-radius: 9999px;
+  width: fit-content;
+  max-width: calc(100vw - 32px);
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+.atlas-reading-order button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 18px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 180ms ease-out;
+}
+
+.atlas-reading-order button:hover,
+.atlas-reading-order button:focus-visible {
+  color: var(--ink-primary);
+  background: rgba(119, 43, 50, 0.3);
+  outline: none;
+}
+
+/* Trạng thái chọn: Chu sa trầm + chữ ngà + viền sáng rõ */
+.atlas-reading-order button.is-active-nav,
+.atlas-reading-order button[aria-current="true"] {
+  color: #eee3d8 !important; /* Chữ ngà */
+  background: #772b32 !important; /* Chu sa trầm */
+  border-color: #bf4b45 !important;
+  box-shadow: 0 0 0 1px #bf4b45, 0 0 14px rgba(191, 75, 69, 0.45);
+}
+
+/* 2. GIAI ĐOẠN 1: BỐ CỤC ĐỦ 5 BẢN ĐỒ */
+.atlas-maps-section {
+  width: 100%;
+}
+
+.atlas-maps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+}
+
+/* Desktop: Thiên bàn + Ngũ hành chia 2 cột bằng nhau */
+@media (min-width: 960px) {
+  .atlas-maps-row-2col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+    width: 100%;
   }
 
-  .decree-cards-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .atlas-maps-row-2col > section {
+    height: 100%;
   }
+}
 
-  .annuals-chips-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .tengods-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .master-jump-strip {
+@media (max-width: 959px) {
+  .atlas-maps-row-2col {
+    display: flex;
     flex-direction: column;
+    gap: 24px;
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   2.5. BẢN ĐỌC CHIÊM NGHIỆM CON NGƯỜI (HUMAN LIFE READING SECTION)
+   4 Câu hỏi đời sống cốt lõi: Bản ngã, Cạm bẫy ngoại cảnh, Tình duyên, Ranh giới
+   ========================================================================== */
+.atlas-human-reading-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: relative;
+}
+
+.human-partial-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(214, 154, 136, 0.08);
+  border: 1px dashed rgba(214, 154, 136, 0.4);
+  border-radius: 6px;
+  padding: 14px 20px;
+  font-size: 14px;
+  color: var(--copper-gold);
+  line-height: 1.65;
+}
+
+.human-reading-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .human-reading-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.human-question-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  border: 1px solid rgba(152, 123, 112, 0.32);
+  border-radius: 8px;
+  background: rgba(18, 24, 22, 0.65);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.human-question-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(214, 154, 136, 0.5), transparent);
+}
+
+.human-question-card:hover {
+  border-color: rgba(214, 154, 136, 0.55);
+  background: rgba(18, 24, 22, 0.82);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.human-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.human-card-badge {
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-nature {
+  color: var(--gold);
+}
+
+.badge-traps {
+  color: var(--cinnabar-rose);
+}
+
+.badge-love {
+  color: var(--cinnabar-light);
+}
+
+.badge-advice {
+  color: var(--copper-gold);
+}
+
+.human-card-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--ink-primary);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.human-card-tagline {
+  font-size: 13.5px;
+  color: var(--copper-gold);
+  font-style: italic;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(152, 123, 112, 0.25);
+}
+
+.human-philosophy-quote {
+  padding: 12px 16px;
+  background: rgba(191, 75, 69, 0.08);
+  border-left: 3px solid var(--cinnabar-glow);
+  border-radius: 0 6px 6px 0;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.human-card-body {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  line-height: 1.85;
+  margin: 0;
+}
+
+.human-card-points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(152, 123, 112, 0.2);
+}
+
+.human-points-title {
+  font-family: var(--serif);
+  font-size: 14.5px;
+  color: var(--ink-primary);
+  margin: 0 0 4px;
+  letter-spacing: 0.5px;
+}
+
+.human-point-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.human-point-content {
+  flex: 1;
+}
+
+.human-point-content strong {
+  color: var(--ink-primary);
+  font-family: var(--serif);
+}
+
+.human-point-content span {
+  color: var(--ink-soft);
+}
+
+.human-reading-bridge-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0 8px;
+}
+
+.explore-maps-bridge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  border: 1px solid rgba(214, 154, 136, 0.45);
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(38, 48, 44, 0.9), rgba(18, 24, 22, 0.95));
+  color: var(--ink-primary);
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+}
+
+.explore-maps-bridge-btn:hover {
+  border-color: var(--copper-gold);
+  background: linear-gradient(135deg, rgba(119, 43, 50, 0.3), rgba(38, 48, 44, 0.95));
+  color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(214, 154, 136, 0.25);
+}
+
+.bridge-btn-arrow {
+  font-size: 18px;
+  color: var(--copper-gold);
+  transition: transform 0.25s ease;
+}
+
+.explore-maps-bridge-btn:hover .bridge-btn-arrow {
+  transform: translateY(3px);
+  color: var(--gold);
+}
+
+/* ==========================================================================
+   2.5. CHÂN DUNG BẢN MỆNH CÁ NHÂN HÓA (PERSONAL PORTRAIT ENGINE)
+   Bức tranh con người đa tầng tính toán theo 6 tầng mạch khí nguyên cục
+   ========================================================================== */
+.atlas-personal-portrait-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.portrait-partial-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(214, 154, 136, 0.08);
+  border: 1px dashed rgba(214, 154, 136, 0.35);
+  border-radius: 4px;
+  padding: 12px 18px;
+  font-size: 13.5px;
+  color: var(--copper-gold);
+  line-height: 1.6;
+}
+
+.portrait-grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 1023px) {
+  .portrait-grid-3col {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+.portrait-pillar-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 20px;
+  border: 1px solid rgba(152, 123, 112, 0.28);
+  border-radius: 4px;
+  background: rgba(18, 24, 22, 0.45);
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.portrait-pillar-card:hover {
+  border-color: rgba(214, 154, 136, 0.5);
+  background: rgba(18, 24, 22, 0.65);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.portrait-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.portrait-card-badge {
+  font-size: 10.5px;
+  letter-spacing: 1.5px;
+  color: var(--cinnabar-rose);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.portrait-card-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--ink-primary);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.portrait-card-tagline {
+  font-size: 12.5px;
+  color: var(--copper-gold);
+  font-style: italic;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(152, 123, 112, 0.2);
+}
+
+.portrait-card-body {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.85;
+  margin: 0;
+}
+
+.portrait-deep-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 20px;
+  border: 1px solid rgba(152, 123, 112, 0.25);
+  border-radius: 4px;
+  background: rgba(18, 24, 22, 0.3);
+}
+
+.portrait-section-subtitle {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink-primary);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.portrait-strengths-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.portrait-strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .portrait-strengths-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.strength-item-card {
+  padding: 14px 16px;
+  border: 1px solid rgba(152, 123, 112, 0.2);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.strength-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--copper-gold);
+}
+
+.strength-item-head strong {
+  font-family: var(--serif);
+  color: var(--ink-primary);
+}
+
+.strength-item-card p {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.portrait-blindspot-box,
+.portrait-flow-box {
+  padding: 16px 18px;
+  border-left: 3px solid var(--cinnabar-glow);
+  background: rgba(119, 43, 50, 0.08);
+  border-radius: 0 4px 4px 0;
+}
+
+.portrait-flow-box {
+  border-left-color: var(--copper-gold);
+  background: rgba(214, 154, 136, 0.06);
+}
+
+.portrait-blindspot-text,
+.portrait-flow-text {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin: 0;
+}
+
+.pillar-daily-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(214, 154, 136, 0.06);
+  border-left: 2px solid var(--copper-gold);
+  padding: 8px 12px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+/* 3. GIAI ĐOẠN 2: TỔNG QUAN */
+.atlas-summary-block {
+  width: 100%;
+  padding: 32px 24px;
+  border: 1px solid rgba(196, 163, 101, 0.25);
+  border-radius: 12px;
+  background: rgba(18, 24, 22, 0.85);
+}
+
+.atlas-summary-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.atlas-summary-bullets li {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  padding-left: 20px;
+  position: relative;
+}
+
+.atlas-summary-bullets li::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  top: 1px;
+  color: var(--copper-gold);
+  font-size: 12px;
+}
+
+.atlas-summary-bullets li strong {
+  color: var(--ink-primary);
+}
+
+.atlas-limits-card {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px dashed rgba(196, 163, 101, 0.3);
+  border-radius: 8px;
+  background: rgba(11, 16, 14, 0.6);
+}
+
+.atlas-limits-card summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--copper-gold);
+  font-size: 16px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.atlas-limits-card p {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+/* 4. GIAI ĐOẠN 3: CHI TIẾT & NGUỒN THU GỌN */
+.atlas-explanations {
+  width: 100%;
+  padding: 32px 24px;
+  border: 1px solid rgba(196, 163, 101, 0.25);
+  border-radius: 12px;
+  background: rgba(18, 24, 22, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.atlas-phase-heading {
+  margin-bottom: 8px;
+}
+
+.atlas-collapsible-sources {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(73, 53, 50, 0.7);
+  border-radius: 8px;
+  background: rgba(11, 16, 14, 0.6);
+}
+
+.atlas-collapsible-sources summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--copper-gold);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.atlas-collapsible-sources p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+  margin: 12px 0 8px;
+}
+
+.atlas-collapsible-sources .external-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(152, 123, 112, 0.2);
+}
+
+.atlas-collapsible-sources .external-sources a {
+  color: var(--copper-gold);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 16px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 5. GIAI ĐOẠN 4: KẾT LUẬN & THANH HÀNH ĐỘNG */
+.atlas-conclusion-box {
+  width: 100%;
+  padding: 32px 24px;
+  border: 1px solid rgba(191, 75, 69, 0.35);
+  border-radius: 12px;
+  background: rgba(24, 18, 18, 0.88);
+}
+
+.conclusion-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.conclusion-header-row h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--ink-primary);
+  font-family: var(--serif);
+}
+
+.conclusion-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--copper-gold);
+  border: 1px solid var(--copper-gold);
+  border-radius: 4px;
+}
+
+.conclusion-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+
+.conclusion-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(152, 123, 112, 0.25);
+}
+
+.conclusion-actions-bar button,
+.editorial-actions-footer button,
+.result-actions-bar button {
+  min-height: 44px;
+  padding: 10px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 180ms ease-out;
+}
+
+.conclusion-actions-bar .button.gold {
+  background: #772b32;
+  color: #eee3d8;
+  border: 1px solid #bf4b45;
+  box-shadow: 0 0 12px rgba(191, 75, 69, 0.3);
+}
+
+.conclusion-actions-bar .button.gold:hover {
+  background: #8d363e;
+  border-color: #edaaa1;
+}
+
+.conclusion-actions-bar .button.outline {
+  background: transparent;
+  color: var(--ink-primary);
+  border: 1px solid rgba(196, 163, 101, 0.5);
+}
+
+.conclusion-actions-bar .button.outline:hover {
+  background: rgba(196, 163, 101, 0.15);
+  border-color: var(--copper-gold);
+}
+
+/* ==========================================================================
+   11. QUY CHUẨN ĐỘNG HỌC & CHUYỂN ĐỘNG (MOTION LAW)
+   - Vòng ngoài thuận 137s, vòng giữa ngược 89s, tâm thuận 113s
+   - 6 dòng chữ 24–46s lệch pha
+   - Tối đa 8 điểm sáng desktop / 4 mobile không chớp
+   - Opacity nền: 6–10% màn nhập, 8–14% màn kết quả và giảm sau chữ
+   - Chuyển màn: opacity + translateY(8px) 200ms ease-out
+   - Chọn trụ/chặng: 180ms
+   - Giải nghĩa: 200ms
+   - Reduced-motion: tĩnh
+   ========================================================================== */
+
+/* 1. Vòng Bát Quái xoay ngầm */
+.reading-sigil-outer {
+  transform-origin: 300px 300px;
+  animation: reading-sigil-cw 137s linear infinite;
+  animation-play-state: paused;
+}
+
+.reading-sigil-inner {
+  transform-origin: 300px 300px;
+  animation: reading-sigil-ccw 89s linear infinite;
+  animation-play-state: paused;
+}
+
+.reading-sigil-core {
+  transform-origin: 300px 300px;
+  animation: reading-sigil-cw 113s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes reading-sigil-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes reading-sigil-ccw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Chạy khi active */
+.reading-atmosphere.is-active :is(.reading-sigil-outer, .reading-sigil-inner, .reading-sigil-core) {
+  animation-play-state: running;
+}
+
+/* 2. Dòng chữ cổ thi 24s - 46s lệch pha */
+.reading-verse {
+  animation-duration: var(--duration, 35s);
+  animation-delay: var(--delay, 0s);
+  animation-play-state: paused;
+}
+
+.reading-atmosphere.is-active .reading-verse {
+  animation-play-state: running;
+}
+
+/* 3. Điểm sáng tinh tú: tối đa 8 desktop, 4 mobile, êm dịu không chớp */
+.ambient-ritual-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-ember {
+  position: absolute;
+  border-radius: 50%;
+  animation: ambient-ember-drift var(--ember-duration, 25s) ease-in-out infinite var(--ember-delay, 0s);
+  animation-play-state: running;
+}
+
+/* Ẩn từ hạt thứ 9 trở đi trên desktop */
+.ambient-ember:nth-child(n+9),
+.reading-mote:nth-child(n+9) {
+  display: none !important;
+}
+
+@keyframes ambient-ember-drift {
+  0% {
+    transform: translateY(105vh) translateX(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--ember-opacity, 0.6);
+  }
+  85% {
+    opacity: var(--ember-opacity, 0.6);
+  }
+  100% {
+    transform: translateY(-10vh) translateX(var(--ember-drift-x, 30px));
+    opacity: 0;
+  }
+}
+
+/* 4. Opacity nền Bát Quái: 6-10% màn nhập, 8-14% màn kết quả */
+.reading-entry-workspace .reading-sigil,
+.workspace:not(.reading-result-workspace) .reading-sigil {
+  opacity: 0.08 !important; /* 8% trong dải 6-10% */
+}
+
+.reading-result-workspace .reading-sigil,
+.reading-result-view .reading-sigil,
+body:has(.atlas-chart-result-container) .reading-sigil {
+  opacity: 0.10 !important; /* 10% trong dải 8-14% */
+}
+
+/* Bảo vệ chữ không bị nền đè */
+.reading-content,
+.atlas-maps-section,
+.atlas-summary-block,
+.atlas-explanations,
+.atlas-conclusion-box,
+.birth-form {
+  position: relative;
+  z-index: 1;
+}
+
+/* 5. Chuyển màn: opacity + translateY(8px) 200ms ease-out */
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reading-grid,
+.workspace,
+.atlas-chart-result-container {
+  animation: screen-fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 6. Chọn trụ / chặng: 180ms ease-out */
+.pillar-col-header,
+.cell-stem,
+.cell-branch,
+.cycle-card,
+.luck-cycle-tab,
+.annual-year-chip,
+.annual-chip,
+.tengod-card,
+.master-jump-pill {
+  transition: all 180ms ease-out !important;
+  cursor: pointer;
+}
+
+/* Trạng thái được chọn nổi bật: Chu sa trầm + chữ ngà + viền sáng */
+.pillar-col-header.is-selected-col,
+.cell-active,
+.cycle-card.is-active,
+.luck-cycle-tab.is-active,
+.annual-year-chip.is-selected,
+.annual-chip.is-selected {
+  background: #772b32 !important;
+  color: #eee3d8 !important;
+  border-color: #bf4b45 !important;
+  box-shadow: 0 0 0 1px #bf4b45, 0 0 10px rgba(191, 75, 69, 0.4) !important;
+}
+
+/* 7. Giải nghĩa: 200ms ease-out */
+.atlas-glossary-item[open] p,
+.atlas-collapsible-sources[open] p,
+.atlas-limits-card[open] p,
+.term-help-dialog {
+  animation: term-popover-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes term-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 8. Reduced-motion tĩnh hoàn toàn */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    animation-play-state: paused !important;
+  }
+  .reading-sigil-outer,
+  .reading-sigil-inner,
+  .reading-sigil-core,
+  .reading-verse,
+  .reading-mote,
+  .ambient-ember,
+  .day-master-aura {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   12. RESPONSIVE BREAKPOINTS (Mobile 390 lề 20px, Mobile 320 lề 16px)
+   ========================================================================== */
+
+/* Mobile 390px (và dưới 768px): lề 20px */
+@media (max-width: 768px) {
+  .workspace,
+  .workspace.reading-result-view,
+  body:has(.atlas-chart-result-container) .workspace,
+  .reading-result-view,
+  .atlas-chart-result-container {
+    padding-inline: 20px !important;
+  }
+
+  /* Ẩn từ hạt thứ 5 trở đi trên mobile (giữ đúng 4 hạt không chớp) */
+  .ambient-ember:nth-child(n+5),
+  .reading-mote:nth-child(n+5) {
+    display: none !important;
+  }
+
+  .atlas-maps-container {
+    gap: 24px;
+  }
+
+  .atlas-summary-block,
+  .atlas-explanations,
+  .atlas-conclusion-box {
+    padding: 24px 16px;
+  }
+
+  /* Font nội dung >= 16px trên mobile */
+  .chapter-desc,
+  .guide-meaning-body,
+  .domain-card-desc,
+  .conclusion-text,
+  .atlas-summary-bullets li,
+  .atlas-limits-card p,
+  .atlas-collapsible-sources p {
+    font-size: 16px !important;
+    line-height: 1.65;
+  }
+
+  /* Tứ trụ mobile cuộn ngang cục bộ */
+  .matrix-table-wrap {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-inline: contain;
+  }
+
+  .matrix-table-wrap::after {
+    content: 'Vuốt ngang để xem đủ 4 trụ';
+    display: block;
+    position: sticky;
+    left: 0;
+    width: max-content;
+    padding: 8px 0 2px;
+    color: var(--copper-gold);
+    font-size: 13px;
+  }
+
+  /* Cột 1 cố định bên trái khi cuộn ngang */
+  .col-header-sticky,
+  .row-title {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background: #0b100e !important;
+  }
+}
+
+/* Mobile 320px: lề 16px */
+@media (max-width: 360px) {
+  .workspace,
+  .workspace.reading-result-view,
+  body:has(.atlas-chart-result-container) .workspace,
+  .reading-result-view,
+  .atlas-chart-result-container {
+    padding-inline: 16px !important;
+  }
+
+  .atlas-reading-order button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .conclusion-actions-bar button {
+    width: 100%;
+    justify-content: center;
   }
 }

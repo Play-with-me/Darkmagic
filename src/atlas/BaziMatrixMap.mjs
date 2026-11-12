@@ -23,26 +23,20 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
 
   const pillars = chart.pillars || [];
   const curPillar = pillars[selectedPillarIdx] || pillars[2] || pillars[0] || {
-    label: 'Ngày',
-    name: 'Bản Mệnh',
-    stem: 'Nhâm',
-    branch: 'Tý',
-    stemHan: '壬',
-    branchHan: '子',
-    stemElement: 'Thủy',
-    branchElement: 'Thủy',
+    label: 'Chưa xác định',
+    name: '',
+    stem: null,
+    branch: null,
   };
-  const activeInteraction = hoveredInteraction || chart.interactions?.[0] || null;
-  const highlightedCols = activeInteraction ? activeInteraction.pillars : [];
+  const highlightedColIndices = hoveredInteraction ? (hoveredInteraction.pillars || []) : [];
 
-  const beginnerPillarInfo = PILLAR_ROLES_BEGINNER[selectedPillarIdx] || PILLAR_ROLES_BEGINNER[2] || {
-    label: 'Trụ Ngày',
-    theme: 'Bản Thể & Hôn Nhân',
-    period: 'Tuổi 33 – 48 (Trung Niên)',
-    meaning: 'Căn nguyên sinh mệnh, ý thức tự chủ và thế giới nội tâm sâu kín nhất.',
-    realLifeImpact: 'Quyết định cách bạn tương tác với bạn đời, tri kỷ và nội lực vượt qua biến cố.',
-    watchOut: 'Dành không gian riêng cho bản thân, học cách cân bằng giữa việc yêu thương người khác và trân trọng giá trị chính mình.',
-  };
+  const pillarReadingGuide = [
+    { theme: 'Trụ Năm', period: 'Mốc năm sinh', meaning: 'Gồm Can và Chi của trụ Năm theo quy ước lịch đang dùng.', question: 'Đọc Can, Chi, tàng can và quan hệ Thập Thần ở cùng cột; không suy ra hoàn cảnh gia đình nếu bạn chưa chia sẻ.' },
+    { theme: 'Trụ Tháng', period: 'Mốc tháng theo tiết khí', meaning: 'Gồm Can và Chi của trụ Tháng; mốc đổi tháng dùng tiết khí theo quy ước đã công bố.', question: 'Đây là cột có trọng số Nguyệt lệnh trong biểu đồ Ngũ hành; trọng số không phải điểm tính cách.' },
+    { theme: 'Trụ Ngày', period: 'Mốc ngày sinh', meaning: 'Thiên Can của trụ Ngày được dùng làm Nhật chủ để tính quan hệ Thập Thần.', question: 'Nhật chủ là điểm tham chiếu kỹ thuật của phép tính, không phải nhãn cố định mô tả toàn bộ con người bạn.' },
+    { theme: 'Trụ Giờ', period: 'Mốc giờ sinh', meaning: 'Gồm Can và Chi của giờ dân sự địa phương; phần này để trống khi không biết giờ.', question: 'Nếu giờ sinh chưa chắc chắn, hãy xem đây là phần chưa xác định thay vì chọn một giờ gần đúng.' },
+  ];
+  const beginnerPillarInfo = curPillar.dynamicInsight || pillarReadingGuide[selectedPillarIdx] || pillarReadingGuide[2];
   const stemTheme = ELEMENT_THEME[curPillar?.stemElement] || ELEMENT_THEME['Thủy'];
   const branchTheme = ELEMENT_THEME[curPillar?.branchElement] || ELEMENT_THEME['Thủy'];
 
@@ -91,7 +85,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
       h(
         'p',
         { className: 'chapter-desc' },
-        'Bốn trụ Năm · Tháng · Ngày · Giờ là 4 cột trụ chống trời của sinh mệnh. Bấm vào từng trụ ở bản đồ bên trái để xem lời giải đời thường chi tiết ở cột bên phải.'
+        'Bốn trụ Năm · Tháng · Ngày · Giờ là dữ kiện nền của lá số. Bấm từng trụ để xem cách đọc Can, Chi, tàng can và quan hệ với Nhật chủ; phần này không tự suy diễn hoàn cảnh đời sống.'
       )
     ),
 
@@ -130,7 +124,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                     'th',
                     {
                       key: p.label,
-                      className: `pillar-col-header ${selectedPillarIdx === idx ? 'is-selected-col' : ''} ${highlightedCols.includes(p.label) ? 'is-beaming-col' : ''}`,
+                      className: `pillar-col-header ${selectedPillarIdx === idx ? 'is-selected-col' : ''} ${highlightedColIndices.includes(idx) ? 'is-beaming-col' : ''}`,
                       onClick: () => handleSelect(idx),
                     },
                     h('div', { className: 'header-label-viet' }, `Trụ ${p.label}`),
@@ -329,7 +323,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · LỜI GIẢI ĐỜI THƯỜNG 4 CHIỀU'),
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · CÁCH ĐỌC TỪNG TRỤ'),
           h('span', { className: 'col-hint' }, `Đang soi: Trụ ${curPillar.label}`)
         ),
 
@@ -366,7 +360,7 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
             ),
             h('span', { className: 'guide-period-pill' }, beginnerPillarInfo.period)
           ),
-          h('h3', { className: 'guide-headline' }, `Ý nghĩa của Trụ ${curPillar.label} (${curPillar.name}) trong đời bạn`),
+          h('h3', { className: 'guide-headline' }, `Cách đọc Trụ ${curPillar.label} (${curPillar.name || 'chưa xác định'})`),
           h('p', { className: 'guide-meaning-body' }, beginnerPillarInfo.meaning),
           h(
             'div',
@@ -423,7 +417,14 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
                   'Điểm Mù Cần Thận Trọng'
                 ),
                 h('p', { className: 'domain-card-desc' }, beginnerPillarInfo.domains.blindspot)
-              )
+              ),
+              beginnerPillarInfo.domains.dailyTip &&
+                h(
+                  'div',
+                  { className: 'pillar-daily-tip' },
+                  h(CheckCircleIcon, { React, size: 14, color: 'var(--copper-gold)' }),
+                  h('span', null, beginnerPillarInfo.domains.dailyTip)
+                )
             )
         ),
 
@@ -440,28 +441,28 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Thiên Can'),
               h('strong', { style: { color: curPillar.stem ? stemTheme.color : '#8c7d74' } }, curPillar.stem ? `${curPillar.stem} (${stemTheme.han})` : 'Chưa xác định (Khuyết giờ)'),
-              h('p', null, curPillar.stem ? (curPillar.isDayMaster ? 'Chính là bạn: trung tâm của toàn bộ sinh mệnh.' : `Định hình cách bạn tương tác với thế giới qua góc nhìn ${curPillar.stemRelation || 'ngoại cảnh'}.`) : 'Cần nhập giờ sinh chính xác để giải mã chi tiết phương diện này.')
+              h('p', null, curPillar.stem ? (curPillar.isDayMaster ? 'Can này là Nhật chủ, điểm tham chiếu để tính các quan hệ còn lại.' : `Quan hệ với Nhật chủ: ${curPillar.stemRelation || 'chưa xác định'}.`) : 'Cần có dữ liệu giờ sinh để tính phần này; hệ thống không tự điền thay thế.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Địa Chi'),
               h('strong', { style: { color: curPillar.branch ? branchTheme.color : '#8c7d74' } }, curPillar.branch ? `${curPillar.branch} (${curPillar.animal})` : 'Chưa xác định'),
-              h('p', null, curPillar.branch ? 'Nền tảng thực tế, nguồn năng lượng nội tại và sức chịu đựng.' : 'Địa chi đại diện cho tâm nguyện và nơi nương tựa nội tâm.')
+              h('p', null, curPillar.branch ? 'Chi này được dùng để tra tàng can, tương tác Địa Chi và Vòng Trường Sinh.' : 'Chưa đủ dữ liệu để xác định Địa Chi của trụ này.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Nạp Âm Bản Mệnh'),
               h('strong', null, curPillar.naYin),
-              h('p', null, 'Hình tượng khí chất tự nhiên toát ra bên ngoài.')
+              h('p', null, 'Tên phân loại truyền thống của cặp Can Chi; không phải mô tả khoa học về khí chất.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Vòng Sinh Khí (Trường Sinh)'),
               h('strong', null, curPillar.lifeStage?.name || '—'),
-              h('p', null, curPillar.lifeStage?.omen || 'Khí thế phát triển bình hòa, ổn định.')
+              h('p', null, curPillar.lifeStage ? 'Tên giai đoạn trong vòng 12 Trường Sinh, được tra từ Nhật chủ và Địa Chi.' : 'Chưa đủ dữ liệu để tra vòng Trường Sinh.')
             )
           )
         ),
@@ -474,10 +475,8 @@ export function BaziMatrixMap({ React, chart, activePillar, onSelectPillar }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, 'Kim chỉ nam chiêm nghiệm hôm nay:'),
-            h('p', null, beginnerPillarInfo.domains?.dailyTip || (curPillar.isDayMaster
-              ? 'Trụ Ngày là chính bản thân bạn. Hãy sống đúng với tính cách nguyên bản, đừng cố gắng trở thành một ai khác.'
-              : `Quan sát xem những sự kiện trong giai đoạn ${beginnerPillarInfo.period} có phản ánh đúng khí thế của ${curPillar.name} hay không.`))
+            h('strong', null, 'Điều cần nhớ khi đọc:'),
+            h('p', null, 'Mỗi ô cho biết dữ kiện hoặc tên quan hệ được tính. Hãy mở cơ sở và giới hạn nếu cần kiểm tra quy ước; không biến một ô thành kết luận về toàn bộ cuộc đời.')
           )
         )
       )

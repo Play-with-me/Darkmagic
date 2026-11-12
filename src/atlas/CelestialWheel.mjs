@@ -26,19 +26,17 @@ export function CelestialWheel({ React, chart }) {
 
   const shenShaList = chart.shenSha || [];
   const curStar = selectedStar || shenShaList[0] || {
-    name: 'Thiên Ất Quý Nhân',
-    pinyin: 'Tiān Yǐ Guì Rén',
-    branch: chart.dayBranch || 'Tý',
-    nature: 'cát',
-    desc: 'Đệ nhất cát thần trong Bát Tự, chuyển nguy thành an.',
-    effect: 'Gặp quý nhân tương trợ khi hoạn nạn.',
+    name: 'Chưa có dữ liệu Thần Sát',
+    branch: null,
+    nature: null,
   };
 
-  const starGuide = SHENSHA_BEGINNER_MEANINGS[curStar.name] || {
+  const dynamicStarInfo = chart.dynamicStarInsights?.[curStar.name] || null;
+  const starGuide = dynamicStarInfo || {
     title: curStar.name,
-    nature: curStar.nature === 'cát' ? 'Cát Tinh' : 'Biến Động Tinh',
-    simpleDesc: curStar.desc || 'Năng lượng đặc biệt chi phối một khía cạnh đời sống.',
-    advice: curStar.effect || 'Thuận theo tự nhiên, bồi dưỡng tâm tính.',
+    nature: 'Vị trí theo quy tắc truyền thống',
+    simpleDesc: `Tên ${curStar.name} xuất hiện vì điều kiện Can Chi của quy tắc tương ứng đã khớp với lá số. Đây là phân loại văn hóa truyền thống, không phải bằng chứng khoa học về tính cách hay sự kiện tương lai.`,
+    advice: 'Mở phần cơ sở để xem dữ kiện Can Chi và giới hạn trước khi tự đối chiếu.',
   };
 
   // 24 Sơn Hướng La Kinh
@@ -104,7 +102,7 @@ export function CelestialWheel({ React, chart }) {
       h(
         'p',
         { className: 'chapter-desc' },
-        'La Kinh định phương hướng năng lượng không gian, kết hợp cùng các chòm sao Quý Nhân, Đào Hoa, Dịch Mã chiếu rọi cung mệnh. Bấm chọn từng sao để xem lời giải đời thường.'
+        'Vòng La Kinh đặt 12 Địa Chi và các tên Thần Sát được tính theo quy tắc truyền thống lên cùng một bản đồ. Bấm từng tên để xem vị trí đã khớp; không dùng mục này để dự báo sự kiện.'
       )
     ),
 
@@ -375,7 +373,7 @@ export function CelestialWheel({ React, chart }) {
         h(
           'div',
           { className: 'column-header-bar' },
-          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · GIẢI MÃ SAO CHIẾU MỆNH'),
+          h('span', { className: 'col-tag beginner-tag' }, 'DÀNH CHO NGƯỜI ĐỌC · CÁCH ĐỌC VỊ TRÍ'),
           h('span', { className: 'col-hint' }, `Đang soi: ${curStar.name} (${curStar.branch || curStar.primaryBranch || 'Cung Chi'})`)
         ),
 
@@ -412,13 +410,13 @@ export function CelestialWheel({ React, chart }) {
             ),
             h('span', { className: 'guide-period-pill' }, starGuide.nature || curStar.nature || 'Chiếu Cung Chi')
           ),
-          h('h3', { className: 'guide-headline' }, `Khí Chất Của ${curStar.name} Trong Đời Sống Thực Tế`),
+          h('h3', { className: 'guide-headline' }, `Vì sao ${curStar.name} xuất hiện?`),
           h('p', { className: 'guide-meaning-body' }, starGuide.simpleDesc || curStar.desc),
           h(
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Tọa độ cung ${curStar.branch || curStar.primaryBranch || 'Bản mệnh'} (${curStar.palace || 'Chiếu Cung'}): ${starGuide.advice || 'Vận dụng thế mạnh này vào các quyết định lớn.'}`)
+            h('span', null, `Vị trí: chi ${curStar.branch || curStar.primaryBranch || 'chưa xác định'} (${curStar.palace || 'chưa xác định trụ'}). ${starGuide.advice || 'Tự đối chiếu với hành vi và quyết định thực tế.'}`)
           ),
 
           // Lưới 4 Chiều Ứng Dụng Sao (Sự nghiệp, Tình cảm, Việc nên làm, Việc nên tránh - Không dùng emoji)
@@ -477,11 +475,11 @@ export function CelestialWheel({ React, chart }) {
         h(
           'div',
           { className: 'guide-card-secondary' },
-          h('h4', { className: 'card-sec-title' }, 'Góc Nhìn Khoa Học & Khách Quan Về "Thần Sát"'),
+          h('h4', { className: 'card-sec-title' }, 'Giới hạn khi đọc Thần Sát'),
           h(
             'p',
             { className: 'card-sec-desc' },
-            'Trong cổ học Đông Phương, "Thần Sát" không phải là thần thánh hay ma quỷ ban phước giáng họa, mà là những mô thức tâm lý bẩm sinh và cơ hội tương tác xã hội lặp đi lặp lại.'
+            'Thần Sát là hệ thống tên gọi trong truyền thống Bát tự. Mệnh Quán chỉ hiển thị vị trí khớp quy tắc; không gọi đây là khoa học, không xem nó là mô thức tâm lý bẩm sinh và không dùng để khẳng định vận may hoặc rủi ro.'
           ),
           h(
             'div',
@@ -491,28 +489,28 @@ export function CelestialWheel({ React, chart }) {
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Quý Nhân'),
               h('strong', null, 'Mạng lưới tương trợ'),
-              h('p', null, 'Khả năng kết nối và được người có tầm ảnh hưởng giúp đỡ đúng thời điểm then chốt.')
+              h('p', null, 'Tên gọi truyền thống; không chứng minh rằng một người sẽ xuất hiện để giúp đỡ.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Đào Hoa'),
               h('strong', null, 'Sức hút giao tiếp'),
-              h('p', null, 'Duyên ăn nói, năng khiếu thẩm mỹ và độ nhạy cảm tinh tế với cảm xúc người khác.')
+              h('p', null, 'Tên gọi truyền thống; không chứng minh sức hút hoặc đặc điểm giao tiếp.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Dịch Mã'),
               h('strong', null, 'Vận động & Đổi mới'),
-              h('p', null, 'Sự linh hoạt đổi mới, cơ duyên đi xa, thay đổi chỗ ở hay mở rộng tầm nhìn toàn cầu.')
+              h('p', null, 'Tên gọi truyền thống; không dự báo việc đi xa hoặc thay đổi nơi ở.')
             ),
             h(
               'div',
               { className: 'trait-box' },
               h('span', { className: 'trait-label' }, 'Văn Xương'),
               h('strong', null, 'Trí tuệ & Học thức'),
-              h('p', null, 'Khả năng tự học xuất sắc, nghiên cứu và diễn đạt thuyết phục bằng văn tự.')
+              h('p', null, 'Tên gọi truyền thống; không chứng minh năng lực học tập hoặc diễn đạt.')
             )
           )
         ),
@@ -525,8 +523,8 @@ export function CelestialWheel({ React, chart }) {
           h(
             'div',
             { className: 'guide-action-text' },
-            h('strong', null, 'Bí quyết kích hoạt vận hội:'),
-            h('p', null, 'Không cần hoang mang trước những tên gọi hung tinh hay thần sát. Mọi vì sao đều là hai mặt của một đồng xu; hiểu rõ bản chất giúp bạn chủ động phát huy điểm mạnh và thiết lập rào chắn an toàn cho điểm yếu.')
+            h('strong', null, 'Cách dùng an toàn:'),
+            h('p', null, 'Hãy xem tên gọi như một mục tra cứu văn hóa. Nếu lời giải không phù hợp với trải nghiệm thực tế, bạn có thể bỏ qua; không dùng mục này cho quyết định sức khỏe, tài chính hoặc pháp lý.')
           )
         )
       )

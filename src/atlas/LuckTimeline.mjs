@@ -21,30 +21,40 @@ export function LuckTimeline({ React, chart }) {
   const h = React.createElement;
   const timeline = chart.timeline || { cycles: [], annuals: [] };
   const cycles = timeline.cycles || [];
-  const annuals = timeline.annuals || [];
 
   const defaultCycleIdx = cycles.findIndex((c) => c.isCurrent);
-  const [selectedCycleIdx, setSelectedCycleIdx] = React.useState(defaultCycleIdx >= 0 ? defaultCycleIdx : 2);
-  const [selectedYear, setSelectedYear] = React.useState(new Date().getFullYear());
+  const [selectedCycleIdx, setSelectedCycleIdx] = React.useState(defaultCycleIdx >= 0 ? defaultCycleIdx : 0);
+  const [selectedYear, setSelectedYear] = React.useState(null);
+  const curCycle = cycles[selectedCycleIdx] || cycles[0] || null;
+  const annuals = curCycle?.annuals || [];
 
-  const curCycle = cycles[selectedCycleIdx] || cycles[0] || {
-    name: 'Bính Dần',
-    han: '丙寅',
-    tenGod: 'Chính tài',
-    startAge: 25,
-    endAge: 34,
-    startYear: 2020,
-    endYear: 2029,
-    guidance: {
-      theme: 'Tài Chính Minh Bạch & Tích Lũy Vững Chắc',
-      observe: 'Cơ hội phát triển tài chính qua công việc chuyên môn ổn định.',
-      caution: 'Tránh đầu cơ rủi ro cao hoặc chi tiêu phung phí.',
-      action: 'Tập trung xây dựng nền móng sự nghiệp và tích lũy dài hạn.',
-    },
-  };
+  React.useEffect(() => {
+    const currentYear = new Date().getFullYear();
+    const nextYear = annuals.find((annual) => annual.year === currentYear)?.year ?? annuals[0]?.year ?? null;
+    setSelectedYear(nextYear);
+  }, [selectedCycleIdx]);
 
-  const curAnnual = annuals.find((a) => a.year === selectedYear) || annuals[0] || {};
-  const cycleTheme = ELEMENT_THEME[curCycle.element] || ELEMENT_THEME['Hỏa'];
+  const curAnnual = annuals.find((a) => a.year === selectedYear) || annuals[0] || null;
+  const cycleTheme = ELEMENT_THEME[curCycle?.element] || ELEMENT_THEME['Hỏa'];
+
+  if (!curCycle) {
+    return h(
+      'section',
+      {
+        id: 'luck-timeline',
+        className: 'atlas-chapter-section ritual-mist-card',
+        'aria-label': 'Đồ Bản V: Đại Vận và Lưu Niên',
+      },
+      h(
+        'header',
+        { className: 'chapter-header' },
+        h('div', { className: 'chapter-badge' }, h(MilestoneIcon, { React, size: 14 }), h('span', null, 'ĐỒ BẢN V · ĐẠI VẬN & LƯU NIÊN')),
+        h('h2', { className: 'chapter-title' }, 'Chưa đủ dữ liệu để lập Đại vận'),
+        h('p', { className: 'chapter-desc' }, timeline.reason || 'Bộ tính chính chưa trả về các chặng Đại vận cho thông tin sinh này. Mệnh Quán không tự dựng mốc tuổi hoặc năm thay thế.')
+      ),
+      h('div', { className: 'atlas-data-limit', role: 'status' }, 'Bạn vẫn có thể đọc bốn bản đồ phía trên. Phần này sẽ chỉ xuất hiện khi có dữ liệu đã tính được.')
+    );
+  }
 
   return h(
     'section',
@@ -67,7 +77,7 @@ export function LuckTimeline({ React, chart }) {
       h(
         'p',
         { className: 'chapter-desc' },
-        'Đời người như con thuyền trên sông lớn, Đại Vận 10 năm là dòng nước xuôi ngược. Bấm chọn từng Đại Vận bên trái để đóng ấn Chu Sa và đọc cẩm nang hành động bên phải.'
+        'Mỗi chặng là một mốc lịch mười năm do bộ tính chính cung cấp. Chọn một chặng để xem đúng các năm thuộc chặng đó và các câu hỏi tự đối chiếu; đây không phải dự báo sự kiện sẽ xảy ra.'
       )
     ),
 
@@ -223,7 +233,7 @@ export function LuckTimeline({ React, chart }) {
                   },
                   c.name
                 ),
-                // Huy hiệu "★ NAY" nếu là chu kỳ hiện tại
+                  // Chỉ gắn nhãn khi năm hiện tại thực sự nằm trong chặng.
                 c.isCurrent &&
                   h(
                     'text',
@@ -236,7 +246,7 @@ export function LuckTimeline({ React, chart }) {
                       fontSize: 8.5,
                       fontWeight: '700',
                     },
-                    '★ NAY'
+                    'HIỆN TẠI'
                   ),
                 // Độ tuổi & Năm
                 h(
@@ -257,15 +267,16 @@ export function LuckTimeline({ React, chart }) {
           )
         ),
 
-        // Lưới 10 năm Lưu Niên trong giai đoạn hiện tại
+        // Lưới Lưu Niên thuộc đúng Đại vận đang chọn.
         h(
           'div',
           { className: 'annuals-timeline-panel' },
-          h('h4', { className: 'panel-subtitle' }, 'Các Năm Lưu Niên Gần Nhất (Bấm chọn để soi vận năm):'),
-          h(
-            'div',
-            { className: 'annuals-chips-grid' },
-            annuals.map((yr) => {
+          h('h4', { className: 'panel-subtitle' }, `Các năm trong chặng ${curCycle.startYear}–${curCycle.endYear}:`),
+          annuals.length > 0
+            ? h(
+              'div',
+              { className: 'annuals-chips-grid' },
+              annuals.map((yr) => {
               const isSelected = selectedYear === yr.year;
               return h(
                 'button',
@@ -285,8 +296,9 @@ export function LuckTimeline({ React, chart }) {
                 ),
                 h('small', { className: 'annual-god' }, yr.tenGod)
               );
-            })
-          )
+              })
+            )
+            : h('p', { className: 'atlas-data-limit' }, 'Chặng này chưa có dữ liệu Lưu niên. Mệnh Quán không tự tạo danh sách năm thay thế.')
         )
       ),
 
@@ -314,7 +326,7 @@ export function LuckTimeline({ React, chart }) {
                 className: `switch-tab-btn ${selectedCycleIdx === cIdx ? 'is-active' : ''}`,
                 onClick: () => setSelectedCycleIdx(cIdx),
               },
-              `${c.startAge}–${c.endAge}t: ${c.name}${c.isCurrent ? ' ★' : ''}`
+              `${c.startAge}–${c.endAge}t: ${c.name}${c.isCurrent ? ' · Hiện tại' : ''}`
             )
           )
         ),
@@ -334,13 +346,13 @@ export function LuckTimeline({ React, chart }) {
             ),
             h('span', { className: 'guide-period-pill' }, `${curCycle.startYear} – ${curCycle.endYear}`)
           ),
-          h('h3', { className: 'guide-headline' }, curCycle.guidance?.theme || 'Giai Đoạn Bứt Phá Năng Lực'),
-          h('p', { className: 'guide-meaning-body' }, curCycle.guidance?.observe || 'Môi trường thuận lợi mở rộng kinh nghiệm.'),
+          h('h3', { className: 'guide-headline' }, curCycle.guidance?.theme || 'Chủ đề đang chờ duyệt'),
+          h('p', { className: 'guide-meaning-body' }, curCycle.guidance?.observe || 'Chặng này có mốc lịch hợp lệ nhưng chưa có lời giải đã được duyệt.'),
           h(
             'div',
             { className: 'guide-prompt-quote' },
             h(InfoIcon, { React, size: 15, color: 'var(--gold)' }),
-            h('span', null, `Chiến lược cốt lõi: ${curCycle.guidance?.action || 'Kiên trì mục tiêu dài hạn.'}`)
+            h('span', null, `Gợi ý tự đối chiếu: ${curCycle.guidance?.action || 'Ghi nhận điều thực tế trước khi rút kết luận.'}`)
           ),
 
           // Lưới 4 Chiều Chiến Lược 10 Năm (Xu thế, Cơ hội, Cẩn trọng, Hành động)
@@ -356,7 +368,7 @@ export function LuckTimeline({ React, chart }) {
                 h('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px', fontSize: '13px' } }, '戰略'),
                 'Nhịp Điệu Chiến Lược'
               ),
-              h('p', { className: 'domain-card-desc' }, curCycle.tenGod.includes('Tài') || curCycle.tenGod.includes('Thương') ? 'Vận Tiến Công: Thời điểm vàng mở rộng kinh doanh, đầu tư và bứt phá danh tiếng.' : 'Vận Tích Lũy: Tập trung học tập, củng cố nội lực, xây dựng nền tảng vững chắc.')
+              h('p', { className: 'domain-card-desc' }, 'Quan sát cách chủ đề của chặng xuất hiện trong lựa chọn và hoàn cảnh thực tế; không dùng mục này để quyết định đầu tư hoặc dự đoán thành bại.')
             ),
             h(
               'div',
@@ -395,7 +407,7 @@ export function LuckTimeline({ React, chart }) {
         ),
 
         // Thẻ Chi Tiết Năm Lưu Niên Đang Chọn (có thanh chọn nhanh các năm)
-        h(
+        curAnnual && h(
           'div',
           { className: 'guide-card-secondary' },
           h('h4', { className: 'card-sec-title' }, `Điểm Rơi Vận Khí Năm ${curAnnual.year} (${curAnnual.name} · ${curAnnual.han})`),

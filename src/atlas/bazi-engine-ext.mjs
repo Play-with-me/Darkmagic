@@ -727,143 +727,845 @@ export function analyzeYongShen(dayStem, dayElement, counts, monthBranch) {
   };
 }
 
-// Khởi tạo 8 Chu Kỳ Đại Vận & 10 Năm Lưu Niên
-export function buildLuckTimeline(dayStem, pillars, birthYear = 1995) {
-  const monthPillar = pillars[1];
-  const yearPillar = pillars[0];
-  const mStemIdx = Math.max(0, STEMS.indexOf(monthPillar?.stem || 'Giáp'));
-  const mBranchIdx = Math.max(0, BRANCHES.indexOf(monthPillar?.branch || 'Dần'));
-  const yStemIdx = Math.max(0, STEMS.indexOf(yearPillar?.stem || 'Giáp'));
-  const dir = (yStemIdx % 2 === 0) ? 1 : -1;
-
-  const currentYear = 2026;
-  const startAge = 4;
-  const cycles = [];
-
-  const TEN_GOD_GUIDANCE = {
+// Diễn giải Đại vận chỉ là câu hỏi tự đối chiếu. Mốc tuổi và Can Chi phải đến
+// từ bộ tính chính; lớp Atlas không tự dựng chặng hoặc năm thay thế.
+const TEN_GOD_GUIDANCE = {
     'Tỷ kiên': {
       theme: 'Tự Lập & Củng Cố Bản Lĩnh',
-      observe: 'Bạn bè, đồng đạo xuất hiện nhiều; ý thức độc lập và tự chủ tăng cao.',
-      caution: 'Tránh bảo thủ hoặc ôm đồm một mình khi có thể hợp tác cùng có lợi.',
-      action: 'Rèn luyện kỹ năng cốt lõi và xây dựng liên minh đồng chí hướng.',
+      observe: 'Đối chiếu cách bạn tự quyết và cách bạn phối hợp với người ngang vai.',
+      caution: 'Không xem khác biệt là cuộc so sánh hơn thua; làm rõ phần việc của mỗi người.',
+      action: 'Chọn một việc bạn tự chịu trách nhiệm và một việc cần thống nhất với người khác.',
     },
     'Kiếp tài': {
       theme: 'Cạnh Tranh & Đột Phá Tốc Độ',
-      observe: 'Nhịp sống sôi động, nhiều cơ hội giao tế nhưng cũng dễ phát sinh chi tiêu lớn.',
-      caution: 'Quản trị rủi ro tài chính chặt chẽ, không đầu tư theo cảm xúc đám đông.',
-      action: 'Chủ động chuyển hóa áp lực cạnh tranh thành động lực nâng cấp bản thân.',
+      observe: 'Đối chiếu ranh giới khi góp công, chia chi phí hoặc dùng chung nguồn lực.',
+      caution: 'Không nhận lời khi trách nhiệm, giới hạn và cách dừng chưa rõ.',
+      action: 'Ghi trước phần việc, giới hạn cam kết và cách đánh giá kết quả.',
     },
     'Thực thần': {
       theme: 'Khơi Nguồn Sáng Tạo & An Nhiên',
-      observe: 'Tư duy thông suốt, tâm hồn thư thái, có lộc ăn uống và nghệ thuật/chuyên môn.',
-      caution: 'Đừng vì quá an nhàn mà bỏ lỡ thời điểm vàng để mở rộng sự nghiệp.',
-      action: 'Đóng gói tri thức và tài năng thành sản phẩm hoặc giá trị hữu hình.',
+      observe: 'Đối chiếu kỹ năng nào bạn muốn rèn đều đặn và ai có thể dùng kết quả đó.',
+      caution: 'Không chờ cảm hứng hoặc sự hoàn hảo mới cho người khác xem.',
+      action: 'Hoàn thành một sản phẩm nhỏ rồi xin một góp ý cụ thể.',
     },
     'Thương quan': {
       theme: 'Cách Tân & Phá Vỡ Lối Mòn',
-      observe: 'Khát khao đổi mới mãnh liệt, trực giác sắc bén, không chấp nhận sự rập khuôn.',
-      caution: 'Giữ lời nói uyển chuyển, tránh phản biện gay gắt làm mất lòng người nâng đỡ.',
-      action: 'Dồn năng lượng sắc sảo vào sáng tạo chuyên môn và giải quyết bài toán khó.',
+      observe: 'Đối chiếu điều gì trong cách làm hiện tại đang gây vướng mắc.',
+      caution: 'Tập trung sửa cách làm, không biến phản biện thành phán xét con người.',
+      action: 'Thử một thay đổi nhỏ và so sánh kết quả trước, sau.',
     },
     'Thiên tài': {
       theme: 'Cơ Duyên Mở Rộng & Linh Hoạt Tài Lộc',
-      observe: 'Dòng tiền lưu chuyển nhanh, dễ gặp cơ hội ngoài dự tính hoặc nguồn thu phụ.',
-      caution: 'Giữ kỷ luật giữ tiền; lộc đến nhanh cũng dễ đi nhanh nếu thiếu kế hoạch.',
-      action: 'Đa dạng hóa nguồn lực và mở rộng mạng lưới kết nối thực chất.',
+      observe: 'Đối chiếu cách bạn đánh giá một lời mời hoặc ý tưởng mới.',
+      caution: 'Không xem một đề xuất hấp dẫn là cam kết đáng làm khi chưa thử ở quy mô nhỏ.',
+      action: 'Đặt giới hạn cho lần thử và điều kiện tiếp tục hoặc dừng.',
     },
     'Chính tài': {
       theme: 'Tích Lũy Bền Vững & Thực Chất',
-      observe: 'Công việc đi vào quỹ đạo ổn định, thành quả tỉ lệ thuận với công sức bỏ ra.',
-      caution: 'Tránh quá thận trọng mà khước từ những cải tiến hợp thời.',
-      action: 'Xây dựng nền tảng tài chính dài hạn và vun đắp gia đạo vững vàng.',
+      observe: 'Đối chiếu việc nào tạo giá trị đều đặn và việc nào đang tiêu tốn nguồn lực.',
+      caution: 'Không nhận thêm nghĩa vụ khi chưa tính được thời gian duy trì.',
+      action: 'Theo dõi một nguồn lực trong một tháng rồi điều chỉnh theo số liệu tự ghi.',
     },
     'Thất sát': {
       theme: 'Tôi Luyện Bản Lĩnh Trước Sóng Gió',
-      observe: 'Trách nhiệm nặng nề hơn, áp lực cao nhưng đi kèm bước nhảy vọt về vị thế.',
-      caution: 'Chăm sóc sức khỏe và giấc ngủ; không quyết định vội khi tâm đang căng thẳng.',
-      action: 'Đối diện trực diện với thử thách bằng kế hoạch kỷ luật từng bước.',
+      observe: 'Đối chiếu cách bạn ưu tiên khi nhiều việc cùng tạo áp lực.',
+      caution: 'Không quyết định vội khi còn thiếu thông tin quan trọng.',
+      action: 'Chọn bước đầu có thể hoàn thành và xác định lúc cần nhờ hỗ trợ.',
     },
     'Chính quan': {
       theme: 'Danh Vị, Trật Tự & Uy Tín',
-      observe: 'Được giao phó trọng trách, danh tiếng và sự công nhận trong tổ chức tăng lên.',
-      caution: 'Đừng tự trói mình trong áp lực hoàn hảo hình thức.',
-      action: 'Lấy chữ tín và chuẩn mực đạo đức làm nền tảng thăng tiến lâu dài.',
+      observe: 'Đối chiếu vai trò, tiêu chí hoàn thành và những lời hứa còn mở.',
+      caution: 'Không tự ôm kỳ vọng chưa được nói rõ.',
+      action: 'Thống nhất một kết quả cần đạt và một mốc kiểm tra với người liên quan.',
     },
     'Thiên ấn': {
       theme: 'Trực Giác Huyền Vi & Chiều Sâu Độc Lập',
-      observe: 'Tâm trí hướng về chiều sâu triết học, nghiên cứu chuyên biệt hoặc tâm linh.',
-      caution: 'Tránh thu mình cô lập hoặc suy diễn quá mức những chuyện nhỏ.',
-      action: 'Ghi chép, nghiên cứu chuyên sâu và tìm người tri kỷ để sẻ chia.',
+      observe: 'Đối chiếu câu hỏi nào khiến bạn muốn tìm hiểu lâu hơn.',
+      caution: 'Không chỉ tìm ý kiến đồng tình hoặc đổi hướng trước khi kiểm tra kết quả.',
+      action: 'Đối chiếu hai nguồn khác nhau và thử áp dụng một ý vào thực tế.',
     },
     'Chính ấn': {
       theme: 'Quý Nhân Che Chở & Bồi Đắp Đức Độ',
-      observe: 'Gặp thầy hiền, sách quý hoặc người bề trên nâng đỡ; tâm thế bao dung, bình ổn.',
-      caution: 'Tránh ỷ lại vào sự an toàn sẵn có mà chậm bước tiến thủ.',
-      action: 'Học tập nâng cao trình độ, tích lũy phúc đức và truyền trao giá trị.',
+      observe: 'Đối chiếu điều bạn đang học và phần nào cần người hướng dẫn.',
+      caution: 'Không đợi biết hết hoặc phụ thuộc mãi vào hướng dẫn mới bắt đầu.',
+      action: 'Chọn một nguồn đáng tin, thực hành một phần nhỏ rồi giải thích lại bằng lời mình.',
     },
   };
 
-  for (let i = 1; i <= 8; i++) {
-    const s = STEMS[(mStemIdx + i * dir + 100) % 10];
-    const b = BRANCHES[(mBranchIdx + i * dir + 120) % 12];
-    const sYear = birthYear + startAge + (i - 1) * 10;
-    const eYear = sYear + 9;
-    const stage = getLifeStage(dayStem, b);
-    const tenGod = getTenGodRelation(dayStem, s);
-    const guide = TEN_GOD_GUIDANCE[tenGod] || TEN_GOD_GUIDANCE['Chính ấn'];
-    const isCurrent = currentYear >= sYear && currentYear <= eYear;
+function parseGanZhi(value = '') {
+  const [stem, branch] = String(value).trim().split(/\s+/);
+  return {
+    stem: STEMS.includes(stem) ? stem : null,
+    branch: BRANCHES.includes(branch) ? branch : null,
+  };
+}
 
-    cycles.push({
-      index: i,
-      stem: s,
-      branch: b,
-      han: `${STEM_META[s].han}${BRANCH_META[b].han}`,
-      name: `${s} ${b}`,
-      element: STEM_META[s].element,
-      branchElement: BRANCH_META[b].element,
+export function buildLuckTimeline(dayStem, pillars, sourceDaYun = [], currentYear = new Date().getFullYear()) {
+  if (!Array.isArray(sourceDaYun) || sourceDaYun.length === 0) {
+    return {
+      available: false,
+      reason: 'Bộ tính chính chưa cung cấp đủ mốc Đại vận cho dữ liệu sinh này.',
+      cycles: [],
+      annuals: [],
+    };
+  }
+
+  const cycles = sourceDaYun.map((source, sourceIndex) => {
+    const { stem, branch } = parseGanZhi(source.ganZhi);
+    const tenGod = source.relationWithDay || (stem ? getTenGodRelation(dayStem, stem) : 'Chưa xác định');
+    const guidance = TEN_GOD_GUIDANCE[tenGod] || null;
+    const startYear = Number(source.startYear);
+    const startAge = Number(source.startAge);
+    const endAge = Number.isFinite(Number(source.endAge)) ? Number(source.endAge) : startAge + 9;
+    const endYear = Number.isFinite(startYear) ? startYear + 9 : null;
+    const annuals = Array.isArray(source.liuNian)
+      ? source.liuNian.map((annual) => {
+          const annualParts = parseGanZhi(annual.ganZhi);
+          const annualTenGod = annual.relationWithDay || (annualParts.stem ? getTenGodRelation(dayStem, annualParts.stem) : 'Chưa xác định');
+          const annualGuide = TEN_GOD_GUIDANCE[annualTenGod] || null;
+          const year = Number(annual.year);
+          return {
+            year,
+            age: Number(annual.age),
+            stem: annualParts.stem,
+            branch: annualParts.branch,
+            han: annualParts.stem && annualParts.branch
+              ? `${STEM_META[annualParts.stem].han}${BRANCH_META[annualParts.branch].han}`
+              : '—',
+            name: annual.ganZhi || 'Chưa xác định',
+            element: annual.elements?.[0] || STEM_META[annualParts.stem]?.element || null,
+            elements: Array.isArray(annual.elements) ? annual.elements.filter(Boolean) : [],
+            tenGod: annualTenGod,
+            stage: annualParts.branch ? getLifeStage(dayStem, annualParts.branch) : null,
+            naYin: annualParts.stem && annualParts.branch ? getNaYin(annualParts.stem, annualParts.branch) : 'Chưa xác định',
+            theme: annualGuide?.theme || 'Chủ đề chưa được duyệt',
+            advice: annualGuide?.action || 'Tự ghi nhận điều thực tế đã xảy ra trước khi rút kết luận.',
+            isCurrent: year === currentYear,
+          };
+        })
+      : [];
+
+    return {
+      index: Number(source.index) || sourceIndex + 1,
+      stem,
+      branch,
+      han: stem && branch ? `${STEM_META[stem].han}${BRANCH_META[branch].han}` : '—',
+      name: source.ganZhi || 'Chưa xác định',
+      element: source.elements?.[0] || STEM_META[stem]?.element || null,
+      branchElement: source.elements?.[1] || BRANCH_META[branch]?.element || null,
       tenGod,
-      stage,
-      naYin: getNaYin(s, b),
-      startAge: startAge + (i - 1) * 10,
-      endAge: startAge + i * 10 - 1,
-      startYear: sYear,
-      endYear: eYear,
-      isCurrent,
-      guidance: guide,
-    });
+      stage: branch ? getLifeStage(dayStem, branch) : null,
+      naYin: stem && branch ? getNaYin(stem, branch) : 'Chưa xác định',
+      startAge,
+      endAge,
+      startYear,
+      endYear,
+      isCurrent: Number.isFinite(startYear) && currentYear >= startYear && currentYear <= endYear,
+      guidance,
+      annuals,
+    };
+  });
+
+  const currentCycle = cycles.find((cycle) => cycle.isCurrent) || cycles[0];
+  return {
+    available: true,
+    cycles,
+    annuals: currentCycle?.annuals || [],
+  };
+}
+
+// Bảng Tàng Can 12 Địa Chi cổ truyền
+export const BRANCH_HIDDEN_STEMS = {
+  'Tý': ['Quý'],
+  'Sửu': ['Kỷ', 'Quý', 'Tân'],
+  'Dần': ['Giáp', 'Bính', 'Mậu'],
+  'Mão': ['Ất'],
+  'Thìn': ['Mậu', 'Ất', 'Quý'],
+  'Tỵ': ['Bính', 'Canh', 'Mậu'],
+  'Ngọ': ['Đinh', 'Kỷ'],
+  'Mùi': ['Kỷ', 'Đinh', 'Ất'],
+  'Thân': ['Canh', 'Nhâm', 'Mậu'],
+  'Dậu': ['Tân'],
+  'Tuất': ['Mậu', 'Tân', 'Đinh'],
+  'Hợi': ['Nhâm', 'Giáp'],
+};
+
+// Thiên Can Ngũ Hợp
+export const STEM_COMBINATIONS = {
+  'Giáp-Kỷ': 'Hóa Thổ (Trung Chính Chi Hợp · Trọng tín nghĩa)',
+  'Ất-Canh': 'Hóa Kim (Nhân Nghĩa Chi Hợp · Cương nhu tương tế)',
+  'Bính-Tân': 'Hóa Thủy (Uy Chế Chi Hợp · Trí tuệ quyền biến)',
+  'Đinh-Nhâm': 'Hóa Mộc (Hữu Tình Chi Hợp · Nhân từ sáng tạo)',
+  'Mậu-Quý': 'Hóa Hỏa (Đa Lễ Chi Hợp · Lễ tiết rực rỡ)',
+};
+
+// Mùa sinh theo Nguyệt Lệnh
+const BRANCH_SEASONS = {
+  'Dần': { season: 'Đầu Xuân', element: 'Mộc', nature: 'Mộc khí sơ khai, vạn vật nảy chồi' },
+  'Mão': { season: 'Giữa Xuân (Xuân Phân)', element: 'Mộc', nature: 'Mộc khí cực thịnh, sinh sôi mãnh liệt' },
+  'Thìn': { season: 'Cuối Xuân (Mộ Mộc)', element: 'Thổ', nature: 'Khí xuân chuyển giao, thổ khí dưỡng mộc' },
+  'Tỵ': { season: 'Đầu Hạ', element: 'Hỏa', nature: 'Hỏa khí sơ khai, ánh sáng lan tỏa' },
+  'Ngọ': { season: 'Giữa Hạ (Hạ Chí)', element: 'Hỏa', nature: 'Hỏa khí cực thịnh, nhiệt huyết bừng sáng' },
+  'Mùi': { season: 'Cuối Hạ (Mộ Hỏa)', element: 'Thổ', nature: 'Hỏa thoái thổ vượng, ẩm ấm lắng dịu' },
+  'Thân': { season: 'Đầu Thu', element: 'Kim', nature: 'Kim khí sơ sinh, bắt đầu thu liễm' },
+  'Dậu': { season: 'Giữa Thu (Thu Phân)', element: 'Kim', nature: 'Kim khí thuần khiết, cương nghị sắc bén' },
+  'Tuất': { season: 'Cuối Thu (Mộ Kim)', element: 'Thổ', nature: 'Khô ráo tích tụ, chuẩn bị đón đông' },
+  'Hợi': { season: 'Đầu Đông', element: 'Thủy', nature: 'Thủy khí sơ sinh, giá lạnh bắt đầu ngưng tụ' },
+  'Tý': { season: 'Giữa Đông (Đông Chí)', element: 'Thủy', nature: 'Thủy khí cực thịnh, sâu thẳm tĩnh lặng' },
+  'Sửu': { season: 'Cuối Đông (Mộ Thủy)', element: 'Thổ', nature: 'Hàn thổ tích sương, ấp ủ mầm xuân' },
+};
+
+// Sinh lời giải chuyên sâu 4 chiều động cho từng trụ
+export function buildDynamicPillarInsight(pillar, chartContext = {}) {
+  const { dayStem, dayElement } = chartContext;
+  const isDayMaster = pillar.isDayMaster || pillar.label === 'Ngày';
+  const stem = pillar.stem;
+  const branch = pillar.branch;
+  const stemEl = pillar.stemElement || (stem ? STEM_META[stem]?.element : null);
+  const branchEl = pillar.branchElement || (branch ? BRANCH_META[branch]?.element : null);
+  const naYin = pillar.naYin || 'Chưa xác định';
+  const stage = pillar.lifeStage?.name || '—';
+  const rel = pillar.stemRelation || (stem && dayStem ? getTenGodRelation(dayStem, stem) : 'Nhật Chủ');
+
+  if (pillar.isUnknown || (!stem && !branch)) {
+    return {
+      pillar: `Trụ ${pillar.label}`,
+      theme: 'Phần Chưa Rõ Giờ Sinh',
+      period: 'Thời Hậu Vận & Không Gian Sáng Tạo',
+      meaning: 'Chưa có dữ kiện giờ sinh địa phương để tính toán trụ này.',
+      question: 'Bạn có thể tự đối chiếu qua nhịp sinh hoạt và dự định cá nhân thay vì chọn một giờ phỏng đoán.',
+      domains: {
+        career: '75% nền tảng sự nghiệp đã được định hình bởi ba trụ Năm, Tháng, Ngày; phần giờ sinh giữ sự linh hoạt.',
+        relationships: 'Mối liên kết thế hệ sau và học trò được bồi đắp tự nhiên qua trải nghiệm sống và sự chia sẻ thiện tâm.',
+        strength: 'Khả năng giữ tâm thế tự do, không bị đóng khung trong khuôn mẫu cứng nhắc.',
+        blindspot: 'Tránh sốt ruột tìm kiếm một giờ sinh phỏng đoán; hãy tập trung hoàn thiện những gì đang hiển hiện.',
+        dailyTip: 'Ghi chép những ý tưởng sáng tạo độc lập vào một cuốn sổ riêng để tự theo dõi mạch phát triển.',
+      },
+    };
   }
 
-  // Nếu không có chu kỳ nào chứa 2026 (do năm sinh giả định), gán chu kỳ 3 là hiện tại
-  if (!cycles.some(c => c.isCurrent) && cycles[2]) {
-    cycles[2].isCurrent = true;
+  let theme = '';
+  let period = '';
+  let meaning = '';
+  let question = '';
+  let career = '';
+  let relationships = '';
+  let strength = '';
+  let blindspot = '';
+  let dailyTip = '';
+
+  if (pillar.label === 'Năm') {
+    theme = `Gốc Rễ Niên Thiếu · ${stem || ''} ${branch || ''} (${naYin})`;
+    period = 'Từ 1 – 16 tuổi (Thời Niên Thiếu)';
+    meaning = `Trụ Năm mang Nạp âm ${naYin}, chi ${branch} (${pillar.animal || ''}) tọa vòng ${stage}. Can ${stem} đóng vai trò ${rel} đối với bản mệnh, phản ánh cội nguồn gia phong và khí chất ban sơ.`;
+    question = `Gia phong tổ tiên và môi trường thuở nhỏ đã tôi luyện nên giá trị cốt lõi nào trong con người bạn?`;
+    career = `Xu hướng định hình thái độ học tập và nền nếp kỷ luật từ sớm; nạp âm ${naYin} tạo nền móng vững chắc khi bắt đầu bước chân vào đường học thuật.`;
+    relationships = `Tương tác với ông bà, cha mẹ chịu ảnh hưởng bởi Can ${stem} (${rel}). Sự tôn trọng cội nguồn giúp củng cố điểm tựa tinh thần.`;
+    strength = `Khí chất tự nhiên toát ra vẻ chững chạc; được thừa hưởng phúc đức và nền tảng giáo dưỡng căn bản của gia đình.`;
+    blindspot = `Đôi khi những kỳ vọng vô thức thời niên thiếu tạo ra áp lực tâm lý vô hình cần được tự tháo gỡ khi trưởng thành.`;
+    dailyTip = `Dành thời gian nhớ về cội nguồn, giữ thái độ hiếu thuận và trân trọng những bài học đầu đời từ gia đình.`;
+  } else if (pillar.label === 'Tháng') {
+    theme = `Khí Lệnh Lập Nghiệp · ${stem || ''} ${branch || ''} (${naYin})`;
+    period = 'Từ 17 – 32 tuổi (Thời Lập Thân Kiến Nghiệp)';
+    meaning = `Nguyệt Lệnh chi ${branch} nắm lệnh mùa sinh, là then chốt của toàn cục Tứ Trụ. Can ${stem} lộ ${rel}, kết hợp Nạp âm ${naYin} ở trạng thái ${stage}, định hình phong cách làm việc và sức bật xã hội.`;
+    question = `Môi trường nghề nghiệp và thử thách chuyên môn nào giúp bạn phát huy tối đa thế mạnh Nguyệt Lệnh?`;
+    career = `Năng lực thực thi mạnh mẽ dưới sự chỉ huy của ${rel}; thích hợp với môi trường coi trọng ${stemEl === 'Hỏa' ? 'tính lan tỏa và sáng tạo' : stemEl === 'Kim' ? 'kỷ luật và tính chính xác cao' : stemEl === 'Thủy' ? 'chiến lược và sự linh hoạt' : stemEl === 'Mộc' ? 'tăng trưởng bền vững và nhân văn' : 'tính thực tế và uy tín bền chặt'}.`;
+    relationships = `Giao tiếp với cấp trên, đồng nghiệp và đối tác dựa trên nguyên tắc minh bạch; biết cách xác lập vị thế chuyên môn cá nhân.`;
+    strength = `Khả năng chịu tải công việc cao, nắm bắt thời thế nhanh nhạy tại những thời khắc bước ngoặt của dự án.`;
+    blindspot = `Áp lực tiến thủ dễ khiến bạn cuốn vào vòng xoáy cạnh tranh; cần phân bổ nhịp nghỉ để không làm cạn kiệt năng lượng.`;
+    dailyTip = `Xác định 1 mục tiêu nghề nghiệp trọng tâm trong quý và kiên định hoàn thành thay vì phân tán nhiều mũi nhọn.`;
+  } else if (pillar.label === 'Ngày') {
+    theme = `Bản Thể Nhật Chủ · ${stem || ''} ${branch || ''} (${naYin})`;
+    period = 'Từ 33 – 48 tuổi (Thời Trung Niên & Trưởng Thành)';
+    meaning = `Nhật Can ${stem} (${dayElement}) là tâm điểm quán xuyến bản mệnh, chi ${branch} là Bản Cung tọa vòng ${stage}. Nạp âm ${naYin} là bản sắc tâm hồn sâu kín nhất của bạn.`;
+    question = `Khi buông bỏ mọi chức danh xã hội, đâu là chân dung con người chân thật nhất mà bạn hướng đến?`;
+    career = `Phong cách lãnh đạo cuộc đời tự chủ, có chuẩn mực đạo đức riêng; không dễ bị lung lay bởi ý kiến phán xét từ bên ngoài.`;
+    relationships = `Chi Ngày ${branch} đại diện cho không gian hôn nhân và tri kỷ: mong muốn một người đồng hành thấu hiểu chiều sâu, tôn trọng sự độc lập của nhau.`;
+    strength = `Nội lực tự phục hồi bền bỉ; tinh thần trách nhiệm cao độ với gia đình nhỏ và những cam kết cá nhân.`;
+    blindspot = `Cái tôi nội tâm sâu sắc đôi khi khiến bạn khép kín cảm xúc, làm người bạn đời khó nắm bắt tâm tư.`;
+    dailyTip = `Chủ động chia sẻ những cảm nghĩ chân thành với người thân mỗi tuần; học cách thả lỏng khi ở nhà.`;
+  } else {
+    theme = `Hậu Vận & Sáng Tạo · ${stem || ''} ${branch || ''} (${naYin})`;
+    period = 'Từ 49 tuổi trở đi (Hậu Vận & Chiêm Nghiệm)';
+    meaning = `Trụ Giờ ${stem} ${branch} đại diện cho thế giới nội tâm thầm kín, con cái, dự án ấp ủ riêng và sự an nhàn về sau. Khí chất ${naYin} ở trạng thái ${stage}.`;
+    question = `Di sản tinh thần và những giá trị nhân văn nào bạn muốn lưu giữ và truyền cảm hứng cho thế hệ tiếp nối?`;
+    career = `Khả năng cố vấn, truyền đạt tri thức và xây dựng các dự án có tầm nhìn dài hạn; chuyển từ trực tiếp tác chiến sang định hướng chiến lược.`;
+    relationships = `Gắn kết hòa ái với thế hệ trẻ, con cái và học trò; đóng vai trò ngọn hải đăng chỉ dẫn bằng trải nghiệm thực chứng.`;
+    strength = `Trực giác đúc kết từ thời gian; khả năng nhìn thấu bản chất vấn đề và giữ được sự an nhiên trước biến động.`;
+    blindspot = `Cần tránh xu hướng can thiệp quá sâu vào lộ trình tự lập của người trẻ; tôn trọng quyền tự quyết của họ.`;
+    dailyTip = `Tập trung vào một sở thích đòi hỏi sự tỉ mỉ tĩnh tâm như đọc sách, làm vườn hoặc viết nhật ký chiêm nghiệm.`;
   }
 
-  // Bảng 10 năm Lưu Niên xung quanh năm hiện tại (2022 - 2031)
-  const annuals = [];
-  for (let yr = 2022; yr <= 2031; yr++) {
-    const offset = (yr - 1984 + 600) % 60; // 1984 là Giáp Tý
-    const s = STEMS[offset % 10];
-    const b = BRANCHES[offset % 12];
-    const tenGod = getTenGodRelation(dayStem, s);
-    const stage = getLifeStage(dayStem, b);
-    const guide = TEN_GOD_GUIDANCE[tenGod] || TEN_GOD_GUIDANCE['Chính ấn'];
-    annuals.push({
-      year: yr,
-      stem: s,
-      branch: b,
-      han: `${STEM_META[s].han}${BRANCH_META[b].han}`,
-      name: `${s} ${b}`,
-      element: STEM_META[s].element,
-      tenGod,
-      stage,
-      naYin: getNaYin(s, b),
-      theme: guide.theme,
-      advice: guide.action,
-      isCurrent: yr === currentYear,
-    });
+  return {
+    pillar: `Trụ ${pillar.label}`,
+    theme,
+    period,
+    meaning,
+    question,
+    domains: {
+      career,
+      relationships,
+      strength,
+      blindspot,
+      dailyTip,
+    },
+  };
+}
+
+// Sinh giải mã động cho từng Ngũ Hành theo quan hệ Lục Thân của Nhật Chủ
+export function buildDynamicElementInsight(element, chartContext = {}) {
+  const { dayElement, weightedCounts = {} } = chartContext;
+  const score = Number(weightedCounts[element] || 0);
+  const GEN_ORDER = ['Mộc', 'Hỏa', 'Thổ', 'Kim', 'Thủy'];
+  const dIdx = Math.max(0, GEN_ORDER.indexOf(dayElement || 'Thủy'));
+  const eIdx = Math.max(0, GEN_ORDER.indexOf(element));
+
+  const relOffset = (eIdx - dIdx + 5) % 5;
+  const KINSHIP_ROLES = [
+    { role: 'Tỷ Kiếp (Bản Thể Đồng Minh)', desc: 'Tượng trưng cho bản lĩnh tự chủ, ý chí độc lập, bạn bè và người ngang vai.' },
+    { role: 'Thực Thương (Tài Hoa Dẫn Xuất)', desc: 'Tượng trưng cho tư duy sáng tạo, năng lực biểu đạt, cống hiến và lan tỏa giá trị.' },
+    { role: 'Tài Tinh (Kiểm Soát Thực Tế)', desc: 'Tượng trưng cho năng lực quản lý nguồn lực, sự thực tế, kiên nhẫn và thành quả vật chất.' },
+    { role: 'Quan Sát (Kỷ Luật Trật Tự)', desc: 'Tượng trưng cho tinh thần trách nhiệm, danh dự, chuẩn mực và khả năng chịu áp lực.' },
+    { role: 'Ấn Tinh (Tri Thức Che Chở)', desc: 'Tượng trưng cho sự học hỏi, trí tuệ tích lũy, sự tĩnh tại và quý nhân bồi đắp căn cơ.' },
+  ];
+  const kinship = KINSHIP_ROLES[relOffset];
+
+  let stateLabel = '';
+  let dynamicAnalysis = '';
+  let application = '';
+
+  if (score >= 4.0) {
+    stateLabel = 'Đại Vượng (Tỷ trọng áp đảo)';
+    dynamicAnalysis = `Hành ${element} mang vai trò ${kinship.role} đạt ${score.toFixed(1)} điểm, giữ thế chủ đạo trong biểu đồ. Năng lượng này thể hiện bạn có thế mạnh vượt trội về ${kinship.desc} Tuy nhiên, khi khí mạch quá dày đặc, cần chủ động tìm kênh dẫn xuất hợp lý để tránh tạo áp lực dư thừa lên các hành khác.`;
+    application = `Chuyển hóa năng lượng này vào công việc sáng tạo hoặc các dự án đòi hỏi chiều sâu chuyên môn cao; tránh ôm đồm nhiều việc cùng lúc.`;
+  } else if (score >= 2.0) {
+    stateLabel = 'Đắc Thế Cân Bằng (Khí lực vững vàng)';
+    dynamicAnalysis = `Hành ${element} đạt ${score.toFixed(1)} điểm, giữ thế quân bình lý tưởng. Đóng vai trò ${kinship.role}, đây là chỗ dựa tin cậy giúp bạn duy trì nhịp điệu sinh hoạt và công việc một cách tự nhiên, không thiên lệch.`;
+    application = `Duy trì thói quen làm việc có kế hoạch; phát huy năng lực tự nhiên này trong các quyết định hợp tác hàng ngày.`;
+  } else if (score >= 0.8) {
+    stateLabel = 'Khí Lực Tiềm Ẩn (Có mặt nhưng cần chăm sóc)';
+    dynamicAnalysis = `Hành ${element} đạt ${score.toFixed(1)} điểm, xuất hiện vừa phải trong các tàng can hoặc một chi đơn lẻ. Trong vai trò ${kinship.role}, phẩm chất này sẵn sàng phát huy khi có cơ hội hoặc gặp thời điểm tương trợ.`;
+    application = `Ý thức rèn luyện thêm tính cách tương ứng; khi cần giải quyết vấn đề thuộc lĩnh vực này, hãy chuẩn bị kỹ lưỡng trước.`;
+  } else {
+    stateLabel = 'Chưa Lộ Rõ (Khuyết thiếu trong phép đếm)';
+    dynamicAnalysis = `Trong phép đếm Can, Chi và tàng can hiện tại, hành ${element} chưa xuất hiện điểm số. Với vai trò ${kinship.role}, điều này không có nghĩa là bạn thiếu năng lực, mà là xu hướng tự nhiên của bạn ít khi bận tâm hoặc bị ràng buộc bởi yếu tố này.`;
+    application = `Có thể bù đắp qua môi trường sống, thói quen sinh hoạt hoặc chủ động hợp tác với những người bạn có thế mạnh về hành này.`;
   }
 
-  return { cycles, annuals };
+  return {
+    element,
+    score,
+    role: kinship.role,
+    roleDesc: kinship.desc,
+    stateLabel,
+    dynamicAnalysis,
+    application,
+  };
+}
+
+// Sinh giải mã động cho từng Thập Thần
+export function buildDynamicTenGodInsight(godName, chartContext = {}) {
+  const { tenGodList = [], dayStem = 'Nhâm' } = chartContext;
+  const currentGod = tenGodList.find((g) => g.name === godName) || { count: 0, locations: [] };
+  const count = Number(currentGod.count || 0);
+  const locations = currentGod.locations || [];
+
+  const isExposed = locations.some((loc) => loc.includes('Thiên can'));
+  const isHidden = locations.some((loc) => loc.includes('Tàng can'));
+
+  let presenceText = '';
+  let strategicAdvice = '';
+
+  if (count === 0) {
+    presenceText = 'Khuyết thiếu trong cấu trúc nguyên cục';
+    strategicAdvice = `Thập Thần ${godName} không hiện diện ở 4 trụ. Đây là điểm trống tự nhiên: bạn không bị vướng mắc bởi định kiến của năng lượng này, nhưng khi cần đưa ra quyết định liên quan, nên tham vấn thêm góc nhìn từ đối tác hoặc người có sở trường bổ trợ.`;
+  } else if (isExposed && isHidden) {
+    presenceText = `Lộ Can Chi Đắc Địa (${count.toFixed(1)} điểm: xuất hiện cả ở Thiên can và Tàng can)`;
+    strategicAdvice = `Năng lượng ${godName} vừa biểu đạt rõ rệt ra phong thái bên ngoài, vừa có gốc rễ bám rễ sâu bên trong. Đây là một trong những bản sắc chủ đạo của bạn, dễ gây ấn tượng mạnh mẽ với đối tác và cấp trên.`;
+  } else if (isExposed) {
+    presenceText = `Lộ Thiên Can (${count.toFixed(1)} điểm: hiển thị ở bề mặt giao tiếp)`;
+    strategicAdvice = `Tố chất ${godName} phát lộ rõ trong phong cách làm việc và ứng xử xã hội. Người xung quanh dễ dàng nhận ra khí chất này ở bạn; hãy chú ý bồi đắp năng lực thực tế để vẻ ngoài luôn song hành cùng chiều sâu.`;
+  } else {
+    presenceText = `Ẩn Tàng Chi Khí (${count.toFixed(1)} điểm: tiềm tàng trong tàng can Địa Chi)`;
+    strategicAdvice = `Năng lượng ${godName} là viên ngọc ngầm bên trong nội tâm: bạn không phô trương nhưng khi gặp hoàn cảnh thử thách hoặc thời vận thích hợp, nội lực này sẽ bộc phát mang lại kết quả bất ngờ.`;
+  }
+
+  return {
+    name: godName,
+    count,
+    locations,
+    presenceText,
+    strategicAdvice,
+  };
+}
+
+// Sinh giải mã động cho từng Thần Sát
+export function buildDynamicStarInsight(star, chartContext = {}) {
+  const baseMeaning = SHENSHA_BEGINNER_MEANINGS[star.name] || {};
+  const matchedPillars = star.matchedPillars || [];
+  const isPresent = Boolean(star.present || matchedPillars.length > 0);
+
+  const matchedDesc = isPresent
+    ? `Tọa vị thực tế tại ${matchedPillars.map((m) => `Trụ ${m.label} (${m.branch})`).join(', ')}`
+    : 'Chiếu từ Đại Vận hoặc Lưu Niên khi gặp chi tương ứng';
+
+  let careerPower = baseMeaning.careerPower || 'Gặp thời cơ thuận lợi khi làm việc đúng sở trường.';
+  let relationshipEffect = baseMeaning.relationshipEffect || 'Các mối quan hệ xã hội được xây dựng trên sự chân thành.';
+  let dos = baseMeaning.dos || 'Giữ chữ tín và trau dồi chuyên môn đều đặn.';
+  let donts = baseMeaning.donts || 'Tránh nóng vội hoặc hành động khi chưa cân nhắc kỹ.';
+
+  if (isPresent) {
+    const hasMonth = matchedPillars.some((p) => p.label === 'Tháng');
+    const hasDay = matchedPillars.some((p) => p.label === 'Ngày');
+    if (hasMonth) {
+      careerPower = `[Đắc Vị Nguyệt Lệnh] ${careerPower} Năng lực này tác động trực tiếp lên con đường lập nghiệp và chuyên môn chính của bạn.`;
+    }
+    if (hasDay) {
+      relationshipEffect = `[Đắc Vị Nhật Chi] ${relationshipEffect} Năng lượng này chiếu rọi sâu vào đời sống hôn nhân, nội tâm và người bạn đời.`;
+    }
+  }
+
+  return {
+    name: star.name,
+    present: isPresent,
+    matchedDesc,
+    title: baseMeaning.title || star.name,
+    nature: baseMeaning.nature || (star.type === 'cat' ? 'Cát Tinh' : 'Nghịch Cảnh Tinh'),
+    simpleDesc: baseMeaning.simpleDesc || star.desc,
+    careerPower,
+    relationshipEffect,
+    dos,
+    donts,
+  };
+}
+
+// Thuật toán tổng hợp Chân Dung Con Người Cá Nhân Hóa Đa Tầng
+export function synthesizePersonalProfile(chart = {}) {
+  const {
+    dayStem = 'Nhâm',
+    dayBranch = 'Thân',
+    dayElement = 'Thủy',
+    pillars = [],
+    weightedCounts = {},
+    shenSha = [],
+    interactions = [],
+    yongShen = {},
+  } = chart;
+
+  const dayPillar = pillars[2] || {};
+  const monthPillar = pillars[1] || {};
+  const yearPillar = pillars[0] || {};
+  const hourPillar = pillars[3] || {};
+
+  const isPartialTime = !hourPillar.stem && !hourPillar.branch;
+
+  // 1. Phân tích Bản thể Cốt cách (Nhật Chủ + Tọa Chi + Nạp Âm Trụ Ngày)
+  const archetype = DAY_MASTER_ARCHETYPES[dayStem] || DAY_MASTER_ARCHETYPES['Nhâm'];
+  const dayNaYin = dayPillar.naYin || 'Chưa xác định';
+  const dayStage = dayPillar.lifeStage?.name || 'Trường Sinh';
+  const dayHidden = BRANCH_HIDDEN_STEMS[dayBranch] || [];
+  const dayHiddenStemsText = dayHidden.map((s) => `${s} (${STEM_META[s]?.element || ''})`).join(', ');
+
+  const coreEssence = {
+    headline: 'Bản Thể Cốt Cách & Nội Tâm Sâu Kín',
+    archetypeTitle: `${dayStem} ${dayElement} · ${dayBranch} (${dayNaYin})`,
+    naYin: dayNaYin,
+    lifeStage: dayStage,
+    detail: `Bạn mang hình tượng ${archetype.archetype} (${archetype.tagline}). Can Ngày ${dayStem} tọa chi ${dayBranch} ở trạng thái ${dayStage}, ẩn tàng các khí mạch ${dayHiddenStemsText}. Nạp âm ${dayNaYin} đúc kết nên một bản thể vừa có sự bền bỉ của cốt cách nguyên thủy, vừa có chiều sâu nội tâm tinh tế. ${archetype.personality} Khi đứng trước các bước ngoặt cuộc đời, bạn thường dựa vào trực giác độc lập và tiêu chuẩn đạo đức cá nhân hơn là chạy theo xu hướng đám đông.`,
+  };
+
+  // 2. Phân tích Phong cách Hành động & Sự nghiệp (Nguyệt Lệnh + Thập Thần Trụ Tháng)
+  const monthBranch = monthPillar.branch || dayBranch;
+  const monthSeasonInfo = BRANCH_SEASONS[monthBranch] || { season: 'Tiết mùa cân bằng', nature: 'Khí mạch điều hòa' };
+  const monthRel = monthPillar.stemRelation || 'Khí Lệnh Chủ Quản';
+  const yongEl = yongShen.yongShen?.element || dayElement;
+
+  const workingStyle = {
+    headline: 'Phong Cách Hành Động & Bản Lĩnh Công Việc',
+    monthBranch,
+    seasonName: monthSeasonInfo.season,
+    dominantRole: monthRel,
+    detail: `Sinh vào tiết ${monthSeasonInfo.season} (${monthSeasonInfo.nature}), Nguyệt Lệnh trụ Tháng đóng vai trò đề cương dẫn dắt toàn cục. Trụ Tháng nắm lệnh với năng lượng ${monthRel}, cho thấy trong công việc bạn là người ${monthRel.includes('Quan') ? 'coi trọng kỷ luật, trật tự và danh dự nghề nghiệp' : monthRel.includes('Thương') || monthRel.includes('Thực') ? 'giàu óc sáng tạo, luôn muốn cải tiến phương pháp cũ và tạo sản phẩm độc đáo' : monthRel.includes('Tài') ? 'thực tế, nhạy bén với giá trị vật chất và quản lý dòng tiền cẩn trọng' : monthRel.includes('Ấn') ? 'yêu thích sự nghiên cứu bài bản, tiếp thu tri thức có hệ thống và hướng đến sự bền vững' : 'tự lực cánh sinh, dám đương đầu và làm việc độc lập rất tốt'}. Năng lượng điều hòa hướng đến hành ${yongEl}, gợi ý rằng bạn đạt hiệu suất cao nhất khi làm việc trong môi trường minh bạch và có không gian tự chủ phát huy sáng kiến.`,
+  };
+
+  // 3. Phân tích Mạng Lưới Xã Hội & Đối Ngoại (Quan Sát vs Tỷ Kiếp + Tương Tác Can Chi)
+  const hasHop = interactions.some((it) => it.type === 'hop');
+  const hasXung = interactions.some((it) => it.type === 'xung');
+  const hasHinh = interactions.some((it) => it.type === 'hinh');
+
+  let interactionNarrative = 'Các trụ bình hòa, mạch khí tương thân, đối nhân xử thế tự nhiên và ít vướng vào các cuộc tranh đua gay gắt.';
+  if (hasHop && hasXung) {
+    interactionNarrative = 'Lá số có sự đan xen giữa liên kết hòa hợp (Lục Hợp) và động lực bứt phá (Lục Xung): bạn vừa biết cách xây dựng liên minh tin cậy, vừa có dũng khí thay đổi khi mối quan hệ không còn phù hợp giá trị cốt lõi.';
+  } else if (hasHop) {
+    interactionNarrative = 'Lá số đắc thế Lục Hợp tương trợ: bạn có năng khiếu gắn kết người khác, dễ tạo được sự tin cậy lâu dài và thường gặp quý nhân đồng hành trong các giai đoạn quan trọng.';
+  } else if (hasXung || hasHinh) {
+    interactionNarrative = 'Lá số chứa mạch khí kích phát (Xung/Hình): tính tình thẳng thắn, không thích sự giả tạo; các mối quan hệ được tôi luyện qua thử thách thực tế, chọn lọc bạn bè rất kỹ.';
+  }
+
+  const socialRelation = {
+    headline: 'Mạng Lưới Xã Hội & Phong Thái Đối Ngoại',
+    summary: interactionNarrative,
+    detail: `Trong giao tiếp xã hội, bạn không phải tuýp người dễ dãi làm vừa lòng tất cả mọi người. ${interactionNarrative} Bạn coi trọng sự chân thành và ranh giới rõ ràng; khi đã trao niềm tin cho ai, bạn sẽ là một người đồng hành trung kiên và đáng tin cậy tuyệt đối.`,
+  };
+
+  // 4. Điểm Mù Tâm Lý & Hướng Điều Hòa Cân Bằng (Ngũ hành vượng/khuyết + Phản tư an toàn)
+  const dominantEntry = Object.entries(weightedCounts).sort((a, b) => b[1] - a[1])[0] || [dayElement, 1];
+  const missingElements = Object.entries(weightedCounts).filter(([_, v]) => v === 0).map(([k]) => k);
+
+  let balanceAdvice = '';
+  if (dominantEntry[0] === 'Hỏa') {
+    balanceAdvice = 'Hỏa khí vượng dễ khiến bạn nóng lòng thấy kết quả ngay; hãy tập thói quen chờ 24 giờ trước khi phản hồi các vấn đề gây bức xúc.';
+  } else if (dominantEntry[0] === 'Thủy') {
+    balanceAdvice = 'Thủy khí vượng tạo chiều sâu suy ngẫm nhưng dễ sinh lo nghĩ xa xôi; hãy ghi các mục tiêu ra giấy và hành động từng bước nhỏ.';
+  } else if (dominantEntry[0] === 'Kim') {
+    balanceAdvice = 'Kim khí vượng mang lại tính kỷ luật thép nhưng dễ quá khắt khe; hãy mềm mỏng hơn trong lời nói để không tạo khoảng cách với người thân.';
+  } else if (dominantEntry[0] === 'Mộc') {
+    balanceAdvice = 'Mộc khí vượng giúp nhiều ý tưởng sinh sôi nhưng dễ phân tán; hãy chọn lọc 1–2 dự án trọng tâm để hoàn thành trọn vẹn.';
+  } else {
+    balanceAdvice = 'Thổ khí dày dặn giúp giữ chữ tín nhưng dễ ngại thay đổi thói quen cũ; hãy chủ động mở lòng đón nhận những phương pháp tiếp cận mới mẻ.';
+  }
+
+  const blindSpotsAndRemedy = {
+    headline: 'Điểm Mù Tâm Lý & Hướng Điều Hòa Cân Bằng',
+    dominantElement: dominantEntry[0],
+    dominantScore: dominantEntry[1].toFixed(1),
+    missingElements,
+    advice: balanceAdvice,
+    detail: `Phép đếm cho thấy hành ${dominantEntry[0]} chiếm tỷ trọng cao nhất (${dominantEntry[1].toFixed(1)} điểm)${missingElements.length > 0 ? `, trong khi hành ${missingElements.join(', ')} chưa xuất hiện điểm số trong các trụ` : ''}. ${balanceAdvice} Việc nhận diện điểm mù này giúp bạn chủ động giữ tâm thế cân bằng, không để áp lực bên ngoài chi phối nhịp sống tự nhiên.`,
+  };
+
+  // 5. Xác định 3 Điểm Mạnh Cốt Lõi Tính Toán Thực Tế
+  const activeStars = shenSha.filter((s) => s.present);
+  const bestStar = activeStars.find((s) => s.name === 'Thiên Ất Quý Nhân' || s.name === 'Văn Xương Quý Nhân' || s.name === 'Lộc Thần') || activeStars[0];
+
+  const strength1 = {
+    title: `Bản Lĩnh ${archetype.name} (${dayNaYin})`,
+    desc: archetype.superpower,
+  };
+  const strength2 = {
+    title: bestStar ? `Cát Khí ${bestStar.name}` : `Khí Lực Nguyệt Lệnh (${monthSeasonInfo.season})`,
+    desc: bestStar ? (bestStar.desc || 'Nhận được sự tương trợ và mở lối từ những cơ duyên thuận lợi.') : `Sức bền thích nghi dẻo dai được nuôi dưỡng từ tiết khí ${monthSeasonInfo.season}.`,
+  };
+  const strength3 = {
+    title: `Chiến Lược ${yongShen.yongShen?.name || 'Tự Lực'}`,
+    desc: yongShen.yongShen?.desc || 'Khả năng tập trung vào mục tiêu then chốt để khai thông vận hội.',
+  };
+
+  // 6. Mạch Khí Tổng Quát Ngũ Hành
+  const flowSummary = `Toàn cục Bát tự của bạn lấy Nhật Can ${dayStem} (${dayElement}) làm trung tâm liên kết. Năng lượng luân chuyển qua Nguyệt Lệnh ${monthBranch} (${monthSeasonInfo.season}) tạo đà vươn lên cho sự nghiệp, trong khi trụ Ngày ${dayStem} ${dayBranch} giữ vai trò điểm neo bình yên cho tâm trí. Đây là cấu trúc có chiều sâu tự lập cao, càng qua trải nghiệm thực tế càng tỏa sáng bản lĩnh.`;
+
+  return {
+    title: `Chân Dung Bản Mệnh · ${dayStem} ${dayBranch} (${dayNaYin})`,
+    isPartialTime,
+    coreEssence,
+    workingStyle,
+    socialRelation,
+    blindSpotsAndRemedy,
+    coreStrengths: [strength1, strength2, strength3],
+    flowSummary,
+  };
+}
+
+// Thuật toán Chiêm Nghiệm Con Người Thực Tế & Ranh Giới Sống
+// Trả lời 4 câu hỏi cuộc đời cốt lõi: Bản ngã bẩm sinh, Điểm mù/Cạm bẫy ngoại cảnh, Tình duyên, Lời khuyên định tâm
+export function synthesizeHumanLifeReading(chart = {}) {
+  const {
+    dayStem = 'Nhâm',
+    dayBranch = 'Thân',
+    dayElement = 'Thủy',
+    pillars = [],
+    weightedCounts = {},
+    shenSha = [],
+    interactions = [],
+    yongShen = {},
+    tenGodList = [],
+  } = chart;
+
+  const dayPillar = pillars[2] || {};
+  const monthPillar = pillars[1] || {};
+  const yearPillar = pillars[0] || {};
+  const hourPillar = pillars[3] || {};
+
+  const isPartialTime = !hourPillar.stem && !hourPillar.branch;
+
+  const archetype = DAY_MASTER_ARCHETYPES[dayStem] || DAY_MASTER_ARCHETYPES['Nhâm'];
+  const dayNaYin = dayPillar.naYin || getNaYin(dayStem, dayBranch);
+  const dayStage = dayPillar.lifeStage?.name || getLifeStage(dayStem, dayBranch)?.name || 'Trường Sinh';
+  const dayHidden = BRANCH_HIDDEN_STEMS[dayBranch] || [];
+  const dayHiddenStemsText = dayHidden.map((s) => `${s} (${STEM_META[s]?.element || ''})`).join(', ');
+
+  const GEN_ORDER = ['Mộc', 'Hỏa', 'Thổ', 'Kim', 'Thủy'];
+  const dIdx = Math.max(0, GEN_ORDER.indexOf(dayElement));
+  const elComp = dayElement;
+  const elOutput = GEN_ORDER[(dIdx + 1) % 5];
+  const elWealth = GEN_ORDER[(dIdx + 2) % 5];
+  const elPower = GEN_ORDER[(dIdx + 3) % 5];
+  const elResource = GEN_ORDER[(dIdx + 4) % 5];
+
+  // 1. Phân tích Thân vượng / Thân nhược / Cân bằng
+  const compScore = weightedCounts[elComp] || 0;
+  const resScore = weightedCounts[elResource] || 0;
+  const selfSupportScore = compScore + resScore;
+
+  const monthBranch = monthPillar.branch || dayBranch;
+  const monthSeasonInfo = BRANCH_SEASONS[monthBranch] || { season: 'Tiết mùa điều hòa', nature: 'Khí mạch quân bình' };
+  const monthBranchMeta = BRANCH_META[monthBranch] || {};
+  const monthElement = monthBranchMeta.element || 'Thổ';
+
+  let dmStrength = 'Cân bằng';
+  let dmStrengthReason = 'Khí lực nội tại và áp lực ngoại cảnh giữ thế quân bình động';
+  if (selfSupportScore >= 4.0 || monthElement === elComp || monthElement === elResource) {
+    dmStrength = 'Vượng';
+    dmStrengthReason = 'Được trợ lực mạnh mẽ từ nguyệt lệnh hoặc tỷ kiếp, ấn tinh bồi tụ';
+  } else if (selfSupportScore <= 2.2) {
+    dmStrength = 'Nhược';
+    dmStrengthReason = 'Năng lượng tiêu hao nhiều cho tài tinh, quan sát hoặc thực thương';
+  }
+
+  // Ngũ hành vượng nhất và khuyết
+  const dominantElementEntry = Object.entries(weightedCounts).sort((a, b) => b[1] - a[1])[0] || [dayElement, 1];
+  const missingElements = Object.entries(weightedCounts).filter(([_, v]) => v === 0).map(([k]) => k);
+
+  // Thập thần nổi trội nhất
+  const sortedGods = [...tenGodList].sort((a, b) => (b.count || 0) - (a.count || 0));
+  const dominantGod = sortedGods[0] || { name: 'Tỷ kiên', group: 'Tỷ Kiếp (Đồng Minh)' };
+
+  // =========================================================================
+  // CÂU HỎI 1: BẢN NGÃ BẨM SINH & CỐT CÁCH THỰC SỰ
+  // =========================================================================
+  const dayBranchElement = BRANCH_META[dayBranch]?.element || 'Kim';
+  let stemBranchRelationDesc = '';
+  if (dayBranchElement === elResource) {
+    stemBranchRelationDesc = `Chi Ngày ${dayBranch} (${dayBranchElement}) tương sinh Can Ngày ${dayStem} (${dayElement}) — hình thành gốc rễ dưỡng mệnh vững chắc, nội tâm có chiều sâu dung nạp và học hỏi bền bỉ.`;
+  } else if (dayBranchElement === elOutput) {
+    stemBranchRelationDesc = `Can Ngày ${dayStem} (${dayElement}) sinh Chi Ngày ${dayBranch} (${dayBranchElement}) — năng lượng bẩm sinh luôn muốn tỏa sáng, cống hiến giá trị, sáng tạo và biểu đạt cảm xúc chân thành ra bên ngoài.`;
+  } else if (dayBranchElement === elComp) {
+    stemBranchRelationDesc = `Can Ngày ${dayStem} và Chi Ngày ${dayBranch} cùng mang hành ${dayElement} — cốt cách tự lập rất cao, ý chí độc lập như thép rèn, không dễ bị khuất phục hay phụ thuộc vào người khác.`;
+  } else if (dayBranchElement === elWealth) {
+    stemBranchRelationDesc = `Can Ngày ${dayStem} (${dayElement}) khắc Chi Ngày ${dayBranch} (${dayBranchElement}) — tư duy thực tế, có đầu óc quản trị nguồn lực nhạy bén và tinh thần trách nhiệm cao với việc cụ thể.`;
+  } else {
+    stemBranchRelationDesc = `Chi Ngày ${dayBranch} (${dayBranchElement}) khắc Can Ngày ${dayStem} (${dayElement}) — bản mệnh tôi luyện qua thử thách kỷ luật, nghiêm cẩn với chính mình và sở hữu bản lĩnh kiên cường khi đương đầu sóng gió.`;
+  }
+
+  const inherentNature = {
+    title: '01 · BẢN NGÃ BẨM SINH & CỐT CÁCH THỰC SỰ',
+    badge: 'BẢN NGÃ BẨM SINH',
+    headline: `${archetype.name} · Hình Tượng ${archetype.archetype}`,
+    tagline: archetype.tagline,
+    naYin: dayNaYin,
+    lifeStage: dayStage,
+    dmStrength,
+    philosophyQuote: 'Bát tự không phải bản án định sẵn cuộc đời, mà là bản đồ soi chiếu hạt giống tinh thần và khí chất tự nhiên mà bạn sở hữu từ lúc chào đời.',
+    narrative: `Bạn mang cốt cách của ${archetype.name} (${archetype.tagline}), biểu trưng bởi hình tượng ${archetype.archetype}. Trong bản thể nguyên thủy, ${archetype.personality} Trụ Ngày ${dayStem} ${dayBranch} tọa ở vòng sinh vượng ${dayStage}, ẩn tàng các khí mạch ${dayHiddenStemsText}. Nạp âm ${dayNaYin} kết hợp cùng khí thế ${dmStrength} (${dmStrengthReason}) định hình nên một con người ${stemBranchRelationDesc} Đây là chiếc neo cốt lõi giúp bạn luôn biết mình là ai khi đứng trước những lựa chọn lớn.`,
+    coreGifts: [
+      {
+        title: `Năng khiếu độc bản (${archetype.name})`,
+        desc: archetype.superpower,
+      },
+      {
+        title: `Điểm tựa sinh tồn (${dayNaYin})`,
+        desc: `Được bảo bọc bởi nguồn khí Nạp Âm ${dayNaYin} ở trạng thái ${dayStage}, bạn có sức bền nội tâm dẻo dai và khả năng hồi phục sau va vấp vượt trội.`,
+      },
+      {
+        title: 'Trực giác và Tiêu chuẩn sống',
+        desc: `Lấy cốt cách ${dayStem} ${dayElement} làm trục, bạn coi trọng sự chân thực và danh dự cá nhân; hiếm khi đánh tráo giá trị sống để thỏa hiệp với những xu hướng hời hợt.`,
+      },
+    ],
+  };
+
+  // =========================================================================
+  // CÂU HỎI 2: ĐIỂM MÙ & CẠM BẪY DỄ VẤP TRƯỚC NGOẠI CẢNH
+  // =========================================================================
+  let dmTrapDetail = '';
+  if (dmStrength === 'Vượng') {
+    dmTrapDetail = 'Thân Vượng mang lại cho bạn sự tự tin và dũng khí tuyệt vời, nhưng chính cái tôi lớn và sự nghĩa khí dễ biến thành điểm mù khi bước ra đời. Khi gặp bạn bè tâng bốc hoặc bị đối phương "khích tướng", bạn rất dễ nổi máu anh hùng, chi tiền quá tay hoặc vội vàng hùn hạp làm ăn mạo hiểm mà thiếu kiểm tra giấy tờ pháp lý.';
+  } else if (dmStrength === 'Nhược') {
+    dmTrapDetail = 'Thân Nhược bẩm sinh giàu lòng trắc ẩn, dễ đồng cảm và thấu hiểu lòng người, nhưng điểm mù chí tử của bạn là sự cả nể và sợ làm người khác buồn. Khi ngoại cảnh xuất hiện những kẻ thao túng tâm lý hoặc những mối quan hệ lợi dụng lòng tốt, bạn thường nhận lời gánh vác việc không thuộc trách nhiệm của mình, để rồi tự làm hao tổn sức lực và tài chính.';
+  } else {
+    dmTrapDetail = 'Cốt cách Thân Cân Bằng giúp bạn giữ được sự tỉnh táo trước nhiều cám dỗ, nhưng điểm mù là thói quen do dự, cân nhắc quá lâu khi thời cơ ập đến. Khi đứng trước những biến động ngoại cảnh phức tạp, bạn dễ bị các luồng ý kiến trái chiều làm phân tán, dẫn đến tình trạng "lắm mối tối nằm không".';
+  }
+
+  let dominantElementTrap = '';
+  if (dominantElementEntry[0] === 'Hỏa') {
+    dominantElementTrap = 'Năng lượng Hỏa áp đảo khiến bạn dễ bị ngoại cảnh kích động cơn nóng vội; khi tức giận bạn dễ đưa ra các quyết định cắt đứt quan hệ hoặc chi tiêu bốc đồng.';
+  } else if (dominantElementEntry[0] === 'Thủy') {
+    dominantElementTrap = 'Năng lượng Thủy áp đảo khiến tâm trí dễ rơi vào trạng thái suy diễn xa xôi; khi ở một mình lâu bạn dễ bị cảm giác hoài nghi ngoại cảnh bủa vây làm nhụt chí tiến thủ.';
+  } else if (dominantElementEntry[0] === 'Kim') {
+    dominantElementTrap = 'Năng lượng Kim áp đảo khiến tiêu chuẩn của bạn quá khắt khe; trước sự cẩu thả của người xung quanh bạn dễ phê bình gay gắt làm hẹp đường lui trong quan hệ hợp tác.';
+  } else if (dominantElementEntry[0] === 'Mộc') {
+    dominantElementTrap = 'Năng lượng Mộc áp đảo khiến bạn có quá nhiều hoài bão cùng lúc; khi thấy xu hướng mới bạn dễ bị cuốn theo dẫn đến tình trạng việc gì cũng biết nhưng khó hoàn tất đến cùng.';
+  } else {
+    dominantElementTrap = 'Năng lượng Thổ áp đảo khiến bạn rất nặng tình và giữ chữ tín, nhưng lại quá chậm xoay chuyển khi ngoại cảnh đòi hỏi sự linh hoạt; dễ bám víu vào những thói quen cũ đã lỗi thời.';
+  }
+
+  const clashes = interactions.filter((it) => it.type === 'xung');
+  let clashWarning = 'Các địa chi tương đối bình hòa, ít gặp va chạm bất ngờ với môi trường.';
+  if (clashes.length > 0) {
+    const clashNames = clashes.map((c) => c.desc || `${c.p1} xung ${c.p2}`).join(', ');
+    clashWarning = `Lá số có mạch khí tương xung (${clashNames}): báo hiệu bạn rất dễ vấp phải sự đối đầu trực diện khi làm việc trong môi trường tập thể thiếu minh bạch; cần thận trọng lời ăn tiếng nói khi có tranh luận chuyên môn.`;
+  }
+
+  const circumstanceVulnerabilities = {
+    title: '02 · ĐIỂM MÙ & CẠM BẪY DỄ VẤP TRƯỚC NGOẠI CẢNH',
+    badge: 'ĐIỂM MÙ NGOẠI CẢNH',
+    headline: 'Nhận Diện Lực Kéo Ngoại Cảnh Có Thể Làm Sai Lệch Tiềm Năng',
+    philosophyQuote: 'Người xưa xem chỉ tay hay Bát tự thường nhắc nhở: Sinh ra mang số giàu sang nhưng nếu ngoại cảnh kết giao bạn xấu, bị lôi kéo vào vòng xoáy đỏ đen thì cả đời cũng khó giữ được tiền của. Bát tự chỉ ra bạn dễ yếu lòng trước cạm bẫy nào để chủ động phòng bị.',
+    dmStrength,
+    dominantGod: dominantGod.name,
+    narrative: `${dmTrapDetail} Thêm vào đó, phép đếm ngũ hành ghi nhận hành ${dominantElementEntry[0]} chiếm tỷ trọng cao nhất (${dominantElementEntry[1].toFixed(1)} điểm). ${dominantElementTrap} ${clashWarning} Nhận biết rõ những cạm bẫy này chính là chiếc khiên bảo vệ tiềm năng của bạn nguyên vẹn.`,
+    trapsToAvoid: [
+      {
+        title: 'Cạm bẫy Bạn bè & Kết giao',
+        desc: dmStrength === 'Vượng' 
+          ? 'Tránh xa những nhóm bạn chỉ tìm đến bạn khi ăn nhậu, bàn chuyện kiếm tiền mạo hiểm hoặc thích khích bác cái tôi của bạn.'
+          : 'Tuyệt đối không đứng ra vay mượn hộ, bảo lãnh tài chính hoặc nhận lời gánh nợ thay cho người khác vì cả nể.',
+      },
+      {
+        title: 'Cạm bẫy Tài chính & Đầu tư',
+        desc: `Cẩn trọng trước các lời hứa hẹn "lợi nhuận nhanh, không rủi ro". Với năng lượng ${dominantGod.name} (${dominantGod.group}), bạn chỉ nên đầu tư vào những lĩnh vực mà bản thân có kiến thức kiểm soát thực tế.`,
+      },
+      {
+        title: 'Cạm bẫy Cảm xúc & Phản ứng',
+        desc: `${dominantElementTrap} Tập thói quen "dừng lại 24 giờ" trước khi đưa ra quyết định phản hồi các vấn đề gây bức xúc ngoài xã hội.`,
+      },
+    ],
+  };
+
+  // =========================================================================
+  // CÂU HỎI 3: TÌNH DUYÊN & DUYÊN NỢ CỦA BẠN
+  // =========================================================================
+  let spousalRelationHeadline = '';
+  let spousalRelationDesc = '';
+  let partnerArchetype = '';
+  let harmonyAdvice = '';
+
+  if (dayBranchElement === elResource) {
+    spousalRelationHeadline = 'Cung Phu Thê Sinh Nhật Can · Duyên Được Che Chở & Yêu Thương';
+    spousalRelationDesc = `Chi Ngày ${dayBranch} (${dayBranchElement}) tương sinh Can Ngày ${dayStem} (${dayElement}). Trong hôn nhân, người phối ngẫu đóng vai trò như người bảo hộ tinh thần: chu đáo, biết săn sóc, giỏi lắng nghe và sẵn sàng làm hậu phương vững chãi cho bạn phát triển sự nghiệp.`;
+    partnerArchetype = 'Người bạn đời điềm đạm, có chiều sâu bao dung, biết cách chăm lo gia đình và có trách nhiệm cao với mái ấm.';
+    harmonyAdvice = 'Bạn dễ sinh tâm lý ỷ lại hoặc xem sự chu đáo của người ấy là điều đương nhiên. Hãy chủ động chia sẻ việc nhà và bày tỏ sự biết ơn để mối quan hệ luôn ấm áp.';
+  } else if (dayBranchElement === elOutput) {
+    spousalRelationHeadline = 'Nhật Can Sinh Cung Phu Thê · Mẫu Người Hết Lòng Tận Tụy Cho Đi';
+    spousalRelationDesc = `Can Ngày ${dayStem} (${dayElement}) sinh Chi Ngày ${dayBranch} (${dayBranchElement}). Trong tình yêu, bạn là người trao đi rất nhiều: từ sự chăm chút tỉ mỉ đến việc lo toan tương lai cho đối phương. Bạn tìm thấy niềm vui khi thấy người mình yêu được hạnh phúc.`;
+    partnerArchetype = 'Người bạn đời cởi mở, biết đón nhận tình cảm, đánh giá cao sự sáng tạo và cần sự quan tâm chăm sóc từ bạn.';
+    harmonyAdvice = 'Tránh tình trạng cho đi quá nhiều rồi sinh ra mong cầu ngầm đối phương phải hồi đáp tương xứng. Hãy dành không gian riêng cho chính mình và tôn trọng sự tự do của bạn đời.';
+  } else if (dayBranchElement === elComp) {
+    spousalRelationHeadline = 'Can Chi Đồng Khí Tọa Phu Thê · Tình Yêu Tri Kỷ & Thử Thách Cái Tôi';
+    spousalRelationDesc = `Can Ngày ${dayStem} và Chi Ngày ${dayBranch} cùng mang hành ${dayElement} (Tọa Tỷ Kiếp). Mối quan hệ vợ chồng mang màu sắc của hai người bạn thân thiết, bằng vai phải lứa, cùng nhau vượt khó và chia sẻ mọi thăng trầm cuộc sống.`;
+    partnerArchetype = 'Người bạn đời có cá tính độc lập, tài năng, có quan điểm rõ ràng và không chịu lép vế.';
+    harmonyAdvice = 'Khi xảy ra tranh cãi, cái tôi của cả hai rất dễ bốc hỏa. Cần ghi nhớ nguyên tắc: "Trong gia đình, tình cảm quan trọng hơn lý lẽ". Học cách chủ động làm lành trước sẽ giữ trọn hạnh phúc.';
+  } else if (dayBranchElement === elWealth) {
+    spousalRelationHeadline = 'Nhật Can Khắc Cung Phu Thê · Trọng Tính Thực Tế & Muốn Làm Chủ Mái Ấm';
+    spousalRelationDesc = `Can Ngày ${dayStem} (${dayElement}) khắc Chi Ngày ${dayBranch} (${dayBranchElement}) (Tọa Tài Tinh). Bạn là người có xu hướng định hướng đường lối, quản lý tài chính và muốn gia đình vận hành theo một trật tự ổn định, hiệu quả.`;
+    partnerArchetype = 'Người bạn đời hiền hậu, khéo léo vun vén tài chính, biết lắng nghe và tôn trọng sự định hướng của bạn.';
+    harmonyAdvice = 'Đừng mang sự tính toán công việc hay nguyên tắc khô khan vào phòng ngủ. Hãy lắng nghe những tâm tư nhỏ nhặt của người ấy mà không phán xét hay vội vàng đưa ra giải pháp.';
+  } else {
+    spousalRelationHeadline = 'Cung Phu Thê Khắc Nhật Can · Bạn Đời Kỷ Luật & Có Uy Quyền';
+    spousalRelationDesc = `Chi Ngày ${dayBranch} (${dayBranchElement}) khắc Can Ngày ${dayStem} (${dayElement}) (Tọa Quan Sát). Người phối ngẫu của bạn là người có nguyên tắc sống vững chãi, cá tính mạnh mẽ, có vị thế xã hội hoặc xuất thân gia phong nghiêm cẩn.`;
+    partnerArchetype = 'Người bạn đời chững chạc, cương trực, có khả năng dẫn dắt nhưng đôi khi tạo áp lực kỳ vọng cao lên bạn.';
+    harmonyAdvice = 'Lấy sự mềm mỏng, thấu hiểu và chân thành để hóa giải sự cứng rắn của đối phương. Tránh đối đầu trực diện khi cả hai đang có áp lực từ công việc bên ngoài.';
+  }
+
+  // Thần sát tình cảm
+  const hasDaoHoa = shenSha.some((s) => s.name === 'Đào Hoa' && s.present);
+  const hasCoThan = shenSha.some((s) => (s.name === 'Cô Thần' || s.name === 'Quả Tú') && s.present);
+  let loveStarNote = '';
+  if (hasDaoHoa) {
+    loveStarNote = 'Lá số đắc khí Đào Hoa: Bạn có sức hút giao tiếp tự nhiên và duyên ăn nói; cần giữ ranh giới rõ ràng trong các mối quan hệ xã giao để tránh làm người bạn đời bất an.';
+  } else if (hasCoThan) {
+    loveStarNote = 'Lá số có bóng dáng Cô Thần / Quả Tú: Nội tâm bạn có những góc khuất sâu kín thích một mình; người bạn đời cần tôn trọng những khoảng lặng đó mà không trách cứ bạn lạnh lùng.';
+  } else {
+    loveStarNote = 'Mạch khí tình cảm hướng đến sự ổn định lâu dài, trân trọng giá trị gia đình truyền thống.';
+  }
+
+  const loveAndRelationships = {
+    title: '03 · TÌNH DUYÊN & DUYÊN NỢ CỦA BẠN',
+    badge: 'TÌNH DUYÊN & PHỐI NGẪU',
+    headline: spousalRelationHeadline,
+    dayBranch,
+    dayBranchElement,
+    philosophyQuote: 'Tình duyên trong Bát tự không nói trước người bạn lấy tên gì hay ngày nào cưới, mà phản ánh Cung Phu Thê (Trụ Ngày) — nơi cất giữ kỳ vọng nội tâm sâu kín và cách bạn đối xử với người đồng hành.',
+    narrative: `${spousalRelationDesc} ${loveStarNote}`,
+    harmonyPoints: [
+      {
+        title: 'Mẫu người phối ngẫu bù trừ tốt nhất',
+        desc: partnerArchetype,
+      },
+      {
+        title: 'Điểm dễ gây cọ xát trong đời sống chung',
+        desc: `Cung Phu Thê tại ${dayBranch} đòi hỏi sự thấu hiểu về cách biểu đạt tình cảm. Khác biệt về ngôn ngữ tình yêu nếu không được giãi bày sẽ dễ tích tụ thành sự lạnh nhạt.`,
+      },
+      {
+        title: 'Bí quyết giữ lửa hạnh phúc bền lâu',
+        desc: harmonyAdvice,
+      },
+    ],
+  };
+
+  // =========================================================================
+  // CÂU HỎI 4: LỜI KHUYÊN ĐỊNH TÂM & THIẾT LẬP RANH GIỚI
+  // =========================================================================
+  const yongEl = yongShen.yongShen?.element || dayElement;
+  const yongName = yongShen.yongShen?.name || 'Tự Lực Cân Bằng';
+
+  let yongShenAdvice = '';
+  let dailyHabitAction = '';
+  if (yongEl === 'Mộc') {
+    yongShenAdvice = 'Dụng Thần hướng về hành Mộc (sinh sôi, nhân từ, học hỏi). Bạn cần nuôi dưỡng tư duy phát triển dài hạn, liên tục trau dồi tri thức mới và mở rộng lòng từ bi.';
+    dailyHabitAction = 'Dành 15 phút mỗi sáng đi bộ dưới tán cây xanh hoặc đọc 1 chương sách hay để khởi động trí tuệ.';
+  } else if (yongEl === 'Hỏa') {
+    yongShenAdvice = 'Dụng Thần hướng về hành Hỏa (nhiệt huyết, minh bạch, lan tỏa). Bạn cần duy trì tinh thần lạc quan, chủ động kết nối xã hội và làm việc với năng lượng cởi mở.';
+    dailyHabitAction = 'Đón ánh nắng sớm 10 phút, mỉm cười chào ngày mới và giữ không gian làm việc tràn ngập ánh sáng tự nhiên.';
+  } else if (yongEl === 'Thổ') {
+    yongShenAdvice = 'Dụng Thần hướng về hành Thổ (trầm tĩnh, chữ tín, tích lũy). Bạn cần xây dựng thói quen làm việc chắc chắn từng bước, coi trọng chữ tín và xây dựng nền tảng tài chính an toàn.';
+    dailyHabitAction = 'Ăn uống đúng bữa, ngồi thiền tĩnh lặng 10 phút và ghi chép chi tiêu rõ ràng mỗi tối.';
+  } else if (yongEl === 'Kim') {
+    yongShenAdvice = 'Dụng Thần hướng về hành Kim (kỷ luật, dứt khoát, thanh lọc). Bạn cần rèn luyện tính kỷ luật thép, dũng cảm cắt tỉa những mối quan hệ vô bổ và kiên định với mục tiêu.';
+    dailyHabitAction = 'Giữ bàn làm việc ngăn nắp tối giản, rèn luyện thể thao 20 phút và lập danh sách việc cần làm trước khi bắt đầu.';
+  } else {
+    yongShenAdvice = 'Dụng Thần hướng về hành Thủy (linh hoạt, trí tuệ, lắng đọng). Bạn cần học cách ứng biến mềm mại trước nghịch cảnh, nuôi dưỡng trực giác và chiều sâu nội tâm.';
+    dailyHabitAction = 'Uống đủ nước ấm vào buổi sáng, dành thời gian viết nhật ký phản tư trước khi ngủ.';
+  }
+
+  const groundingAdvice = {
+    title: '04 · LỜI KHUYÊN ĐỊNH TÂM & THIẾT LẬP RANH GIỚI',
+    badge: 'RANH GIỚI & ĐỊNH TÂM',
+    headline: `Thiết Lập Bộ Lọc Ngoại Cảnh & Kỷ Luật Để Bảo Vệ Tiềm Năng (${yongName})`,
+    philosophyQuote: 'Biết mình là ai chưa đủ; bảo vệ được mình trước sóng gió mới giúp ta chạm đến đỉnh cao của tiềm năng. Dưới đây là 3 chiếc "neo tâm" giúp bạn giữ vững tay chèo giữa biến thiên cuộc đời.',
+    yongShenElement: yongEl,
+    yongShenName: yongName,
+    narrative: `${yongShenAdvice} Khi cuộc sống xô bồ khiến bạn mỏi mệt, việc quay về kết nối với năng lượng hành ${yongEl} sẽ giúp bạn nhanh chóng tái tạo nguyên khí và đưa ra những quyết định sáng suốt nhất.`,
+    boundaryPrinciples: [
+      {
+        title: 'Bộ lọc kết giao & Chọn môi trường',
+        desc: `Chủ động thanh lọc vòng tròn bạn bè: chỉ giữ lại những mối quan hệ chân thành, tôn trọng sự phát triển của nhau. Nói "Không" dứt khoát với những môi trường tiêu cực hoặc thích lôi kéo vào việc mờ ám.`,
+      },
+      {
+        title: 'Ranh giới kỷ luật cá nhân',
+        desc: 'Thiết lập quy tắc "48 giờ": trước bất kỳ quyết định tài chính, đầu tư hay thay đổi công việc quan trọng nào, hãy cho bản thân 48 giờ tĩnh tâm suy xét độc lập, không để cảm xúc đám đông chi phối.',
+      },
+      {
+        title: 'Thói quen định tâm mỗi ngày',
+        desc: dailyHabitAction,
+      },
+    ],
+  };
+
+  return {
+    title: `Bản Đọc Chiêm Nghiệm Con Người · ${dayStem} ${dayBranch} (${dayNaYin})`,
+    dayStem,
+    dayBranch,
+    dayElement,
+    archetypeTitle: `${archetype.name} · ${archetype.archetype}`,
+    isPartialTime,
+    partialTimeNotice: isPartialTime
+      ? 'Lá số của bạn chưa rõ giờ sinh: 75% cấu trúc căn bản (Niên thiếu, Lập nghiệp, Bản ngã cốt cách & Duyên nợ hôn nhân) đã được phân tích chuẩn xác qua 3 trụ Năm – Tháng – Ngày. 25% hậu vận và năng lượng tiềm ẩn của trụ Giờ được để mở như một khoảng trời tự do để bạn tự tay kiến tạo.'
+      : null,
+    inherentNature,
+    circumstanceVulnerabilities,
+    loveAndRelationships,
+    groundingAdvice,
+  };
 }
 
 // Hàm tổng hợp: Làm giàu toàn diện dữ liệu Lá Số cho 5 Đại Bản Đồ
@@ -879,12 +1581,17 @@ export function enrichBaziChart(chart) {
         { label: 'Giờ', name: `${bz.hour?.stem || ''} ${bz.hour?.branch || ''}`.trim(), ...(bz.hour || {}) },
       ];
     } else {
-      rawPillars = [
-        { label: 'Năm', name: 'Giáp Tý' },
-        { label: 'Tháng', name: 'Bính Dần' },
-        { label: 'Ngày', name: 'Mậu Thìn' },
-        { label: 'Giờ', name: 'Canh Thân' },
-      ];
+      return {
+        ...chart,
+        dataAvailable: false,
+        dataError: 'Bộ tính chính không trả về Tứ trụ. Mệnh Quán không dựng lá số mẫu thay thế.',
+        pillars: [],
+        weightedCounts: { Mộc: 0, Hỏa: 0, Thổ: 0, Kim: 0, Thủy: 0 },
+        shenSha: [],
+        interactions: [],
+        timeline: { available: false, cycles: [], annuals: [] },
+        tenGodList: [],
+      };
     }
   }
 
@@ -893,13 +1600,26 @@ export function enrichBaziChart(chart) {
   let dayStem = dayPillarRaw.stem || chart?.dayMaster;
   let dayBranch = dayPillarRaw.branch;
   if (!dayStem || !STEMS.includes(dayStem)) {
-    const parts = (dayPillarRaw.name || 'Nhâm Tý').split(' ');
-    dayStem = STEMS.includes(parts[0]) ? parts[0] : 'Nhâm';
-    dayBranch = BRANCHES.includes(parts[1]) ? parts[1] : 'Tý';
+    const parts = (dayPillarRaw.name || '').split(' ');
+    dayStem = STEMS.includes(parts[0]) ? parts[0] : null;
+    dayBranch = BRANCHES.includes(parts[1]) ? parts[1] : null;
   }
   if (!dayBranch || !BRANCHES.includes(dayBranch)) {
-    const parts = (dayPillarRaw.name || 'Nhâm Tý').split(' ');
-    dayBranch = BRANCHES.includes(parts[1]) ? parts[1] : 'Tý';
+    const parts = (dayPillarRaw.name || '').split(' ');
+    dayBranch = BRANCHES.includes(parts[1]) ? parts[1] : null;
+  }
+  if (!dayStem || !dayBranch) {
+    return {
+      ...chart,
+      dataAvailable: false,
+      dataError: 'Trụ Ngày chưa đủ Can Chi để xác định Nhật chủ. Mệnh Quán không dùng giá trị mặc định thay thế.',
+      pillars: rawPillars,
+      weightedCounts: { Mộc: 0, Hỏa: 0, Thổ: 0, Kim: 0, Thủy: 0 },
+      shenSha: [],
+      interactions: [],
+      timeline: { available: false, cycles: [], annuals: [] },
+      tenGodList: [],
+    };
   }
   const dayElement = chart?.dayElement || STEM_META[dayStem]?.element || 'Thủy';
 
@@ -915,7 +1635,7 @@ export function enrichBaziChart(chart) {
 
     const palaceNames = ['Tổ Nghiệp & Căn Cơ', 'Nguyệt Lệnh & Sự Nghiệp', 'Bản Mệnh & Phối Ngẫu', 'Hậu Vận & Tâm Nguyện'];
     const isUnknown = !stem && !branch;
-    return {
+    const basePillar = {
       ...p,
       index: idx,
       isUnknown,
@@ -933,21 +1653,11 @@ export function enrichBaziChart(chart) {
       kongWang,
       isDayMaster: idx === 2,
     };
+    return {
+      ...basePillar,
+      dynamicInsight: buildDynamicPillarInsight(basePillar, { dayStem, dayElement }),
+    };
   });
-
-  // Tính năm sinh ước lượng từ trụ Năm hoặc _birthInput
-  let birthYear = 1995;
-  if (chart?._birthInput?.date) {
-    const y = parseInt(String(chart._birthInput.date).split('-')[0], 10);
-    if (!isNaN(y) && y > 1900) birthYear = y;
-  } else if (enrichedPillars[0]?.stem && enrichedPillars[0]?.branch) {
-    const sexIdx = getSexagenaryIndex(enrichedPillars[0].stem, enrichedPillars[0].branch);
-    if (sexIdx >= 0) {
-      let y = 1984 + sexIdx;
-      if (y > 2008) y -= 60;
-      birthYear = y;
-    }
-  }
 
   // Đếm ngũ hành toàn cục (Can Chi + Tàng Can có trọng số, không cộng điểm ảo nếu khuyết giờ)
   const counts = { Mộc: 0, Hỏa: 0, Thổ: 0, Kim: 0, Thủy: 0, ...(chart?.counts || {}) };
@@ -971,7 +1681,7 @@ export function enrichBaziChart(chart) {
   const shenSha = computeShenSha(dayStem, enrichedPillars[0]?.branch, dayBranch, enrichedPillars);
   const interactions = computeBranchInteractions(enrichedPillars);
   const yongShen = analyzeYongShen(dayStem, dayElement, weightedCounts, enrichedPillars[1]?.branch || dayBranch);
-  const timeline = buildLuckTimeline(dayStem, enrichedPillars, birthYear);
+  const timeline = buildLuckTimeline(dayStem, enrichedPillars, chart?.daYun);
 
   // Thống kê 10 Thập Thần
   const tenGodStats = {};
@@ -1035,38 +1745,79 @@ export function enrichBaziChart(chart) {
     takeaways: [
       {
         id: 'archetype',
-        label: 'Hình Tượng Bản Mệnh',
-        title: archetype.archetype,
-        subtitle: archetype.tagline,
-        detail: archetype.personality,
+        label: 'Dữ kiện Nhật chủ',
+        title: `${dayStem} · ${dayElement}`,
+        subtitle: 'Tên Can và hành của trụ Ngày',
+        detail: 'Đây là dữ kiện dùng làm mốc so sánh các quan hệ Can Chi; không phải nhãn tính cách cố định.',
       },
       {
         id: 'dominant',
         label: 'Ngũ Khí Nổi Trội Nhất',
         title: `Hành ${dominantElementEntry[0]} (${dominantElementEntry[1].toFixed(1)} điểm)`,
-        subtitle: ELEMENT_THEME[dominantElementEntry[0]]?.trait || 'Khí chất chủ đạo',
-        detail: `Hành ${dominantElementEntry[0]} chiếm ưu thế trong lá số, định hình phong cách hành động và tư duy tự nhiên của bạn.`,
+        subtitle: 'Tỷ trọng trong phép đếm đang dùng',
+        detail: `Hành ${dominantElementEntry[0]} có tỷ trọng cao nhất trong phép đếm Can, Chi và tàng can; con số này không tự suy ra tính cách, sức khỏe hay vận hạn.`,
       },
       {
         id: 'remedy',
-        label: 'Chất Liệu Cần Bổ Dưỡng',
-        title: `Bổ trợ Hành ${yongShen.yongShen.element}`,
-        subtitle: yongShen.isStrong ? 'Thân Vượng · Tiết khí thư thái' : 'Thân Nhược · Tiếp thêm nguyên khí',
+        label: 'Khí Mạch Cần Lưu Tâm',
+        title: missingElements.length > 0 ? `Chưa thấy trong phép đếm: ${missingElements.join(', ')}` : 'Năm hành đều xuất hiện trong phép đếm',
+        subtitle: missingElements.length > 0 ? 'Phép đếm ghi nhận điểm 0 ở can chi' : 'Năm hành đều có mặt trong bốn trụ',
         detail: missingElements.length > 0 
-          ? `Lá số hiện khuyết hành ${missingElements.join(', ')}. Hãy chú trọng dung nạp năng lượng hành ${yongShen.yongShen.element} vào lối sống.`
-          : `Lá số tương đối hài hòa. Hãy phát huy tối đa năng lực của hành ${yongShen.yongShen.element} trong sự nghiệp.`,
+          ? `Trong bốn trụ và tàng can hiện chưa thấy xuất hiện hành ${missingElements.join(', ')}. Đây là dữ kiện đếm số lượng, không dùng để chẩn đoán sức khỏe hay vận hạn.`
+          : `Lá số ghi nhận đủ 5 ngũ hành trong Can, Chi và tàng can. Bạn có thể tự đối chiếu nhịp điệu sinh hoạt qua biểu đồ Ngũ hành.`,
       },
     ],
     shenShaMeanings: SHENSHA_BEGINNER_MEANINGS,
   };
 
+  const personalProfile = synthesizePersonalProfile({
+    dayStem,
+    dayBranch,
+    dayElement,
+    pillars: enrichedPillars,
+    weightedCounts,
+    shenSha,
+    interactions,
+    yongShen,
+    timeline,
+    tenGodList: Object.values(tenGodStats),
+  });
+
+  const humanReading = synthesizeHumanLifeReading({
+    dayStem,
+    dayBranch,
+    dayElement,
+    pillars: enrichedPillars,
+    weightedCounts,
+    shenSha,
+    interactions,
+    yongShen,
+    timeline,
+    tenGodList: Object.values(tenGodStats),
+  });
+
+  const dynamicElementInsights = {};
+  GEN_ORDER.forEach((el) => {
+    dynamicElementInsights[el] = buildDynamicElementInsight(el, { dayElement, weightedCounts });
+  });
+
+  const dynamicTenGodInsights = {};
+  ALL_TEN_GODS.forEach((g) => {
+    dynamicTenGodInsights[g.name] = buildDynamicTenGodInsight(g.name, { tenGodList: Object.values(tenGodStats), dayStem });
+  });
+
+  const dynamicStarInsights = {};
+  shenSha.forEach((s) => {
+    dynamicStarInsights[s.name] = buildDynamicStarInsight(s, { dayStem, dayBranch, pillars: enrichedPillars });
+  });
+
   return {
     ...chart,
+    dataAvailable: true,
     dayStem,
     dayBranch,
     dayElement,
     dayMasterMeta: STEM_META[dayStem] || STEM_META['Nhâm'],
-    birthYear,
     pillars: enrichedPillars,
     counts,
     weightedCounts,
@@ -1076,5 +1827,10 @@ export function enrichBaziChart(chart) {
     timeline,
     tenGodList: Object.values(tenGodStats),
     beginnerGuide,
+    personalProfile,
+    humanReading,
+    dynamicElementInsights,
+    dynamicTenGodInsights,
+    dynamicStarInsights,
   };
 }

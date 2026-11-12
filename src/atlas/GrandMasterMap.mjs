@@ -30,9 +30,6 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
   const dayStemHan = STEM_META[dayStem]?.han || '壬';
   const dayElement = chart.dayElement || 'Thủy';
   const elTheme = ELEMENT_THEME[dayElement] || ELEMENT_THEME['Thủy'];
-  const guide = chart.beginnerGuide || {};
-  const archetype = guide.archetype || {};
-  const takeaways = guide.takeaways || [];
 
   // 12 nhánh Địa Chi trên vòng tròn La Kinh
   const circleBranches = [
@@ -70,13 +67,13 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
       React.createElement(
         'h2',
         { className: 'grand-master-title' },
-        React.createElement('span', { className: 'grand-master-archetype' }, archetype.archetype || 'Bản Mệnh Chiêm Nghiệm'),
-        React.createElement('span', { className: 'grand-master-subtitle' }, ` · ${archetype.tagline || 'Thấu tỏ mệnh cục'}`)
+      React.createElement('span', { className: 'grand-master-archetype' }, 'Đại Mệnh Bàn Tổng Hợp'),
+      React.createElement('span', { className: 'grand-master-subtitle' }, ' · Bốn trụ và các lớp dữ kiện')
       ),
       React.createElement(
         'p',
         { className: 'grand-master-desc' },
-        'Đồ bản hợp nhất 4 cột mốc thời gian (Tứ Trụ), La Kinh 24 Sơn Hướng và Ngũ Khí Triều Nguyên. Dành cho cả người mới muốn nắm bắt hình tượng bản thân trong 30 giây lẫn người nghiên cứu muốn soi sâu mạch khí.'
+        'Đồ bản đặt bốn trụ sinh vào cùng một hình để bạn nhìn toàn cấu trúc trước khi đọc giải nghĩa. Các vòng và đường nối là cách trình bày dữ kiện, không phải bằng chứng về tính cách hay sự kiện tương lai.'
       )
     ),
 
@@ -387,42 +384,6 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
             )
           )
         )
-      ),
-
-      // CỘT PHẢI: 3 MỤC ĐÚC KẾT KINH THƯ KHẮC NỔI 30 GIÂY (ZERO-CARD, ZERO-EMOJI)
-      React.createElement(
-        'div',
-        { className: 'master-takeaways-column' },
-        React.createElement(
-          'div',
-          { className: 'takeaways-header-row' },
-          React.createElement(BookOpenIcon, { React, size: 16, color: 'var(--gold)' }),
-          React.createElement('h3', null, 'Cẩm Nang 30 Giây Thấu Hiểu Bản Thân'),
-          React.createElement('span', { className: 'takeaways-badge' }, 'ĐÚC KẾT CỐT LÕI')
-        ),
-        takeaways.map((item) => {
-          let sealHan = '本命';
-          if (item.id === 'dominant') sealHan = '氣勢';
-          if (item.id === 'remedy') sealHan = '補養';
-
-          return React.createElement(
-            'div',
-            { key: item.id, className: 'takeaway-editorial-row' },
-            React.createElement(
-              'div',
-              { className: 'takeaway-label-row' },
-              React.createElement(
-                'span',
-                { className: 'takeaway-tag' },
-                React.createElement('span', { style: { fontFamily: 'var(--font-han-brush)', color: 'var(--cinnabar-glow)', marginRight: '6px' } }, sealHan),
-                item.label
-              )
-            ),
-            React.createElement('h4', { className: 'takeaway-title' }, item.title),
-            React.createElement('div', { className: 'takeaway-sub' }, item.subtitle),
-            React.createElement('p', { className: 'takeaway-body' }, item.detail)
-          );
-        })
       )
     ),
 
@@ -434,8 +395,8 @@ export function GrandMasterMap({ React, chart, onNavigateChapter }) {
         { id: 'bazi-matrix', num: 'I', label: 'Tứ Trụ Huyền Bàn', icon: LayersIcon },
         { id: 'celestial-wheel', num: 'II', label: 'La Kinh 24 Sơn', icon: CompassIcon },
         { id: 'five-elements', num: 'III', label: 'Ngũ Hành Sinh Khắc', icon: ScaleIcon },
-        { id: 'ten-gods', num: 'IV', label: 'Thập Thần & Dụng Thần', icon: AwardIcon },
-        { id: 'luck-timeline', num: 'V', label: 'Đại Vận 80 Năm', icon: MilestoneIcon },
+        { id: 'ten-gods', num: 'IV', label: 'Thập Thần', icon: AwardIcon },
+        { id: 'luck-timeline', num: 'V', label: 'Đại Vận & Lưu Niên', icon: MilestoneIcon },
       ].map((chapter) =>
         React.createElement(
           'button',

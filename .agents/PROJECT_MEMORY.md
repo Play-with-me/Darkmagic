@@ -1,94 +1,42 @@
-# Project memory — Mệnh Quán
+# Project Memory — Mệnh Quán (Bát Tự Chiêm Nghiệm)
 
-## 2026-11-08 — Mobile reading polish
+## 1. Product Summary & Active UX Rules
+- **Brand & Theme**: Phong cách Huyền Vũ Chu Sa (Cổ phong huyền ảo, giấy trầm, mực son, chữ ngà `#eee3d8`, viền đồng `#d69a88`, điểm chu sa `#772b32` / `#bf4b45`).
+- **Nền & Hiệu ứng**: Zero-card open editorial (nền trong suốt để lộ Bát quái xoay ngầm và cổ thi), tối đa 8 hạt tàn hương trôi nhẹ nhàng.
+- **Rộng mở màn hình**: Khung đọc kết quả mở rộng `max-width: 1560px` (`width: min(94vw, 1560px)`), tận dụng màn hình lớn, không để khoảng trống thừa 2 bên.
+- **Không vỡ giao diện (Anti-Overflow CSS)**:
+  - Bảng Tứ Trụ 7 tầng: Trên desktop `>= 1280px` phân bổ đều 4 cột (`table-layout: fixed`), không bị thanh cuộn hay cột đầu che mất cột Trụ Năm.
+  - La Kinh 24 Sơn & Ngũ Hành Sinh Khắc: Mỗi đồ bản là 1 section độc lập toàn chiều rộng (Trái: Đồ bản SVG ~50%, Phải: Cẩm nang giải mã ~50%), không lồng ghép 2 đồ bản vào 1 hàng để tránh ép thành 4 cột con gây tràn viền.
+- **An toàn nội dung & Triết lý**: Không đưa ra chẩn đoán y khoa/nội tạng; không khẳng định số phận tuyệt đối; xem lá số là công cụ tự đối chiếu, phát triển bản thân.
 
-At <=650px, mobile.css adds compact homepage layout, full-width primary CTA, larger touch areas, single-column birth fields with 16px inputs, sticky result navigation with scroll offsets, and a pinned row-label column inside the horizontally scrollable Tứ trụ table. Desktop zoom preferences do not apply at the mobile breakpoint. Five maps remain visible in order. Checked mobile Chromium 320 and 390px and existing five-width suite, including navigation, lunar dropdown, journal view and no document overflow. Local preview remains the working version. Sites connector still reports project_not_found.
+## 2. Architecture & God Nodes
+- `src/atlas/AtlasChartResult.mjs`: Bộ điều phối 5 đồ bản + Chân dung con người + Điều hướng + Xuất file TXT.
+- `src/atlas/bazi-engine-ext.mjs`: Thuật toán Bát tự lõi (Tứ trụ, Ngũ hành, Thần sát, Thập thần, Đại vận, và Bộ tổng hợp Chân Dung Con Người Cá Nhân Hóa Đa Tầng `synthesizePersonalProfile`).
+- `src/atlas/BaziMatrixMap.mjs`: Đồ bản I (Tứ Trụ Huyền Bàn 7 tầng & Mạch Khí Địa Chi).
+- `src/atlas/CelestialWheel.mjs`: Đồ bản II (La Kinh 24 Sơn & Thần Sát Chiếu Mệnh).
+- `src/atlas/FiveElementsRadar.mjs`: Đồ bản III (Ngũ Hành Sinh Khắc Trận & Lục Thân Nhật Chủ).
+- `src/atlas/TenGodsProfileMap.mjs`: Đồ bản IV (Thập Thần Cách Cục & Chiến Lược Đời Sống).
+- `src/atlas/LuckTimeline.mjs`: Đồ bản V (Biên Niên Đại Vận 80 Năm & Lưu Niên).
+- `src/styles/ritual-atlas.css`: Hệ thống biến CSS, layout responsive và hiệu ứng chuyển động.
+- `tests/*.test.mjs`: Bộ test hồi quy bảo vệ an toàn nội dung và tính chính xác của dữ liệu.
 
-## 2026-11-08 — Single-paragraph conclusion and ten-year cycle guidance
+## 3. Recent Completed Changes (2026-11-13)
+1. **Mở rộng chiều ngang nội dung & Khắc phục lỗi hiển thị**:
+   - Nâng `max-width` lên 1560px (`width: min(94vw, 1560px)`), bảng Tứ Trụ 7 tầng sticky 108px không che cột Trụ Năm.
+   - Tách La Kinh 24 Sơn và Ngũ Hành Sinh Khắc thành 2 section độc lập toàn chiều rộng (50% SVG - 50% luận giải), giải quyết triệt để lỗi ép 4 cột vỡ viền.
+2. **Bản Đọc Chiêm Nghiệm Con Người (Human Life Reading) đặt trang trọng ở Đầu Trang**:
+   - Thiết kế theo triết lý "Hạt giống bẩm sinh vs Ngoại cảnh" (như xem chỉ tay): Bát tự soi chiếu cốt cách và điểm yếu tâm lý; ngoại cảnh, sự kết giao và kỷ luật ranh giới mới quyết định thành bại. Tuyệt đối không phán đoán số phận hay đưa ra ngày giờ định mệnh.
+   - Trả lời 4 câu hỏi đời sống cốt lõi:
+     * 01 · BẢN NGÃ BẨM SINH & CỐT CÁCH THỰC SỰ: Cốt cách nguyên bản, 3 hạt giống bẩm sinh (Nhật chủ, Tọa chi, Nạp âm, Vòng trường sinh).
+     * 02 · ĐIỂM MÙ & CẠM BẪY DỄ VẤP TRƯỚC NGOẠI CẢNH: Cảnh báo cạm bẫy bạn bè xấu rủ rê, khích tướng hùn hạp tài chính, cả nể ôm đồm theo Thân vượng/nhược, Thập thần và Ngũ hành vượng/khuyết.
+     * 03 · TÌNH DUYÊN & DUYÊN NỢ CỦA BẠN: Phân tích Cung Phu Thê (Trụ Ngày), quan hệ Can-Chi (Chi sinh Can, Can sinh Chi, Tỷ Kiếp, Khắc), mẫu bạn đời bù trừ và lời khuyên giữ lửa.
+     * 04 · LỜI KHUYÊN ĐỊNH TÂM & THIẾT LẬP RANH GIỚI: Định hướng Dụng thần điều hòa, 3 nguyên tắc sống (chọn bạn, quy tắc 48h tài chính, thói quen định tâm mỗi ngày).
+   - Nút cầu nối mượt mà: *"Khám phá 5 Đồ Bản Chi Tiết để kiểm chứng cơ sở tính toán cổ pháp ↓"* cuộn nhẹ xuống `#atlas-overview`.
+   - Cập nhật thanh điều hướng: `['atlas-human-reading', 'Bản đọc'], ['atlas-overview', '5 Đồ bản'], ['atlas-summary', 'Tổng quan'], ['atlas-details', 'Chi tiết'], ['atlas-conclusion', 'Kết luận']`.
+   - Xuất trọn vẹn 4 câu hỏi đời sống vào tệp TXT tải về.
+3. **Bộ kiểm thử & An toàn nội dung**:
+   - Thêm ca test kiểm chứng 4 câu hỏi đời sống và trường hợp khuyết giờ sinh (`isPartialTime`) vào `tests/atlas-data.test.mjs`. Toàn bộ 10/10 tests pass 100%.
 
-Conclusion now follows the user image with one heading and one paragraph. It uses a short reflection for the current timeline range if available. LuckTimeline has distinct prompts for all ten Thập thần relationships, with a scenario to observe, a caution, and a practical next step. The yearly table adds a short theme for each row. Guidance is editorial and conditional. Calendar data supports the time markers only. The current marker is based on the displayed year range and no longer defaults to the first cycle. TXT includes the new conclusion and cycle guidance. Verified five widths, each selectable cycle, missing data, 41 Node tests, TypeScript and build. Sites still reports project_not_found.
-
-## 2026-11-08 — Atlas guidance, glossary and closing summary
-
-Five map-first sections retain full visuals and now include plain-language reading instructions, examples and takeaways. Wheel and radar are enlarged and centered on separate rows. TermHelp dialogs support keyboard opening, Escape and focus return. Calculation basis is collapsed. A final chart-specific conclusion follows details and appears in the TXT export. Selected atlas surfaces use burgundy and light labels, with extra contrast for SVG and chronicle labels. Local browser coverage at five widths, typecheck, 41 Node tests and build passed. Existing private Sites project is still inaccessible to the connector in this session.
-
-## 2026-11-08 — Compact map-first correction ready locally
-
-The user reiterated that all five maps must show immediately after calculation, before overview and details. Removed duplicate pillar strip and map-button row so the actual matrix starts higher. Compact result spacing and side-by-side wheel/radar at 1100px and up. Applied to menh-quan-font-ring and prepared in menh-quan-ritual-release/.sites-checkout from deployed v8; the release checkout includes required atlas data dependencies and preserves explicit adult consent. Browser flow passed at 320/390/768/1101/1440px, 41 Node tests, TypeScript and production build passed. Production update remains pending: Sites get_site and source credential return project_not_found in the current session and list_sites is empty. Do not create a replacement Site. Resume packaging and deploy to the existing private Site when access is restored.
-
-## 2026-11-08 — Ritual-red UI published to main private site
-
-User explicitly requested stronger mysterious/blood-red theme on the main site, not only local. Opened clean deployed source e05c7bef via Sites workflow into C:/darkmagic/menh-quan-ritual-release/.sites-checkout. Published frontend-only commit560a7eafec16a4f1bc2fcf6c2921978782ad7bcb to existing owner-private site; native deployment appgdep_6af05d650ba8819189ff3d2edeef069f succeeded. URL https://menh-quan-chiem-nghiem.neatnacre2.chatgpt.site . Changes: dark blood-red homepage/site palette, octagonal glyph ring, four floating decorative phrases, slow visibility-aware halo, full-width birth/result with shared ReadingAtmosphere. No uncommitted atlas/calculation changes published; main site intentionally retains deployed engine/result components. Shared ritual.css and CelestialArt also applied to both local checkouts without overwriting unrelated work. Clean release35 tests/typecheck/build passed; five-width browser home/input/result and normal/reduced motion passed, real images reviewed. Existing user server5173 preserved; own verification server5174 may be stopped. This supersedes prior local-only publication notes.
-
-## 2026-11-08 — User requested blood-red dark reading theme
-
-Entry/result now use green-black and blood-red washes instead of the previous bright paper palette. Scoped CSS in release checkout globals.css covers forms, menus, maps, details, navigation, zoom and SVG labels. Keep homepage palette and existing algorithms untouched. Contrast assertion in tests/atlas-map-first.mjs now measures against the conservative dark/red composite. Typecheck, 41 Node tests and build passed; five-width browser flow passed before final label/zoom refinements. Local preview only; dirty unrelated user work remains unpublished. This supersedes the light-paper veil colors in the preceding map-first entry.
-
-## 2026-11-08 — Approved map-first plan implemented locally
-
-Entry/result background now uses transparent entry content, smooth radial protection and viewport-sized sticky decoration rather than the96% rectangular overlay. Three137/89reverse/113s rotors, six verses,12 motes; pointer-inert/aria-hidden, paused when hidden/outside, static reduced motion. ChartResult order: five maps once → five-item summary/limits → old Nhật chủ and per-map details/source. New AtlasDetail.tsx uses portals so BaziMatrixMap/CelestialWheel/FiveElementsRadar/TenGodsProfileMap/LuckTimeline retain a single shared selection state while explanations appear below summary. Existing scoring, interpretation texts, APIs and contracts were preserved. Added keyboard operation to previously pointer-only targets. Missing Đại vận preserves its map position with explicit explanation. Download reordered accordingly.
-
-tests/atlas-map-first.mjs verifies320/390/768/1101/1440, transparent surface, viewport sticky bounds, unique ordered maps, portal state/focus, missing-hour/term data and export order. Existing41 Node tests pass and TypeScript passes. All work remains in dirty local checkout alongside pre-existing atlas/backend edits; no automatic publication. DESIGN.md records superseding decisions. Graphify report was read but not regenerated or treated as exact for new dependencies.
-
-## 2026-11-08 — Birth-input presentation follows result
-
-User requested redesign of input UI with ultrathinking. Chose restrained shared atmosphere behind a readable centered form, rather than foreground motion around controls. Reading.tsx removes old aside for birth too and renders shared ReadingAtmosphere for both stages. BirthForm.tsx only changes legend; globals.css scopes860px centered panel, three-field first row desktop, stacked mobile and source link. Existing dirty calculation/atlas work preserved. reading-atmosphere.mjs expanded to320/390/1101/1440 checks entry/result absence of sidebar, overflow and motion behavior.41 Node tests and TypeScript pass. Local preview5173 remains current; no unrelated work published.
-
-## 2026-11-08 — Full-width result and mystical atmosphere
-
-Scoped frontend update in release checkout: Reading.tsx removes the “Một khoảng lặng” card only after a chart exists, adds a compact four-pillar header and full-width result. New ReadingAtmosphere.tsx renders aria-hidden/non-interactive Bagua137/89s opposing rotors and six independently timed decorative verses. Static reduced motion, intersection/visibility pause. CSS also constrains result jump links to eliminate mobile document overflow. Birth form/calculation and existing in-progress atlas components were preserved. Local reading-atmosphere.mjs verifies390/1101/1440, card absence, four pillars, static reduced motion and running normal motion. Existing41 Node tests pass; TypeScript passes. Other pre-existing dirty atlas/calculation files remain user-owned and are not included in an automatic publication for this scoped change. Preview is http://127.0.0.1:5173/ . No new Graphify extraction claimed.
-
-## Latest release — 2026-11-08, Professional Eastern Bazi VFX & Dynamic Chart Animations
-
-- **Mục tiêu sản phẩm & Nguyên tắc UX**:
-  - Nâng tầm toàn diện giao diện Đại Bản Đồ Bát Tự theo tiêu chuẩn **Nhà Thiết Kế Chuyên Nghiệp (Designer Craftsmanship)** và văn hóa Á Đông cổ phong (`DESIGN.md`).
-  - Tích hợp các hiệu ứng thị giác huyền vi, 60fps physics, không lạm dụng hiệu ứng 3D nặng:
-    1. **Hào quang Bản mệnh Nhật Chủ (`Aura Breathing`)**: Vầng ánh kim thở nhẹ nhàng (`day-master-aura`) tại trụ Ngày và huy hiệu Nhật Chủ.
-    2. **Mạng lưới Từ trường Tương tác (Interactive Branch Beam Focus)**: Rê chuột vào bất kỳ thẻ quan hệ nào (*Lục Hợp, Tam Hợp, Lục Xung, Tương Hình, Tương Hại*), các cột trụ tương ứng trên bảng ma trận 7 tầng lập tức phát sáng đồng bộ (`is-interacting-focus`).
-    3. **Sóng Sinh Khí Tự Vẽ (`Living Life-Wave SVG`)**: Đường cong Trường Sinh chuyển động vẽ nét mượt mà (`wave-spline-animated`), các nút mốc phát quang khi rê chuột và hiển thị bong bóng thông điệp giải nghĩa tức thời (`wave-hover-tooltip`).
-    4. **Dòng Khí Tuần Hoàn Ngũ Hành (`Dynamic Qi Generation Stream`)**: Vòng tròn tương sinh bên ngoài chuyển động các luồng hạt năng lượng theo chiều kim đồng hồ; mạng lưới ngôi sao tương khắc bên trong phát sáng rực rỡ khi chọn hành tương ứng.
-    5. **Chùm Tia Tinh Tú Thiên Bàn (`Celestial Constellation Beam`)**: Khi chọn Thần Sát hoặc Cung Chi trên La Kinh, một luồng sao phát quang từ tâm La Kinh phóng thẳng tới cung được chọn kèm vòng tỏa quang thiên thể (`celestial-active-pulse-ring`).
-    6. **Ấn Triện Năm Hiện Tại (`Stamp Pulse`)**: Dòng năm hiện tại trong bảng 10 năm Lưu Niên mang hiệu ứng ấn triện Chu Sa nhấp nháy êm dịu, kèm nút lưu một chạm vào Sổ tay.
-
-- **Kiểm thử & Xác minh**:
-  - 41 Node tests pass 100% (`tests/*.test.ts`).
-  - TypeScript `tsc --noEmit` đạt 0 lỗi.
-  - Next.js build hoàn thành 100% thành công.
-  - Dev server phục vụ tại `http://127.0.0.1:5173/`.
-  - Đồng bộ 100% giữa `menh-quan-font-ring` và `menh-quan`.
-
-
-## 2026-11-09 — Standalone Node Server & Direct Local Launch
-- Cấu hình server chạy độc lập server.mjs kết hợp register.mjs/loader.mjs với Node.js v24.22.1 (C:\AI Engineering\runtime\node.exe).
-- Đã giải nén bản phát hành ritual-release.tar.gz, phục vụ toàn bộ SSR Next.js/Vinext và static assets (CSS, JS Chunks, Fonts Noto Serif/Sans, SVG).
-- Kiểm tra kết nối HTTP 200, kích thước trang ~29KB, CSS 148KB, JS 255KB hoạt động mượt mà tại http://127.0.0.1:5173/.
-- Đã tự động kích hoạt trình duyệt và tạo file khởi động nhanh một chạm chay-du-an.bat.
-
-## 2026-11-09 — Git pull commit 0c5ac53
-- Pulled latest commit 0c5ac53 ('update') from origin/main.
-- Identified Gitlink issue: commit 0c5ac53 only updated subproject commit hash for menh-quan-font-ring (69d54f2) due to nested .git folder, no actual files were included.
-- Guided user on removing nested .git and re-adding menh-quan-font-ring to push full source files.
-
-## 2026-11-09 — Fixed 'Tam nghi de hoan thien / Tam dong' issue
-- Root cause: page-LMxhegNg.js imports { env as r } from 'cloudflare:workers' and computes acceptNewReadings: (r.ACCEPT_NEW_READINGS === 'true'). The previous loader mock returned empty env {}, making it false.
-- Fix: Updated loader.mjs to export env with ACCEPT_NEW_READINGS = 'true'.
-- Verified: Rendered SSR payload now passes acceptNewReadings: true, allowing users to enter birth info and view Bazi matrix.
-
-## 2026-11-09 — Zero-Card Open Inscription Layout & 60fps Ambient Ritual Motion Engine
-- **Loại bỏ 100% khung card bao bọc**: Gỡ bỏ `.ritual-mist-card`, viền bo hộp, nền đục che khuất Bát Quái và bài thơ bay. Chuyển toàn bộ 5 đồ bản sang phong cách Kinh Thư Khắc Nổi (Zero-Card Inscription) thuần khiết trên nền đen huyền bí với các đường kẻ mảnh tinh tế.
-- **Thay thế toàn bộ Emoji bằng Ấn Triện Chữ Hán Cổ Phong**: Loại bỏ 100% emoji hiện đại (💼, ❤️, ⚡, ⚠️, 🥗, 🎨, 🧘, ⚔️, 🌟, 🎯...), thay bằng đại tự Hán Triện tôn nghiêm (`事業`, `姻緣`, `天賦`, `慎行`, `養生`, `空間`, `心性`, `財帛`, `戰略`, `契機`, `警示`, `踐行`) và icon Lucide SVG cao cấp.
-- **Cơ chế Ambient Ritual Motion 60fps**: Tích hợp `AmbientRitualField` (8 hạt lửa kim sa và chu sa trôi bồng bềnh), Thiên Bàn quay nghịch hướng vũ trụ (`celestial-orbit-cw` 140s / `celestial-orbit-ccw` 95s), đường sinh khí lấp lánh (`qi-stream-line`), và ấn triện nhịp thở nguyên thần (`aura-breathe`).
-- **Tách Lớp Nền Đĩa Thiên Bàn Ngọc Đen (Obsidian Celestial Plate)**: Bổ sung đĩa ngọc đen 98% (`#1d2722` -> `#0a0f0d`) viền đồng hồng hào quang mờ cho Đại Mệnh Bàn, La Kinh 24 Sơn và Ngũ Giác Tinh, ngăn hoàn toàn Bát Quái nền cắt xuyên, khắc phục triệt để tình trạng bản đồ dính màu tối với nền web.
-- **Nâng Cấp Bảng Màu Tương Phản Chuẩn WCAG AAA**: Toàn bộ vạch sơn và vòng tròn chuyển sang đồng hồng sa `#d69a88` và vàng kim `#c4a365`, 12 Địa Chi dùng Hán tự vàng kim `#f7dfb9` và tên Quốc ngữ trắng ngà `#f3ebe4`, trạm Tứ Trụ Can Chi phát sáng ngũ hành trên nền ngọc tối nổi bật.
-- **Atomic Commits**: `1b822c2` (CSS zero-card), `8d3afd8` (ambient engine), `d6d2d47` (CJK seals), `9cd11fd` (runtime fixes), `81a6cf2` (obsidian plates & high-contrast palette). Dev server `?v=atlas9` HTTP 200 OK.
-
-## 2026-11-09 — Vietnamese Typography Elevation & Hidden Stems Seal Upgrade
-- **Khắc phục triệt để lỗi bể font tiếng Việt tại hàng Tàng Can và Lưu Niên**: Gỡ bỏ triệt để `var(--font-han-serif)` khỏi các thẻ chứa văn bản Quốc ngữ; nạp `Noto Serif` và `Noto Sans` chuẩn tiếng Việt vào `server.mjs`. Commit `fd6cc4b`.
-
-## 2026-11-09 — Everyday User UX Polish & 6 Critical Display Bug Fixes
-- **Xóa bỏ 100% lỗi `undefined` và `null` trên toàn hệ thống**: Chuẩn hóa `computeShenSha` (bổ sung `branch`, `nature`, `palace`), `analyzeYongShen` (bổ sung `pattern`, `name`, `desc`), `tenGodStats` (tính ngũ hành động theo Nhật chủ, đếm đúng Tàng can có ký tự `·`), và xử lý an toàn trụ giờ khuyết (`unknownTime`).
-- **Khắc phục lỗi chữ xoay ngược đầu 180 độ**: Tách chuyển động `celestial-orbit-cw` chỉ áp dụng cho vạch la bàn, vòng kim tuyến và đốm hào quang; giữ chữ Địa Chi (`子 Tý`, `丑 Sửu`...) và Bát Quái đứng thẳng ngay ngắn, 100% dễ đọc.
-- **Loại bỏ +2.0 điểm Thủy ảo khi khuyết giờ**: Trụ giờ chưa rõ không gán nhầm hành Thủy hay nhãn `[ Thủy ]` giả.
-- **Sửa lỗi lệch nút chọn Đại Vận**: Đồng bộ chỉ số 0-based `cIdx`, bấm chọn tuổi nào nhảy đúng chu kỳ đó.
-- **Biểu đồ sóng 80 năm**: Bổ sung đĩa ngọc đen nhẹ, nhãn `★ NAY` tại chu kỳ hiện tại và song ngữ Hán - Việt.
-- **Atomic Commits**: `e25247a` & `afb455b`. Toàn bộ 17 commit mới nhất đã được đẩy thành công lên GitHub `origin/main` (commit head: `afb455b`). Dev server `?v=atlas11` HTTP 200 OK.
+## 4. Next Priorities
+- Kiểm tra visual trên các kích thước màn hình thực tế (laptop 1366px, desktop 1920px, mobile 375px/390px).
+- Thu thập phản hồi từ người dùng về độ sâu và độ chính xác của bản đọc 4 câu hỏi đời sống.
