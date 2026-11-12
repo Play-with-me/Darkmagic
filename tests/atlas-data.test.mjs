@@ -174,3 +174,101 @@ test('Bản đọc chiêm nghiệm xử lý chuẩn xác trường hợp khuyế
   assert.ok(chartPartial.humanReading.partialTimeNotice);
   assert.match(chartPartial.humanReading.partialTimeNotice, /75% cấu trúc căn bản/i);
 });
+
+test('Master Bazi Engine v2.0 phân tích chính xác Điều Hầu khí hậu, Biểu/Lý, Thế cục và Giao thoa đa trụ', () => {
+  // Lá số sinh mùa đông nhiều Thủy (Hàn Thấp), Tý-Ngọ xung ngày-giờ, lộ Canh Sát không gốc mạnh
+  const winterChart = enrichBaziChart({
+    pillars: [
+      { stem: 'Nhâm', branch: 'Tý' },
+      { stem: 'Quý', branch: 'Hợi' },
+      { stem: 'Giáp', branch: 'Tý' },
+      { stem: 'Canh', branch: 'Ngọ' },
+    ],
+  });
+
+  const reading = winterChart.humanReading;
+  assert.equal(reading.engineVersion, 'v2.0-master');
+
+  // 1. Vector Khí Hậu & Điều Hầu ưu tiên Hỏa
+  assert.match(reading.climateProfile.climateType, /Hàn/i);
+  assert.equal(reading.climateProfile.climatePriority, 'Hỏa');
+  assert.match(reading.groundingAdvice.yongShenName, /Điều Hầu Hỏa/i);
+  assert.match(reading.groundingAdvice.climateRemedy, /Điều Hầu.*Hỏa/i);
+
+  // 2. Tầng Biểu vs Tầng Lý & Rooting
+  assert.ok(reading.dualLayerProfile.surfaceLabel.length > 0);
+  assert.ok(reading.dualLayerProfile.innerLabel.length > 0);
+  assert.equal(reading.inherentNature.surfaceLabel, reading.dualLayerProfile.surfaceLabel);
+  assert.equal(reading.inherentNature.innerLabel, reading.dualLayerProfile.innerLabel);
+
+  // 3. Thế cục giằng xé nội tâm (ít nhất 1 pattern nhận diện được)
+  assert.ok(Array.isArray(reading.conflictAnalysis.patterns));
+  assert.ok(reading.conflictAnalysis.patterns.length >= 1);
+  assert.ok(reading.circumstanceVulnerabilities.conflictPatterns.length >= 1);
+
+  // 4. Ma trận giao thoa Cung Phu Thê đa trụ (Tý - Ngọ Lục Xung ở Trụ Ngày - Giờ)
+  assert.ok(reading.relationalMatrix.interferenceSummary.length > 0);
+  assert.equal(reading.relationalMatrix.hasInterferenceConflict, true);
+  assert.match(reading.relationalMatrix.interferenceSummary, /Lục Xung|Giao thoa/i);
+
+  // 5. Lưỡng khí tranh vượng (lá số cân bằng 2 hành sát nút <= 0.15)
+  const tieChart = enrichBaziChart({
+    pillars: [
+      { stem: 'Giáp', branch: 'Tý' },
+      { stem: 'Ất', branch: 'Hợi' },
+      { stem: 'Bính', branch: 'Dần' },
+      { stem: 'Đinh', branch: 'Mão' },
+    ],
+  });
+  assert.ok(tieChart.humanReading.conflictAnalysis.dominantLabel.length > 0);
+  assert.equal(typeof tieChart.humanReading.conflictAnalysis.isTieElement, 'boolean');
+});
+
+import { MONETIZATION_CONFIG } from '../src/atlas/monetization-config.mjs';
+import {
+  LIBRARY_ARTICLES,
+  renderEditorialPage,
+  buildRobotsTxt,
+  buildSitemapXml,
+  buildAdsTxt,
+} from '../src/atlas/editorial-pages.mjs';
+
+test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nhất quán', () => {
+  assert.ok(['library', 'affiliate', 'adsense', 'off'].includes(MONETIZATION_CONFIG.mode));
+  assert.ok(MONETIZATION_CONFIG.librarySuggestions.betweenReadingAndMaps.href.startsWith('/thu-vien/'));
+  assert.ok(MONETIZATION_CONFIG.librarySuggestions.beforeConclusion.href.startsWith('/thu-vien/'));
+  assert.ok(MONETIZATION_CONFIG.affiliateOffers.betweenReadingAndMaps.rel.includes('sponsored'));
+
+  const robots = buildRobotsTxt('https://darkmagic.onrender.com');
+  assert.match(robots, /Sitemap:\s*https:\/\/darkmagic\.onrender\.com\/sitemap\.xml/);
+
+  const sitemap = buildSitemapXml('https://darkmagic.onrender.com');
+  assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/quyen-rieng-tu<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/darkmagic\.onrender\.com\/thu-vien\/ngu-hanh-trong-bat-tu<\/loc>/);
+
+  const disabledAds = buildAdsTxt(MONETIZATION_CONFIG);
+  assert.match(disabledAds, /^#/);
+
+  const enabledAds = buildAdsTxt({
+    adsense: { enabled: true, publisherId: 'pub-1234567890123456', adsTxtSellerId: 'f08c47fec0942fa0' },
+  });
+  assert.equal(enabledAds.trim(), 'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0');
+});
+
+test('editorial pages trả HTML hợp lệ cho legal pages và đủ 6 bài thư viện', () => {
+  assert.equal(LIBRARY_ARTICLES.length, 6);
+
+  for (const route of ['/quyen-rieng-tu', '/dieu-khoan', '/thu-vien']) {
+    const html = renderEditorialPage(route, 'https://darkmagic.onrender.com');
+    assert.ok(html && html.includes('<!DOCTYPE html>'), `Missing HTML for ${route}`);
+    assert.ok(html.includes('viewport-fit=cover'), `Missing viewport-fit=cover on ${route}`);
+  }
+
+  for (const article of LIBRARY_ARTICLES) {
+    const html = renderEditorialPage(`/thu-vien/${article.slug}`, 'https://darkmagic.onrender.com');
+    const escapedTitle = article.title.replaceAll('"', '&quot;');
+    assert.ok(html && html.includes(escapedTitle), `Missing title for ${article.slug}`);
+  }
+
+  assert.equal(renderEditorialPage('/thu-vien/khong-ton-tai', 'https://darkmagic.onrender.com'), null);
+});

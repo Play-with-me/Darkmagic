@@ -4,6 +4,13 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
+import { MONETIZATION_CONFIG } from './src/atlas/monetization-config.mjs';
+import {
+  renderEditorialPage,
+  buildRobotsTxt,
+  buildSitemapXml,
+  buildAdsTxt,
+} from './src/atlas/editorial-pages.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -80,6 +87,39 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // Crawlability, AdSense verification, legal & editorial pages.
+    if (req.method === 'GET' || req.method === 'HEAD') {
+      const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+      const proto = forwardedProto || (hostHeader.includes('onrender.com') ? 'https' : 'http');
+      const requestBaseUrl = `${proto}://${hostHeader}`;
+
+      if (pathname === '/robots.txt') {
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.end(req.method === 'HEAD' ? undefined : buildRobotsTxt(requestBaseUrl));
+        return;
+      }
+
+      if (pathname === '/sitemap.xml') {
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        res.end(req.method === 'HEAD' ? undefined : buildSitemapXml(requestBaseUrl));
+        return;
+      }
+
+      if (pathname === '/ads.txt') {
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.end(req.method === 'HEAD' ? undefined : buildAdsTxt(MONETIZATION_CONFIG));
+        return;
+      }
+
+      const editorialHtml = renderEditorialPage(pathname, requestBaseUrl);
+      if (editorialHtml) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=300');
+        res.end(req.method === 'HEAD' ? undefined : editorialHtml);
+        return;
+      }
+    }
+
     // 1. Serve /atlas/ritual-atlas.css from src/styles/ritual-atlas.css
     if (pathname === '/atlas/ritual-atlas.css') {
       const cssFile = path.join(STYLES_DIR, 'ritual-atlas.css');
@@ -107,12 +147,33 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // 3. Intercept Reading-CEebwCfN.js & ClientApp-COG-eH4S.js to wire 5-Map Atlas and bust cache
+    // 3. Intercept Reading-CEebwCfN.js, ClientApp-COG-eH4S.js & SiteHeader-DoVcnI5L.js
+    const assetVer = 'atlas14';
+
     if (pathname.endsWith('/Reading-CEebwCfN.js')) {
       const readingPath = path.join(CLIENT_DIR, '_next/static/chunks/Reading-CEebwCfN.js');
       if (fs.existsSync(readingPath)) {
         const rawCode = fs.readFileSync(readingPath, 'utf-8');
-        const patched = transformReadingChunk(rawCode);
+        const patched = transformReadingChunk(rawCode).replace(
+          '/atlas/AtlasChartResult.mjs',
+          `/atlas/AtlasChartResult.mjs?v=${assetVer}`
+        );
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(patched);
+        return;
+      }
+    }
+
+    if (pathname.endsWith('/SiteHeader-DoVcnI5L.js')) {
+      const headerPath = path.join(CLIENT_DIR, '_next/static/chunks/SiteHeader-DoVcnI5L.js');
+      if (fs.existsSync(headerPath)) {
+        const rawCode = fs.readFileSync(headerPath, 'utf-8');
+        const patched = rawCode.replace(
+          '`Cơ sở luận giải`})]})',
+          '`Cơ sở luận giải`}),(0,c.jsx)(`a`,{href:`/thu-vien`,className:``,children:`Thư viện`})]})'
+        );
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
@@ -125,7 +186,13 @@ const server = http.createServer(async (req, res) => {
       const clientAppPath = path.join(CLIENT_DIR, '_next/static/chunks/ClientApp-COG-eH4S.js');
       if (fs.existsSync(clientAppPath)) {
         const rawCode = fs.readFileSync(clientAppPath, 'utf-8');
-        const patched = rawCode.replaceAll('Reading-CEebwCfN.js', 'Reading-CEebwCfN.js?v=atlas11');
+        const patched = rawCode
+          .replaceAll('Reading-CEebwCfN.js', `Reading-CEebwCfN.js?v=${assetVer}`)
+          .replaceAll('SiteHeader-DoVcnI5L.js', `SiteHeader-DoVcnI5L.js?v=${assetVer}`)
+          .replace(
+            '(0,g.jsx)(`a`,{href:`/co-so-luan-giai`,children:`Nguồn tham khảo`})',
+            '(0,g.jsx)(`a`,{href:`/co-so-luan-giai`,children:`Nguồn tham khảo`}),(0,g.jsx)(`a`,{href:`/thu-vien`,children:`Thư viện`}),(0,g.jsx)(`a`,{href:`/quyen-rieng-tu`,children:`Chính sách bảo mật`}),(0,g.jsx)(`a`,{href:`/dieu-khoan`,children:`Điều khoản`})'
+          );
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
@@ -181,12 +248,27 @@ const server = http.createServer(async (req, res) => {
     const webRes = await app.fetch(webReq, env, ctx);
 
     res.statusCode = webRes.status;
+    const adsenseEnabled = Boolean(
+      MONETIZATION_CONFIG.adsense?.enabled && MONETIZATION_CONFIG.adsense?.publisherId
+    );
+    const adsenseHosts =
+      'https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google';
+
     for (const [k, v] of webRes.headers.entries()) {
       if (k.toLowerCase() === 'content-length') continue;
       if (k.toLowerCase() === 'content-security-policy') {
-        const updatedCsp = v
+        let updatedCsp = v
           .replace("style-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
           .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com data:");
+        if (adsenseEnabled) {
+          for (const directive of ['script-src', 'frame-src', 'img-src', 'connect-src']) {
+            if (updatedCsp.includes(directive)) {
+              updatedCsp = updatedCsp.replace(directive, `${directive} ${adsenseHosts}`);
+            } else {
+              updatedCsp = `${updatedCsp}; ${directive} 'self' ${adsenseHosts}`;
+            }
+          }
+        }
         res.setHeader(k, updatedCsp);
         continue;
       }
@@ -195,13 +277,29 @@ const server = http.createServer(async (req, res) => {
 
     const contentType = webRes.headers.get('content-type') || '';
     if (contentType.includes('text/html')) {
+      const adsenseTag = adsenseEnabled
+        ? `\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(MONETIZATION_CONFIG.adsense.publisherId)}" crossorigin="anonymous"></script>`
+        : '';
       let html = await webRes.text();
       html = html
-        .replaceAll('ClientApp-COG-eH4S.js', 'ClientApp-COG-eH4S.js?v=atlas11')
-        .replaceAll('Reading-CEebwCfN.js', 'Reading-CEebwCfN.js?v=atlas11')
+        .replace(
+          /<meta\s+name="viewport"[^>]*>/i,
+          '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>'
+        )
+        .replaceAll('SiteHeader-DoVcnI5L.js', `SiteHeader-DoVcnI5L.js?v=${assetVer}`)
+        .replaceAll('ClientApp-COG-eH4S.js', `ClientApp-COG-eH4S.js?v=${assetVer}`)
+        .replaceAll('Reading-CEebwCfN.js', `Reading-CEebwCfN.js?v=${assetVer}`)
+        .replace(
+          'Cơ sở luận giải</a></nav>',
+          'Cơ sở luận giải</a><a href="/thu-vien" class="">Thư viện</a></nav>'
+        )
+        .replace(
+          '<button>Quyền riêng tư</button><a href="/co-so-luan-giai">Nguồn tham khảo</a>',
+          '<button>Quyền riêng tư</button><a href="/co-so-luan-giai">Nguồn tham khảo</a><a href="/thu-vien">Thư viện</a><a href="/quyen-rieng-tu">Chính sách bảo mật</a><a href="/dieu-khoan">Điều khoản</a>'
+        )
         .replace(
           '</head>',
-          '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/atlas/ritual-atlas.css?v=atlas11"/></head>'
+          `<meta name="theme-color" content="#0b100e"/>\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="/atlas/ritual-atlas.css?v=${assetVer}"/>${adsenseTag}</head>`
         );
       res.setHeader('Cache-Control', 'no-store');
       res.setHeader('Clear-Site-Data', '"cache"');

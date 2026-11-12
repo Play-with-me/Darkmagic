@@ -13,6 +13,7 @@ import { CelestialWheel } from './CelestialWheel.mjs';
 import { FiveElementsRadar } from './FiveElementsRadar.mjs';
 import { TenGodsProfileMap } from './TenGodsProfileMap.mjs';
 import { LuckTimeline } from './LuckTimeline.mjs';
+import { AdSlotBanner } from './AdSlotBanner.mjs';
 import {
   ScrollTextIcon,
   BookOpenIcon,
@@ -161,6 +162,22 @@ function HumanReadingSection({ React, reading, onExploreMaps }) {
             h('h3', { className: 'human-card-title' }, inherentNature.title)
           ),
           h('div', { className: 'human-card-tagline' }, inherentNature.headline),
+          (inherentNature.climateType || inherentNature.surfaceLabel) &&
+            h(
+              'div',
+              { className: 'human-meta-pills' },
+              inherentNature.climateType &&
+                h('span', { className: 'human-meta-pill pill-climate' }, `Khí hậu: ${inherentNature.climateType}`),
+              inherentNature.dmStrength &&
+                h('span', { className: 'human-meta-pill pill-strength' }, `Nội lực: Thân ${inherentNature.dmStrength}`)
+            ),
+          inherentNature.surfaceLabel &&
+            h(
+              'div',
+              { className: 'human-dual-layer-box' },
+              h('div', { className: 'dual-layer-row' }, h('strong', null, 'Vẻ ngoài (Biểu): '), h('span', null, inherentNature.surfaceLabel)),
+              h('div', { className: 'dual-layer-row' }, h('strong', null, 'Nội tâm (Lý): '), h('span', null, inherentNature.innerLabel))
+            ),
           h('p', { className: 'human-card-body' }, inherentNature.narrative),
           h(
             'div',
@@ -194,6 +211,16 @@ function HumanReadingSection({ React, reading, onExploreMaps }) {
             h('h3', { className: 'human-card-title' }, circumstanceVulnerabilities.title)
           ),
           h('div', { className: 'human-card-tagline' }, circumstanceVulnerabilities.headline),
+          (circumstanceVulnerabilities.conflictPatterns?.length > 0 || circumstanceVulnerabilities.dominantLabel) &&
+            h(
+              'div',
+              { className: 'human-meta-pills' },
+              (circumstanceVulnerabilities.conflictPatterns || []).map((pat, idx) =>
+                h('span', { key: idx, className: 'human-meta-pill pill-pattern' }, pat.name)
+              ),
+              circumstanceVulnerabilities.dominantLabel &&
+                h('span', { className: 'human-meta-pill pill-dominant' }, circumstanceVulnerabilities.dominantLabel)
+            ),
           h(
             'div',
             { className: 'human-philosophy-quote' },
@@ -399,21 +426,27 @@ export function AtlasChartResult({
       '',
       '[00] BẢN ĐỌC CHIÊM NGHIỆM CON NGƯỜI (4 CÂU HỎI ĐỜI SỐNG CỐT LÕI)',
       '1. BẢN NGÃ BẨM SINH & CỐT CÁCH THỰC SỰ: ' + (enriched.humanReading?.inherentNature?.headline || ''),
+      ...(enriched.humanReading?.inherentNature?.climateType ? ['   - Khí hậu bản mệnh: ' + enriched.humanReading.inherentNature.climateType] : []),
+      ...(enriched.humanReading?.inherentNature?.surfaceLabel ? ['   - Tầng Biểu (Vẻ ngoài): ' + enriched.humanReading.inherentNature.surfaceLabel] : []),
+      ...(enriched.humanReading?.inherentNature?.innerLabel ? ['   - Tầng Lý (Bên trong): ' + enriched.humanReading.inherentNature.innerLabel] : []),
       '   - Khí chất: ' + (enriched.humanReading?.inherentNature?.narrative || ''),
       (enriched.humanReading?.inherentNature?.coreGifts || []).map((g) => `   • ${g.title}: ${g.desc}`).join('\n'),
       '',
       '2. ĐIỂM MÙ & CẠM BẪY DỄ VẤP TRƯỚC NGOẠI CẢNH:',
+      ...(enriched.humanReading?.circumstanceVulnerabilities?.conflictPatterns?.length ? ['   - Thế cục giằng xé: ' + enriched.humanReading.circumstanceVulnerabilities.conflictPatterns.map((p) => p.name || p).join(' · ')] : []),
       '   - Triết lý cảnh giác: ' + (enriched.humanReading?.circumstanceVulnerabilities?.philosophyQuote || ''),
       '   - Phân tích: ' + (enriched.humanReading?.circumstanceVulnerabilities?.narrative || ''),
       (enriched.humanReading?.circumstanceVulnerabilities?.trapsToAvoid || []).map((t) => `   • ${t.title}: ${t.desc}`).join('\n'),
       '',
       '3. TÌNH DUYÊN & DUYÊN NỢ CỦA BẠN:',
       '   - Cung Phu Thê: ' + (enriched.humanReading?.loveAndRelationships?.headline || ''),
+      ...(enriched.humanReading?.loveAndRelationships?.interferenceSummary ? ['   - Giao thoa đa trụ: ' + enriched.humanReading.loveAndRelationships.interferenceSummary] : []),
       '   - Xu hướng cảm xúc: ' + (enriched.humanReading?.loveAndRelationships?.narrative || ''),
       (enriched.humanReading?.loveAndRelationships?.harmonyPoints || []).map((p) => `   • ${p.title}: ${p.desc}`).join('\n'),
       '',
       '4. LỜI KHUYÊN ĐỊNH TÂM & THIẾT LẬP RANH GIỚI:',
       '   - Định hướng Dụng Thần: ' + (enriched.humanReading?.groundingAdvice?.headline || ''),
+      ...(enriched.humanReading?.groundingAdvice?.climateRemedy ? ['   - Điều Hầu khí hậu: ' + enriched.humanReading.groundingAdvice.climateRemedy] : []),
       '   - Lời khuyên: ' + (enriched.humanReading?.groundingAdvice?.narrative || ''),
       (enriched.humanReading?.groundingAdvice?.boundaryPrinciples || []).map((b) => `   • ${b.title}: ${b.desc}`).join('\n'),
       '',
@@ -487,6 +520,8 @@ export function AtlasChartResult({
     setActiveSection(id);
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const navBtn = document.querySelector(`.atlas-reading-order [data-nav-id="${id}"]`);
+    navBtn?.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   };
 
   const navItems = [
@@ -514,6 +549,7 @@ export function AtlasChartResult({
           {
             type: 'button',
             key: id,
+            'data-nav-id': id,
             className: activeSection === id ? 'is-active-nav' : '',
             'aria-current': activeSection === id ? 'true' : undefined,
             onClick: () => scrollTo(id),
@@ -530,6 +566,11 @@ export function AtlasChartResult({
       React,
       reading: enriched.humanReading,
       onExploreMaps: () => scrollTo('atlas-overview'),
+    }),
+
+    h(AdSlotBanner, {
+      React,
+      position: 'betweenReadingAndMaps',
     }),
 
     // =========================================================================
@@ -684,6 +725,11 @@ export function AtlasChartResult({
     // =========================================================================
     // GIAI ĐOẠN 4: MỘT ĐOẠN KẾT LUẬN & THANH HÀNH ĐỘNG TẢI/LƯU
     // =========================================================================
+    h(AdSlotBanner, {
+      React,
+      position: 'beforeConclusion',
+    }),
+
     h(
       'footer',
       {
@@ -723,6 +769,16 @@ export function AtlasChartResult({
           h(BookOpenIcon, { React, size: 16 }),
           h('span', null, 'Ghi Nhận Vào Sổ Chiêm Nghiệm')
         )
+      ),
+      h(
+        'nav',
+        {
+          className: 'atlas-legal-links',
+          'aria-label': 'Thư viện và chính sách',
+        },
+        h('a', { href: '/thu-vien', className: 'atlas-legal-links__item' }, 'Thư viện Bát Tự'),
+        h('a', { href: '/quyen-rieng-tu', className: 'atlas-legal-links__item' }, 'Quyền riêng tư'),
+        h('a', { href: '/dieu-khoan', className: 'atlas-legal-links__item' }, 'Điều khoản sử dụng')
       )
     )
   );

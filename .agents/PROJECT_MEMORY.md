@@ -36,7 +36,22 @@
    - Xuất trọn vẹn 4 câu hỏi đời sống vào tệp TXT tải về.
 3. **Bộ kiểm thử & An toàn nội dung**:
    - Thêm ca test kiểm chứng 4 câu hỏi đời sống và trường hợp khuyết giờ sinh (`isPartialTime`) vào `tests/atlas-data.test.mjs`. Toàn bộ 10/10 tests pass 100%.
+4. **Master Bazi Engine v2.0 (`bazi-engine-ext.mjs`)**:
+   - **Tầng Biểu vs Tầng Lý & Kiểm định Thông Căn**: Tách bạch Can lộ (vẻ ngoài/tài lộc hư phù) và Tàng can ẩn sâu (tâm lý bên trong).
+   - **Vector Khí Hậu & Điều Hầu**: Chấm điểm Hàn–Nhiệt–Táo–Thấp có trọng số Chi tháng, ưu tiên Điều Hầu khi khí hậu cực đoan (`|temp| >= 3.5` hoặc `|moisture| >= 3.5`).
+   - **10 Thế Cục Giằng Xé Nội Tâm & Lưỡng Khí Tranh Vượng**: Phát hiện các xung đột Thập Thần (`Kiếp Tài Đoạt Tài`, `Thương Quan Kiến Quan`, `Thực Thần Chế Sát`, `Nhất Khí Độc Vượng`, v.v.) và xử lý chênh lệch ngũ hành sát nút (`<= 0.15`).
+   - **Ma Trận Giao Thoa Cung Phu Thê Đa Trụ**: Phân tích giao thoa Tháng–Ngày–Giờ, Tranh Hợp, Không Vong / Hoa Cái trong Câu hỏi 3.
+   - **Đồng bộ UI & TXT + Kiểm thử**: Hiển thị badge khí hậu, hộp Tầng Biểu/Tầng Lý, tag thế cục trong `AtlasChartResult.mjs` + `ritual-atlas.css`, xuất đầy đủ ra `.txt`, và xác minh 11/11 tests pass (`tests/atlas-data.test.mjs` + `tests/atlas-safety.test.mjs`).
+5. **Tối Ưu Giao Diện Điện Thoại Đa Hệ Điều Hành (iOS & Android)**:
+   - **`server.mjs`**: Nâng `<meta name="viewport">` hỗ trợ `viewport-fit=cover`, thêm `<meta name="theme-color" content="#0b100e"/>`, nâng cache-bust `?v=atlas12`.
+   - **`AtlasChartResult.mjs`**: Đồng bộ `data-nav-id` và tự căn giữa nút điều hướng đang chọn (`scrollIntoView({ inline: 'center' })`) trên thanh cuộn di động.
+   - **`ritual-atlas.css`**: Chống tự zoom ô nhập liệu iOS (`font-size: 16px`, `min-height: 44px`), hỗ trợ `env(safe-area-inset-*)` & `100dvh`, tách `:hover` vào `@media (hover: hover)` kèm `:active` cảm ứng, biến thanh 5 nút điều hướng dưới `640px` thành dải `scroll-snap` 1 hàng (`flex-wrap: nowrap`), khóa chống tràn ngang toàn chuỗi phần tử chứa SVG và bảng Tứ trụ 7 tầng.
+
+6. **Hạ Tầng Kiếm Tiền Sạch & Thư Viện SEO Chuẩn AdSense**:
+   - **`src/atlas/monetization-config.mjs` & `src/atlas/AdSlotBanner.mjs`**: Cấu hình tập trung (`mode: 'library' | 'affiliate' | 'adsense' | 'off'`) và component tái sử dụng gắn ở Vị trí 1 (`betweenReadingAndMaps`) & Vị trí 3 (`beforeConclusion`) trong `AtlasChartResult.mjs`.
+   - **`src/atlas/editorial-pages.mjs` & `server.mjs`**: Phục vụ SSR `/quyen-rieng-tu`, `/dieu-khoan`, `/thu-vien` + 6 bài viết Bát Tự chiêm nghiệm gốc, cùng `/robots.txt`, `/sitemap.xml`, `/ads.txt`, nâng cache-bust `?v=atlas13` và mở CSP có điều kiện cho AdSense khi bật `enabled: true`.
+   - **`tests/atlas-data.test.mjs` & `tests/atlas-safety.test.mjs`**: Kiểm tra đồng bộ `14/14` tests pass, kiểm thử mobile `390x844` (`scrollWidth = 375px <= 390px`, 0 console/network error).
 
 ## 4. Next Priorities
-- Kiểm tra visual trên các kích thước màn hình thực tế (laptop 1366px, desktop 1920px, mobile 375px/390px).
-- Thu thập phản hồi từ người dùng về độ sâu và độ chính xác của bản đọc 4 câu hỏi đời sống.
+- Sau khi triển khai lên `darkmagic.onrender.com` và lưu lượng ổn định, điền `publisherId` + `slots` và đổi `mode: 'adsense'`, `enabled: true` trong `src/atlas/monetization-config.mjs` khi nộp duyệt Google AdSense.
+- Commit các thay đổi lên git khi người dùng xác nhận.

@@ -41,6 +41,89 @@
 }
 
 /* ==========================================================================
+   0. NỀN TẢNG CÔNG THÁI HỌC DI ĐỘNG & ĐIỀU HƯỚNG AN TOÀN (MOBILE OS FOUNDATION)
+   ========================================================================== */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+summary,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(214, 154, 136, 0.16);
+}
+
+.workspace {
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+/* Chuỗi kiểm soát chống tràn ngang & thu phóng SVG linh hoạt (Anti-Overflow & SVG Containment) */
+.atlas-chart-result-container,
+.atlas-chart-result-container *,
+.atlas-chart-result-container *::before,
+.atlas-chart-result-container *::after {
+  box-sizing: border-box;
+}
+
+.reading-grid,
+.reading-grid.reading-grid-wide {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 960px) {
+  .reading-grid,
+  .reading-grid.reading-grid-wide {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+.reading-grid > *,
+.reading-content,
+.reading-content > *,
+.atlas-chapter-section,
+.atlas-maps-section,
+.atlas-maps-container,
+.chapter-split-layout,
+.split-column,
+.human-reading-grid,
+.human-question-card,
+.atlas-summary-block,
+.atlas-explanations,
+.atlas-conclusion-box,
+.atlas-glossary,
+.atlas-glossary-item,
+.atlas-limits-card,
+.atlas-collapsible-sources,
+.compass-svg-container,
+.radar-svg-container,
+.timeline-svg-container {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.compass-svg-container svg,
+.radar-svg-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ==========================================================================
    0. NỀN KINH THƯ KHẮC NỔI 100% TRONG SUỐT (ZERO-CARD OPEN EDITORIAL)
    Xóa sạch mọi khung hộp, lớp blur che khuất Bát Quái và cổ thi phía dưới
    ========================================================================== */
@@ -109,7 +192,7 @@ body:has(.atlas-chart-result-container) .workspace,
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 auto;
-  padding: 10px 0 60px;
+  padding: 10px 0 max(60px, calc(48px + env(safe-area-inset-bottom)));
   min-width: 0;
   overflow-x: clip;
 }
@@ -401,9 +484,17 @@ body:has(.atlas-chart-result-container) .workspace,
    ========================================================================== */
 .atlas-chapter-section {
   padding: 24px 8px 48px;
-  scroll-margin-top: 30px;
+  scroll-margin-top: calc(78px + env(safe-area-inset-top));
   border-bottom: 1px solid rgba(152, 123, 112, 0.22);
   background: transparent !important;
+}
+
+#atlas-human-reading,
+#atlas-overview,
+#atlas-summary,
+#atlas-details,
+#atlas-conclusion {
+  scroll-margin-top: calc(78px + env(safe-area-inset-top));
 }
 
 .chapter-header {
@@ -476,10 +567,16 @@ body:has(.atlas-chart-result-container) .workspace,
   font-family: var(--sans);
 }
 
-.switch-tab-btn:hover {
-  background: rgba(214, 154, 136, 0.08);
-  border-color: var(--copper-gold);
-  color: var(--ink-primary);
+@media (hover: hover) and (pointer: fine) {
+  .switch-tab-btn:hover {
+    background: rgba(214, 154, 136, 0.08);
+    border-color: var(--copper-gold);
+    color: var(--ink-primary);
+  }
+}
+
+.switch-tab-btn:active {
+  transform: scale(0.985);
 }
 
 .switch-tab-btn.is-active {
@@ -1072,6 +1169,7 @@ body:has(.atlas-chart-result-container) .workspace,
   align-items: center;
   width: 100%;
   max-width: 480px;
+  min-width: 0;
   margin: 0 auto;
 }
 
@@ -1154,6 +1252,7 @@ body:has(.atlas-chart-result-container) .workspace,
   align-items: center;
   width: 100%;
   max-width: 440px;
+  min-width: 0;
   margin: 0 auto;
 }
 
@@ -1347,7 +1446,11 @@ body:has(.atlas-chart-result-container) .workspace,
    ========================================================================== */
 .timeline-svg-container {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   background: transparent !important;
   border: 1px solid rgba(152, 123, 112, 0.22);
   border-radius: 2px;
@@ -1578,7 +1681,7 @@ body:has(.atlas-chart-result-container) .workspace,
   justify-content: center;
   gap: 8px;
   position: sticky;
-  top: 12px;
+  top: max(10px, env(safe-area-inset-top));
   z-index: 50;
   padding: 6px;
   background: rgba(11, 16, 14, 0.92);
@@ -1606,11 +1709,21 @@ body:has(.atlas-chart-result-container) .workspace,
   transition: all 180ms ease-out;
 }
 
-.atlas-reading-order button:hover,
+@media (hover: hover) and (pointer: fine) {
+  .atlas-reading-order button:hover {
+    color: var(--ink-primary);
+    background: rgba(119, 43, 50, 0.3);
+  }
+}
+
 .atlas-reading-order button:focus-visible {
   color: var(--ink-primary);
   background: rgba(119, 43, 50, 0.3);
   outline: none;
+}
+
+.atlas-reading-order button:active {
+  transform: scale(0.985);
 }
 
 /* Trạng thái chọn: Chu sa trầm + chữ ngà + viền sáng rõ */
@@ -1625,6 +1738,8 @@ body:has(.atlas-chart-result-container) .workspace,
 /* 2. GIAI ĐOẠN 1: BỐ CỤC ĐỦ 5 BẢN ĐỒ */
 .atlas-maps-section {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .atlas-maps-container {
@@ -1632,6 +1747,8 @@ body:has(.atlas-chart-result-container) .workspace,
   flex-direction: column;
   gap: 32px;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Desktop: Thiên bàn + Ngũ hành chia 2 cột bằng nhau */
@@ -1688,6 +1805,8 @@ body:has(.atlas-chart-result-container) .workspace,
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 @media (max-width: 960px) {
@@ -1709,6 +1828,8 @@ body:has(.atlas-chart-result-container) .workspace,
   transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .human-question-card::before {
@@ -1721,11 +1842,17 @@ body:has(.atlas-chart-result-container) .workspace,
   background: linear-gradient(90deg, transparent, rgba(214, 154, 136, 0.5), transparent);
 }
 
-.human-question-card:hover {
-  border-color: rgba(214, 154, 136, 0.55);
-  background: rgba(18, 24, 22, 0.82);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+@media (hover: hover) and (pointer: fine) {
+  .human-question-card:hover {
+    border-color: rgba(214, 154, 136, 0.55);
+    background: rgba(18, 24, 22, 0.82);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.human-question-card:active {
+  transform: scale(0.985);
 }
 
 .human-card-header {
@@ -1771,6 +1898,74 @@ body:has(.atlas-chart-result-container) .workspace,
   font-style: italic;
   padding-bottom: 10px;
   border-bottom: 1px dashed rgba(152, 123, 112, 0.25);
+}
+
+.human-meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.human-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(214, 154, 136, 0.28);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink-primary);
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.pill-climate {
+  border-color: rgba(214, 154, 136, 0.45);
+  background: rgba(214, 154, 136, 0.1);
+  color: var(--gold);
+}
+
+.pill-strength {
+  border-color: rgba(152, 123, 112, 0.35);
+  color: var(--ink-soft);
+}
+
+.pill-pattern {
+  border-color: rgba(191, 75, 69, 0.45);
+  background: rgba(191, 75, 69, 0.12);
+  color: var(--cinnabar-rose);
+}
+
+.pill-dominant {
+  border-color: rgba(214, 154, 136, 0.35);
+  background: rgba(38, 48, 44, 0.55);
+  color: var(--copper-gold);
+}
+
+.human-dual-layer-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(214, 154, 136, 0.2);
+  font-size: 13px;
+  line-height: 1.6;
+  min-width: 0;
+}
+
+.dual-layer-row {
+  color: var(--ink-soft);
+}
+
+.dual-layer-row strong {
+  color: var(--ink-primary);
+  font-family: var(--serif);
 }
 
 .human-philosophy-quote {
@@ -1855,23 +2050,23 @@ body:has(.atlas-chart-result-container) .workspace,
   transition: all 0.25s ease;
 }
 
-.explore-maps-bridge-btn:hover {
-  border-color: var(--copper-gold);
-  background: linear-gradient(135deg, rgba(119, 43, 50, 0.3), rgba(38, 48, 44, 0.95));
-  color: var(--gold);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(214, 154, 136, 0.25);
+@media (hover: hover) and (pointer: fine) {
+  .explore-maps-bridge-btn:hover {
+    border-color: var(--copper-gold);
+    background: linear-gradient(135deg, rgba(119, 43, 50, 0.3), rgba(38, 48, 44, 0.95));
+    color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(214, 154, 136, 0.25);
+  }
+
+  .explore-maps-bridge-btn:hover .bridge-btn-arrow {
+    transform: translateY(3px);
+    color: var(--gold);
+  }
 }
 
-.bridge-btn-arrow {
-  font-size: 18px;
-  color: var(--copper-gold);
-  transition: transform 0.25s ease;
-}
-
-.explore-maps-bridge-btn:hover .bridge-btn-arrow {
-  transform: translateY(3px);
-  color: var(--gold);
+.explore-maps-bridge-btn:active {
+  transform: scale(0.985);
 }
 
 /* ==========================================================================
@@ -2254,6 +2449,12 @@ body:has(.atlas-chart-result-container) .workspace,
   transition: all 180ms ease-out;
 }
 
+.conclusion-actions-bar button:active,
+.editorial-actions-footer button:active,
+.result-actions-bar button:active {
+  transform: scale(0.985);
+}
+
 .conclusion-actions-bar .button.gold {
   background: #772b32;
   color: #eee3d8;
@@ -2486,14 +2687,51 @@ body:has(.atlas-chart-result-container) .reading-sigil {
    12. RESPONSIVE BREAKPOINTS (Mobile 390 lề 20px, Mobile 320 lề 16px)
    ========================================================================== */
 
-/* Mobile 390px (và dưới 768px): lề 20px */
+/* Mobile 390px (và dưới 768px): lề an toàn & không co cụm kép */
 @media (max-width: 768px) {
   .workspace,
   .workspace.reading-result-view,
   body:has(.atlas-chart-result-container) .workspace,
-  .reading-result-view,
+  .reading-result-view {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)) !important;
+  }
+
   .atlas-chart-result-container {
-    padding-inline: 20px !important;
+    padding-inline: 0 !important;
+    gap: 24px;
+    overflow-x: visible;
+  }
+
+  .atlas-chapter-section {
+    padding: 18px 0 32px !important;
+  }
+
+  /* Chống tự động zoom chữ trên iOS Safari & giữ nút gọn không phình chip */
+  .birth-form input:not([type="checkbox"]):not([type="radio"]),
+  .birth-form select,
+  .birth-form textarea,
+  .reading-content input:not([type="checkbox"]):not([type="radio"]),
+  .reading-content select,
+  .reading-content textarea {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  .birth-form input[type="checkbox"],
+  .birth-form input[type="radio"],
+  .reading-content input[type="checkbox"],
+  .reading-content input[type="radio"] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  .birth-form button[type="submit"],
+  .atlas-glossary-item summary,
+  .atlas-limits-card summary,
+  .atlas-collapsible-sources summary {
+    min-height: 44px;
   }
 
   /* Ẩn từ hạt thứ 5 trở đi trên mobile (giữ đúng 4 hạt không chớp) */
@@ -2503,16 +2741,16 @@ body:has(.atlas-chart-result-container) .reading-sigil {
   }
 
   .atlas-maps-container {
-    gap: 24px;
+    gap: 20px;
   }
 
   .atlas-summary-block,
   .atlas-explanations,
   .atlas-conclusion-box {
-    padding: 24px 16px;
+    padding: 20px 14px;
   }
 
-  /* Font nội dung >= 16px trên mobile */
+  /* Font nội dung >= 15.5px dễ đọc trên mobile */
   .chapter-desc,
   .guide-meaning-body,
   .domain-card-desc,
@@ -2520,14 +2758,23 @@ body:has(.atlas-chart-result-container) .reading-sigil {
   .atlas-summary-bullets li,
   .atlas-limits-card p,
   .atlas-collapsible-sources p {
-    font-size: 16px !important;
+    font-size: 15.5px !important;
     line-height: 1.65;
+  }
+
+  /* Chuyển mọi lưới nhiều cột trên desktop về 1 cột hoặc 2 cột gọn gàng */
+  .guide-traits-grid,
+  .decree-cards-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px;
   }
 
   /* Tứ trụ mobile cuộn ngang cục bộ */
   .matrix-table-wrap {
     overflow-x: auto;
     width: 100%;
+    max-width: 100%;
+    isolation: isolate;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-inline: contain;
   }
@@ -2538,38 +2785,378 @@ body:has(.atlas-chart-result-container) .reading-sigil {
     position: sticky;
     left: 0;
     width: max-content;
-    padding: 8px 0 2px;
+    padding: 8px 6px 4px;
     color: var(--copper-gold);
-    font-size: 13px;
+    font-size: 12px;
   }
 
-  /* Cột 1 cố định bên trái khi cuộn ngang */
+  /* Cột 1 cố định bên trái gọn lại để lộ được 2 cột trụ trên màn nhỏ */
   .col-header-sticky,
   .row-title {
     position: sticky;
     left: 0;
-    z-index: 5;
+    z-index: 6;
+    width: 82px;
+    min-width: 82px;
+    padding: 8px 6px !important;
+    font-size: 11px;
     background: #0b100e !important;
   }
 }
 
-/* Mobile 320px: lề 16px */
-@media (max-width: 360px) {
-  .workspace,
-  .workspace.reading-result-view,
-  body:has(.atlas-chart-result-container) .workspace,
-  .reading-result-view,
-  .atlas-chart-result-container {
-    padding-inline: 16px !important;
+/* Mobile 640px (Small Handhelds & Phablets) */
+@media (max-width: 640px) {
+  /* Thanh điều hướng nổi 100% bề ngang, nền đặc che khít để chữ cuộn bên dưới không bao giờ bị đè lọt khe */
+  .atlas-reading-order {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    width: calc(100% + 32px);
+    max-width: none;
+    margin: 0 -16px 8px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+    gap: 6px;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(196, 163, 101, 0.32);
+    background: rgba(11, 16, 14, 0.98);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.72);
+  }
+
+  .atlas-reading-order::-webkit-scrollbar {
+    display: none;
   }
 
   .atlas-reading-order button {
-    padding: 8px 12px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-height: 36px;
+    min-width: auto;
+    padding: 6px 11px;
+    font-size: 13px;
+    scroll-snap-align: center;
+  }
+
+  #atlas-human-reading,
+  #atlas-overview,
+  #atlas-summary,
+  #atlas-details,
+  #atlas-conclusion,
+  .atlas-chapter-section {
+    scroll-margin-top: calc(62px + env(safe-area-inset-top));
+  }
+
+  /* Gọn thanh tiêu đề cột & nhóm nút chọn để không tràn viền hoặc xuống dòng méo */
+  .column-header-bar {
+    gap: 6px;
+  }
+
+  .col-tag {
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.35;
+    font-size: 9.5px;
+    letter-spacing: 0.8px;
+  }
+
+  .col-hint {
+    display: none;
+  }
+
+  .quick-switch-tabs,
+  .interaction-chips-row,
+  .shensha-chips-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .switch-tab-btn,
+  .interaction-chip,
+  .shensha-pill {
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  /* Gọn lưới Thập Thần & Lưu Niên trên màn hình nhỏ */
+  .tengods-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .tengod-card {
+    padding: 8px 10px;
+  }
+
+  .tengod-card-top {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .tengod-name {
+    font-size: 13.5px;
+  }
+
+  .tengod-subdesc {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .annuals-chips-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px;
+  }
+
+  /* Độ thoáng thẻ & nút bấm full-width */
+  .human-question-card {
+    padding: 18px 14px;
+    gap: 12px;
+  }
+
+  .human-card-title {
+    font-size: 18px;
+  }
+
+  .explore-maps-bridge-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 16px;
+    min-height: 46px;
     font-size: 14px;
+  }
+
+  .conclusion-actions-bar {
+    flex-direction: column;
+    gap: 10px;
   }
 
   .conclusion-actions-bar button {
     width: 100%;
     justify-content: center;
+    text-align: center;
+    white-space: normal;
+    min-height: 46px;
+    padding: 10px 14px;
+    font-size: 14.5px;
   }
+}
+
+/* Mobile 320px–420px: lưới Thập Thần thu về 1 cột thoáng để không bóp badge */
+@media (max-width: 400px) {
+  .tengods-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Mobile 320px: lề 12px safe-area */
+@media (max-width: 360px) {
+  .workspace,
+  .workspace.reading-result-view,
+  body:has(.atlas-chart-result-container) .workspace,
+  .reading-result-view {
+    padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right)) !important;
+  }
+
+  .atlas-chart-result-container {
+    padding-inline: 0 !important;
+  }
+
+  .atlas-reading-order {
+    width: calc(100% + 24px);
+    margin: 0 -12px 8px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+  }
+
+  .atlas-reading-order button {
+    padding: 6px 10px;
+    font-size: 12.5px;
+  }
+}
+
+/* =========================================================================
+   MONETIZATION SLOTS, LIBRARY COMPANION CARDS & CRAWLABLE LEGAL LINKS
+   ========================================================================= */
+.atlas-companion-card,
+.atlas-ad-slot {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 16px 0;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: linear-gradient(155deg, rgba(24, 32, 29, 0.94), rgba(14, 19, 17, 0.96));
+  border: 1px solid rgba(214, 154, 136, 0.24);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+}
+
+.atlas-companion-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.atlas-companion-card__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.atlas-companion-card__badge {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 154, 136, 0.28);
+  background: rgba(119, 43, 50, 0.22);
+  color: #d69a88;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.atlas-companion-card__title {
+  margin: 0 0 4px;
+  font-family: "Noto Serif", serif;
+  font-size: 1.05rem;
+  line-height: 1.38;
+  color: #eee3d8;
+}
+
+.atlas-companion-card__desc {
+  margin: 0;
+  font-size: 0.91rem;
+  line-height: 1.58;
+  color: #cbbdb0;
+  overflow-wrap: anywhere;
+}
+
+.atlas-companion-card__cta {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #772b32;
+  border: 1px solid rgba(191, 75, 69, 0.58);
+  color: #fff5ee;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.atlas-companion-card__cta:hover {
+  background: #bf4b45;
+  transform: translateY(-1px);
+}
+
+.atlas-ad-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.atlas-ad-slot__label {
+  align-self: flex-start;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(214, 154, 136, 0.72);
+}
+
+.atlas-ad-slot__frame {
+  width: 100%;
+  min-width: 0;
+  min-height: 112px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(11, 16, 14, 0.48);
+}
+
+.atlas-legal-links {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(214, 154, 136, 0.16);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+}
+
+.atlas-legal-links__item {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 4px 8px;
+  color: #d69a88;
+  text-decoration: none;
+  font-size: 0.86rem;
+  transition: color 160ms ease;
+}
+
+.atlas-legal-links__item:hover {
+  color: #eee3d8;
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .atlas-companion-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .atlas-companion-card__cta {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .atlas-ad-slot {
+    padding: 12px;
+  }
+
+  .atlas-ad-slot__frame {
+    min-height: 100px;
+  }
+
+  .atlas-legal-links {
+    gap: 4px 12px;
+  }
+}
+
+.site-footer > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  min-width: 0;
+}
+
+.site-footer > div a,
+.site-footer > div button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
