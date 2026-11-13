@@ -296,9 +296,8 @@ const server = http.createServer(async (req, res) => {
           .replace("style-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
           .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com data:");
         if (externalAdHosts) {
+          const extra = monetagScriptsActive ? `${externalAdHosts} https:` : externalAdHosts;
           for (const directive of ['script-src', 'frame-src', 'img-src', 'connect-src']) {
-            const extra =
-              directive === 'img-src' && monetagScriptsActive ? `${externalAdHosts} https:` : externalAdHosts;
             if (updatedCsp.includes(directive)) {
               updatedCsp = updatedCsp.replace(directive, `${directive} ${extra}`);
             } else {

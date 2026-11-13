@@ -9,7 +9,7 @@
  * - 'adsense': Render Google AdSense display/in-article units when approved & configured
  * - 'off': Hide all companion banners cleanly
  */
-export const ATLAS_ASSET_VERSION = 'atlas19';
+export const ATLAS_ASSET_VERSION = 'atlas20';
 
 export const MONETIZATION_CONFIG = {
   mode: 'affiliate',
@@ -33,7 +33,7 @@ export const MONETIZATION_CONFIG = {
       { src: 'https://nap5k.com/tag.min.js', zone: '12250663', title: 'Loud tag (In-Page Push)' },
     ],
     cspHosts:
-      'https://monetag.com https://*.monetag.com https://nap5k.com https://*.nap5k.com https://quge5.com https://*.quge5.com https://alwingulla.com https://*.alwingulla.com https://*.highperformanceformat.com',
+      'https://monetag.com https://*.monetag.com https://nap5k.com https://*.nap5k.com https://my.rtmark.net https://*.rtmark.net https://jhnwr.com https://*.jhnwr.com https://quge5.com https://*.quge5.com https://alwingulla.com https://*.alwingulla.com https://*.highperformanceformat.com',
   },
   librarySuggestions: {
     betweenReadingAndMaps: {
@@ -178,7 +178,7 @@ export function buildHeadMonetizationTags(
         .map((item) => {
           const zoneAssign = item.zone ? `s.dataset.zone='${escapeJsSingle(item.zone)}';` : '';
           const cfAssign = item.cfasync === false ? `s.setAttribute('data-cfasync','false');` : '';
-          return `<script>(function(){try{if(window.__mqMonetagSessionBooted||sessionStorage.getItem('${storageKey}')==='1')return;window.__mqMonetagSessionBooted=true;sessionStorage.setItem('${storageKey}','1');}catch(e){return;}var s=document.createElement('script');${zoneAssign}s.src='${escapeJsSingle(item.src)}';s.async=true;${cfAssign}(document.head||document.documentElement||document.body).appendChild(s);})();</script>`;
+          return `<script>(function(){if(window.__mqMonetagSessionBooted)return;window.__mqMonetagSessionBooted=true;try{if(sessionStorage.getItem('${storageKey}')==='1')return;sessionStorage.setItem('${storageKey}','1');}catch(e){}var s=document.createElement('script');${zoneAssign}s.src='${escapeJsSingle(item.src)}';s.async=true;${cfAssign}(document.head||document.documentElement||document.body).appendChild(s);})();</script>`;
         })
         .join('\n  ');
     } else {
