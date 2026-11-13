@@ -9,7 +9,7 @@
  * - 'adsense': Render Google AdSense display/in-article units when approved & configured
  * - 'off': Hide all companion banners cleanly
  */
-export const ATLAS_ASSET_VERSION = 'atlas18';
+export const ATLAS_ASSET_VERSION = 'atlas19';
 
 export const MONETIZATION_CONFIG = {
   mode: 'affiliate',
@@ -140,6 +140,14 @@ export function markMonetagSessionLoaded(storage, config = MONETIZATION_CONFIG) 
   return false;
 }
 
+function escapeJsSingle(value) {
+  return String(value ?? '')
+    .replaceAll('\\', '\\\\')
+    .replaceAll("'", "\\'")
+    .replaceAll('<', '')
+    .replaceAll('>', '');
+}
+
 /**
  * Build shared AdSense & Monetag <head> tags cleanly without Node dependencies.
  */
@@ -162,10 +170,17 @@ export function buildHeadMonetizationTags(
       : '';
 
   const validScripts = getValidMonetagScripts(config);
+  const storageKey = escapeJsSingle(monetag.sessionStorageKey || 'mq_monetag_session_loaded');
   let scripts = '';
   if (validScripts.length > 0) {
     if (monetag.oncePerSession !== false) {
-      scripts = `<script type="module" src="/atlas/monetag-session.mjs?v=${escapeAttr(assetVer)}"></script>`;
+      scripts = validScripts
+        .map((item) => {
+          const zoneAssign = item.zone ? `s.dataset.zone='${escapeJsSingle(item.zone)}';` : '';
+          const cfAssign = item.cfasync === false ? `s.setAttribute('data-cfasync','false');` : '';
+          return `<script>(function(){try{if(window.__mqMonetagSessionBooted||sessionStorage.getItem('${storageKey}')==='1')return;window.__mqMonetagSessionBooted=true;sessionStorage.setItem('${storageKey}','1');}catch(e){return;}var s=document.createElement('script');${zoneAssign}s.src='${escapeJsSingle(item.src)}';s.async=true;${cfAssign}(document.head||document.documentElement||document.body).appendChild(s);})();</script>`;
+        })
+        .join('\n  ');
     } else {
       scripts = validScripts
         .map((item) => {
@@ -173,7 +188,7 @@ export function buildHeadMonetizationTags(
           const cfAttr = item.cfasync === false ? ' data-cfasync="false"' : '';
           return `<script src="${escapeAttr(item.src)}"${zoneAttr} async${cfAttr}></script>`;
         })
-        .join('\n');
+        .join('\n  ');
     }
   }
 
@@ -183,5 +198,6 @@ export function buildHeadMonetizationTags(
     monetagMetaTag,
     monetagScriptsHtml: scripts,
     combinedHeadHtml: combined ? `\n  ${combined}` : '',
+    assetVer,
   };
 }

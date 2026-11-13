@@ -249,8 +249,9 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
   const headTags = buildHeadMonetizationTags(MONETIZATION_CONFIG);
   assert.match(headTags.monetagMetaTag, /<meta name="monetag" content="17f2098708859e12049841afd66178ac"/);
   assert.match(headTags.adsenseTag, /ca-pub-1866418681419466/);
-  assert.match(headTags.monetagScriptsHtml, /\/atlas\/monetag-session\.mjs/);
-  assert.doesNotMatch(headTags.monetagScriptsHtml, /nap5k\.com/);
+  assert.match(headTags.monetagScriptsHtml, /sessionStorage\.getItem\('mq_monetag_session_loaded'\)/);
+  assert.match(headTags.monetagScriptsHtml, /dataset\.zone='12250663'/);
+  assert.match(headTags.monetagScriptsHtml, /https:\/\/nap5k\.com\/tag\.min\.js/);
 
   const zoneConfig = {
     ...MONETIZATION_CONFIG,
@@ -263,8 +264,9 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
     },
   };
   const withMonetagZone = buildHeadMonetizationTags(zoneConfig);
-  assert.match(withMonetagZone.monetagScriptsHtml, /\/atlas\/monetag-session\.mjs/);
-  assert.doesNotMatch(withMonetagZone.monetagScriptsHtml, /quge5\.com/);
+  assert.match(withMonetagZone.monetagScriptsHtml, /sessionStorage\.getItem\('mq_monetag_session_loaded'\)/);
+  assert.match(withMonetagZone.monetagScriptsHtml, /dataset\.zone='999999'/);
+  assert.match(withMonetagZone.monetagScriptsHtml, /https:\/\/quge5\.com\/88\/tag\.min\.js/);
 
   const makeMockStorage = () => {
     const map = new Map();
