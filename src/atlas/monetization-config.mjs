@@ -1,6 +1,7 @@
 /**
  * Centralized monetization, simple banner, AdSense & Monetag configuration for Mệnh Quán.
- * Pure browser-safe ESM (no node:* imports) so server.mjs, editorial-pages.mjs, and AdSlotBanner.mjs share it.
+ * Pure browser-safe ESM (no node:* imports) so server.mjs, editorial-pages.mjs, AdSlotBanner.mjs,
+ * and monetag-session.mjs share a single source of truth.
  *
  * Modes:
  * - 'library': Show editorial reading cards linking to /thu-vien/*
@@ -8,6 +9,8 @@
  * - 'adsense': Render Google AdSense display/in-article units when approved & configured
  * - 'off': Hide all companion banners cleanly
  */
+export const ATLAS_ASSET_VERSION = 'atlas17';
+
 export const MONETIZATION_CONFIG = {
   mode: 'affiliate',
   adsense: {
@@ -24,6 +27,8 @@ export const MONETIZATION_CONFIG = {
     siteId: '3574571',
     metaVerificationContent: '17f2098708859e12049841afd66178ac',
     swFileContent: '',
+    oncePerSession: true,
+    sessionStorageKey: 'mq_monetag_session_loaded',
     headScripts: [],
     cspHosts:
       'https://*.monetag.com https://quge5.com https://*.quge5.com https://*.alwingulla.com https://*.nap5k.com https://*.highperformanceformat.com',
@@ -88,10 +93,58 @@ function escapeAttr(value) {
     .replaceAll('>', '&gt;');
 }
 
+function getValidMonetagScripts(config = MONETIZATION_CONFIG) {
+  const monetag = config?.monetag || {};
+  if (!monetag.enabled || !Array.isArray(monetag.headScripts)) {
+    return [];
+  }
+  return monetag.headScripts.filter((item) => item && item.src);
+}
+
+/**
+ * Determine whether Monetag ad scripts should load in the current browser session.
+ * Keeps ownership <meta> active across all pages while capping ad script loads to 1 per session.
+ */
+export function shouldLoadMonetagInSession(storage, config = MONETIZATION_CONFIG) {
+  const validScripts = getValidMonetagScripts(config);
+  if (validScripts.length === 0) {
+    return false;
+  }
+  const monetag = config?.monetag || {};
+  if (monetag.oncePerSession === false) {
+    return true;
+  }
+  const key = monetag.sessionStorageKey || 'mq_monetag_session_loaded';
+  try {
+    if (!storage || typeof storage.getItem !== 'function') {
+      return false;
+    }
+    return storage.getItem(key) !== '1';
+  } catch {
+    return false;
+  }
+}
+
+export function markMonetagSessionLoaded(storage, config = MONETIZATION_CONFIG) {
+  const key = config?.monetag?.sessionStorageKey || 'mq_monetag_session_loaded';
+  try {
+    if (storage && typeof storage.setItem === 'function') {
+      storage.setItem(key, '1');
+      return true;
+    }
+  } catch {
+    // Ignore storage quota or strict privacy mode errors cleanly.
+  }
+  return false;
+}
+
 /**
  * Build shared AdSense & Monetag <head> tags cleanly without Node dependencies.
  */
-export function buildHeadMonetizationTags(config = MONETIZATION_CONFIG) {
+export function buildHeadMonetizationTags(
+  config = MONETIZATION_CONFIG,
+  assetVer = ATLAS_ASSET_VERSION
+) {
   const adsense = config?.adsense || {};
   const adsenseTag =
     adsense.enabled && adsense.publisherId
@@ -106,17 +159,21 @@ export function buildHeadMonetizationTags(config = MONETIZATION_CONFIG) {
       ? `<meta name="monetag" content="${escapeAttr(monetag.metaVerificationContent)}" />`
       : '';
 
-  const scripts =
-    monetag.enabled && Array.isArray(monetag.headScripts)
-      ? monetag.headScripts
-          .filter((item) => item && item.src)
-          .map((item) => {
-            const zoneAttr = item.zone ? ` data-zone="${escapeAttr(item.zone)}"` : '';
-            const cfAttr = item.cfasync === false ? ' data-cfasync="false"' : '';
-            return `<script src="${escapeAttr(item.src)}"${zoneAttr} async${cfAttr}></script>`;
-          })
-          .join('\n')
-      : '';
+  const validScripts = getValidMonetagScripts(config);
+  let scripts = '';
+  if (validScripts.length > 0) {
+    if (monetag.oncePerSession !== false) {
+      scripts = `<script type="module" src="/atlas/monetag-session.mjs?v=${escapeAttr(assetVer)}"></script>`;
+    } else {
+      scripts = validScripts
+        .map((item) => {
+          const zoneAttr = item.zone ? ` data-zone="${escapeAttr(item.zone)}"` : '';
+          const cfAttr = item.cfasync === false ? ' data-cfasync="false"' : '';
+          return `<script src="${escapeAttr(item.src)}"${zoneAttr} async${cfAttr}></script>`;
+        })
+        .join('\n');
+    }
+  }
 
   const combined = [adsenseTag, monetagMetaTag, scripts].filter(Boolean).join('\n  ');
   return {

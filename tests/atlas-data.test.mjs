@@ -225,6 +225,7 @@ test('Master Bazi Engine v2.0 phân tích chính xác Điều Hầu khí hậu, 
 });
 
 import { MONETIZATION_CONFIG, buildHeadMonetizationTags } from '../src/atlas/monetization-config.mjs';
+import { bootMonetagSession } from '../src/atlas/monetag-session.mjs';
 import {
   CONTACT_EMAIL,
   LIBRARY_ARTICLES,
@@ -241,21 +242,63 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
   assert.ok(MONETIZATION_CONFIG.affiliateOffers.betweenReadingAndMaps.rel.includes('sponsored'));
   assert.ok(MONETIZATION_CONFIG.affiliateOffers.editorialBanner.rel.includes('sponsored'));
   assert.equal(MONETIZATION_CONFIG.monetag.metaVerificationContent, '17f2098708859e12049841afd66178ac');
+  assert.equal(MONETIZATION_CONFIG.monetag.oncePerSession, true);
 
   const headTags = buildHeadMonetizationTags(MONETIZATION_CONFIG);
   assert.match(headTags.monetagMetaTag, /<meta name="monetag" content="17f2098708859e12049841afd66178ac"/);
   assert.match(headTags.adsenseTag, /ca-pub-1866418681419466/);
 
-  const withMonetagZone = buildHeadMonetizationTags({
+  const zoneConfig = {
     ...MONETIZATION_CONFIG,
     monetag: {
       enabled: true,
+      oncePerSession: true,
+      sessionStorageKey: 'mq_monetag_session_loaded',
       metaVerificationContent: '17f2098708859e12049841afd66178ac',
       headScripts: [{ src: 'https://quge5.com/88/tag.min.js', zone: '999999', cfasync: false }],
     },
-  });
-  assert.match(withMonetagZone.monetagScriptsHtml, /data-zone="999999"/);
-  assert.match(withMonetagZone.monetagScriptsHtml, /data-cfasync="false"/);
+  };
+  const withMonetagZone = buildHeadMonetizationTags(zoneConfig);
+  assert.match(withMonetagZone.monetagScriptsHtml, /\/atlas\/monetag-session\.mjs/);
+  assert.doesNotMatch(withMonetagZone.monetagScriptsHtml, /quge5\.com/);
+
+  const makeMockStorage = () => {
+    const map = new Map();
+    return {
+      getItem: (k) => (map.has(k) ? map.get(k) : null),
+      setItem: (k, v) => map.set(k, String(v)),
+    };
+  };
+  const makeMockDoc = () => {
+    const appended = [];
+    return {
+      appended,
+      head: { appendChild: (el) => appended.push(el) },
+      createElement: () => ({ attrs: {}, setAttribute(k, v) { this.attrs[k] = v; } }),
+    };
+  };
+
+  const tabStorage = makeMockStorage();
+  const doc1 = makeMockDoc();
+  const win1 = {};
+  assert.equal(bootMonetagSession({ doc: doc1, win: win1, storage: tabStorage, config: zoneConfig }), true);
+  assert.equal(doc1.appended.length, 1);
+  assert.equal(doc1.appended[0].attrs['data-zone'], '999999');
+
+  // Điều hướng trang khác hoặc tải lại trong cùng phiên -> bị chặn
+  const doc2 = makeMockDoc();
+  const win2 = {};
+  assert.equal(bootMonetagSession({ doc: doc2, win: win2, storage: tabStorage, config: zoneConfig }), false);
+  assert.equal(doc2.appended.length, 0);
+
+  // Phiên mới (tắt mở lại tab mới) -> cho phép tải 1 lần mới
+  const freshStorage = makeMockStorage();
+  const doc3 = makeMockDoc();
+  assert.equal(bootMonetagSession({ doc: doc3, win: {}, storage: freshStorage, config: zoneConfig }), true);
+  assert.equal(doc3.appended.length, 1);
+
+  // Trình duyệt chặn sessionStorage -> an toàn, không crash
+  assert.equal(bootMonetagSession({ doc: makeMockDoc(), win: {}, storage: null, config: zoneConfig }), false);
 
   const robots = buildRobotsTxt('https://darkmagic.onrender.com');
   assert.match(robots, /Sitemap:\s*https:\/\/darkmagic\.onrender\.com\/sitemap\.xml/);

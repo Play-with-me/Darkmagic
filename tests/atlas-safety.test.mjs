@@ -37,11 +37,13 @@ test('không dựng năm sinh giả và không gọi dữ kiện là nhãn tính
 test('editorial pages và monetization config tuân thủ nội dung an toàn và không dùng node:* phía trình duyệt', async () => {
   const { LIBRARY_ARTICLES, renderEditorialPage } = await import('../src/atlas/editorial-pages.mjs');
   const configSource = await readFile('src/atlas/monetization-config.mjs', 'utf8');
+  const sessionSource = await readFile('src/atlas/monetag-session.mjs', 'utf8');
   const bannerSource = await readFile('src/atlas/AdSlotBanner.mjs', 'utf8');
   const editorialSource = await readFile('src/atlas/editorial-pages.mjs', 'utf8');
   const articlesSource = await readFile('src/atlas/library-articles.mjs', 'utf8');
 
   assert.doesNotMatch(configSource, /from\s+['"]node:|import\s+['"]node:/);
+  assert.doesNotMatch(sessionSource, /from\s+['"]node:|import\s+['"]node:/);
   assert.doesNotMatch(bannerSource, /from\s+['"]node:|import\s+['"]node:/);
 
   const forbiddenMedical = /bồi dưỡng thận|gan đào thải|dưỡng tim mạch|dưỡng phổi/i;

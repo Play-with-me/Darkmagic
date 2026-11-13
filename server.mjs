@@ -4,7 +4,11 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
-import { MONETIZATION_CONFIG, buildHeadMonetizationTags } from './src/atlas/monetization-config.mjs';
+import {
+  MONETIZATION_CONFIG,
+  ATLAS_ASSET_VERSION,
+  buildHeadMonetizationTags,
+} from './src/atlas/monetization-config.mjs';
 import {
   renderEditorialPage,
   buildRobotsTxt,
@@ -167,7 +171,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 3. Intercept Reading-CEebwCfN.js, ClientApp-COG-eH4S.js & SiteHeader-DoVcnI5L.js
-    const assetVer = 'atlas16';
+    const assetVer = ATLAS_ASSET_VERSION;
 
     if (pathname.endsWith('/Reading-CEebwCfN.js')) {
       const readingPath = path.join(CLIENT_DIR, '_next/static/chunks/Reading-CEebwCfN.js');
