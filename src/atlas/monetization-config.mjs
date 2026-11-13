@@ -9,7 +9,7 @@
  * - 'adsense': Render Google AdSense display/in-article units when approved & configured
  * - 'off': Hide all companion banners cleanly
  */
-export const ATLAS_ASSET_VERSION = 'atlas20';
+export const ATLAS_ASSET_VERSION = 'atlas21';
 
 export const MONETIZATION_CONFIG = {
   mode: 'affiliate',
@@ -176,9 +176,10 @@ export function buildHeadMonetizationTags(
     if (monetag.oncePerSession !== false) {
       scripts = validScripts
         .map((item) => {
-          const zoneAssign = item.zone ? `s.dataset.zone='${escapeJsSingle(item.zone)}';` : '';
-          const cfAssign = item.cfasync === false ? `s.setAttribute('data-cfasync','false');` : '';
-          return `<script>(function(){if(window.__mqMonetagSessionBooted)return;window.__mqMonetagSessionBooted=true;try{if(sessionStorage.getItem('${storageKey}')==='1')return;sessionStorage.setItem('${storageKey}','1');}catch(e){}var s=document.createElement('script');${zoneAssign}s.src='${escapeJsSingle(item.src)}';s.async=true;${cfAssign}(document.head||document.documentElement||document.body).appendChild(s);})();</script>`;
+          const zoneAssign = item.zone ? `s.dataset.zone='${escapeJsSingle(item.zone)}',` : '';
+          const cfAssign = item.cfasync === false ? `s.setAttribute('data-cfasync','false'),` : '';
+          const innerSnippet = `(function(s){${zoneAssign}${cfAssign}s.src='${escapeJsSingle(item.src)}'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`;
+          return `<script>(function(){if(window.__mqMonetagSessionBooted)return;window.__mqMonetagSessionBooted=true;try{if(sessionStorage.getItem('${storageKey}')==='1')return;sessionStorage.setItem('${storageKey}','1');}catch(e){}${innerSnippet};})();</script>`;
         })
         .join('\n  ');
     } else {
