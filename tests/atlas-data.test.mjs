@@ -243,10 +243,14 @@ test('monetization config & ads.txt / robots.txt / sitemap.xml hoạt động nh
   assert.ok(MONETIZATION_CONFIG.affiliateOffers.editorialBanner.rel.includes('sponsored'));
   assert.equal(MONETIZATION_CONFIG.monetag.metaVerificationContent, '17f2098708859e12049841afd66178ac');
   assert.equal(MONETIZATION_CONFIG.monetag.oncePerSession, true);
+  assert.equal(MONETIZATION_CONFIG.monetag.headScripts[0].zone, '12250663');
+  assert.equal(MONETIZATION_CONFIG.monetag.headScripts[0].src, 'https://nap5k.com/tag.min.js');
 
   const headTags = buildHeadMonetizationTags(MONETIZATION_CONFIG);
   assert.match(headTags.monetagMetaTag, /<meta name="monetag" content="17f2098708859e12049841afd66178ac"/);
   assert.match(headTags.adsenseTag, /ca-pub-1866418681419466/);
+  assert.match(headTags.monetagScriptsHtml, /\/atlas\/monetag-session\.mjs/);
+  assert.doesNotMatch(headTags.monetagScriptsHtml, /nap5k\.com/);
 
   const zoneConfig = {
     ...MONETIZATION_CONFIG,

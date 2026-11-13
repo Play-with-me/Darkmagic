@@ -9,7 +9,7 @@
  * - 'adsense': Render Google AdSense display/in-article units when approved & configured
  * - 'off': Hide all companion banners cleanly
  */
-export const ATLAS_ASSET_VERSION = 'atlas17';
+export const ATLAS_ASSET_VERSION = 'atlas18';
 
 export const MONETIZATION_CONFIG = {
   mode: 'affiliate',
@@ -29,9 +29,11 @@ export const MONETIZATION_CONFIG = {
     swFileContent: '',
     oncePerSession: true,
     sessionStorageKey: 'mq_monetag_session_loaded',
-    headScripts: [],
+    headScripts: [
+      { src: 'https://nap5k.com/tag.min.js', zone: '12250663', title: 'Loud tag (In-Page Push)' },
+    ],
     cspHosts:
-      'https://*.monetag.com https://quge5.com https://*.quge5.com https://*.alwingulla.com https://*.nap5k.com https://*.highperformanceformat.com',
+      'https://monetag.com https://*.monetag.com https://nap5k.com https://*.nap5k.com https://quge5.com https://*.quge5.com https://alwingulla.com https://*.alwingulla.com https://*.highperformanceformat.com',
   },
   librarySuggestions: {
     betweenReadingAndMaps: {

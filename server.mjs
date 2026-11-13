@@ -297,10 +297,12 @@ const server = http.createServer(async (req, res) => {
           .replace("font-src 'self'", "font-src 'self' https://fonts.gstatic.com data:");
         if (externalAdHosts) {
           for (const directive of ['script-src', 'frame-src', 'img-src', 'connect-src']) {
+            const extra =
+              directive === 'img-src' && monetagScriptsActive ? `${externalAdHosts} https:` : externalAdHosts;
             if (updatedCsp.includes(directive)) {
-              updatedCsp = updatedCsp.replace(directive, `${directive} ${externalAdHosts}`);
+              updatedCsp = updatedCsp.replace(directive, `${directive} ${extra}`);
             } else {
-              updatedCsp = `${updatedCsp}; ${directive} 'self' ${externalAdHosts}`;
+              updatedCsp = `${updatedCsp}; ${directive} 'self' ${extra}`;
             }
           }
         }
